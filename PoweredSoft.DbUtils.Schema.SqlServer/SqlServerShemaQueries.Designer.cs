@@ -115,13 +115,13 @@ namespace PoweredSoft.DbUtils.Schema.SqlServer {
         ///	 ic.is_included_column As IsIncludedColumn,
         ///	 ind.is_unique_constraint As IsUniqueConstraint,
         ///	 ind.has_filter As HasFilter,
-        ///	 ind.filter_definition As FilterDefinition
+        ///	 ind.filter_definition As FilterDefinition,
+        ///	 ic.is_descending_key As IsDescendingKey,
+        ///	 ic.key_ordinal As KeyOrdinal
         ///FROM 
         ///     sys.indexes ind 
         ///INNER JOIN 
-        ///     sys.index_columns ic ON  ind.object_id = ic.object_id and ind.index_id = ic.index_id 
-        ///INNER JOIN 
-        ///     sys.columns col ON ic.object_id = col.object_id and ic [rest of string was truncated]&quot;;.
+        ///     sys.index_columns ic ON  ind.object_id = ic.object_id and ind.index_id = ic.index_ [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string FetchIndexes {
             get {

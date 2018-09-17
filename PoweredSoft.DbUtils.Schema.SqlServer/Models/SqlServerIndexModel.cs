@@ -14,5 +14,7 @@ namespace PoweredSoft.DbUtils.Schema.SqlServer.Models
         public bool IsUniqueConstraint { get; set; }
         public bool HasFilter { get; set; }
         public string FilterDefinition { get; set; }
+        public bool IsDescendingKey { get; set; }
+        public int KeyOrdinal { get; set; }
     }
 }

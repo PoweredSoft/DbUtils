@@ -161,7 +161,9 @@ INNER JOIN sys.columns PKCOL ON PKCOL.object_id = FKC.referenced_object_id AND P
 	 ic.is_included_column As IsIncludedColumn,
 	 ind.is_unique_constraint As IsUniqueConstraint,
 	 ind.has_filter As HasFilter,
-	 ind.filter_definition As FilterDefinition
+	 ind.filter_definition As FilterDefinition,
+	 ic.is_descending_key As IsDescendingKey,
+	 ic.key_ordinal As KeyOrdinal
 FROM 
      sys.indexes ind 
 INNER JOIN 
