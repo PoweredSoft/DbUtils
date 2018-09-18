@@ -23,11 +23,6 @@ namespace PoweredSoft.DbUtils.Schema.SqlServer
         public bool IsForeignKey => Table.ForeignKeys.Any(t => t.ForeignKeyColumn.Name == Name);
         public bool IsNullable { get; set; }
 
-        public Type ResolveDotNetDataType()
-        {
-            throw new NotImplementedException();
-        }
-
         public override string ToString()
         {
             var ret = $"{Table}.[{Name}]";

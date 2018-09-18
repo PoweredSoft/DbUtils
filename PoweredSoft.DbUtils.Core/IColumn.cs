@@ -17,7 +17,5 @@ namespace PoweredSoft.DbUtils.Schema.Core
         bool IsForeignKey { get; }
         bool IsNullable { get; }
         ITable Table { get; }
-
-        Type ResolveDotNetDataType();
     }
 }
