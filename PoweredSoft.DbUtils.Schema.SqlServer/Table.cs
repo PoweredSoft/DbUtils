@@ -1,8 +1,8 @@
-﻿using PoweredSoft.DbUtils.Schema.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using PoweredSoft.DbUtils.Schema.Core;
 
 namespace PoweredSoft.DbUtils.Schema.SqlServer
 {
@@ -13,6 +13,7 @@ namespace PoweredSoft.DbUtils.Schema.SqlServer
         public List<IColumn> Columns => SqlServerColumns.Cast<IColumn>().ToList();
         public List<IIndex> Indexes => SqlServerIndexes.Cast<IIndex>().ToList();
         public List<IForeignKey> ForeignKeys => SqlServerForeignKeys.Cast<IForeignKey>().ToList();
+        public IDatabaseSchema DatabaseSchema { get; set; }
 
         public List<Column> SqlServerColumns { get; set; } = new List<Column>();
         public List<ForeignKey> SqlServerForeignKeys { get; set; } = new List<ForeignKey>();
@@ -35,7 +36,18 @@ namespace PoweredSoft.DbUtils.Schema.SqlServer
             return ret;
         }
 
-        #if DEBUG
+        public bool IsNamed(string name)
+        {
+            var tableFullName = $"{Schema}.{Name}";
+            var tableShortName = $"{Name}";
+
+            if (name.Contains("."))
+                return name.Equals(tableFullName, StringComparison.InvariantCultureIgnoreCase);
+
+            return name.Equals(tableShortName, StringComparison.InvariantCultureIgnoreCase);
+        }
+
+#if DEBUG
         public string Debug => TableDump();
         #endif
     }

@@ -6,6 +6,7 @@ namespace PoweredSoft.DbUtils.Schema.Core
 {
     public interface IDatabaseSchema
     {
+        string ConnectionString { get; set; }
         List<ITable> Tables { get; }
 
         void LoadSchema();

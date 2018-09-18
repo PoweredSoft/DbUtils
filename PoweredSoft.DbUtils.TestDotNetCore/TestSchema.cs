@@ -12,7 +12,7 @@ namespace PoweredSoft.DbUtils.TestDotNetCore
         {
             var schema = new DatabaseSchema
             {
-                ConnectionString = "Server=ps-sql.dev;Database=Acme;user id=sa;password=-pssql2016-"
+                ConnectionString = "Server=ps-sql.dev;Database=Acme;user id=acme;password=-acmepw2016-"
             };
 
             schema.LoadSchema();

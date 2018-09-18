@@ -10,7 +10,9 @@ namespace PoweredSoft.DbUtils.Schema.Core
         List<IColumn> Columns { get; }
         List<IIndex> Indexes { get; }
         List<IForeignKey> ForeignKeys { get; }
+        IDatabaseSchema DatabaseSchema { get; }
 
         string TableDump();
+        bool IsNamed(string name);
     }
 }

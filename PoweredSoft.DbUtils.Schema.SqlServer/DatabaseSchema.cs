@@ -268,6 +268,7 @@ namespace PoweredSoft.DbUtils.Schema.SqlServer
                 {
                     // create a new table.
                     var t = new Table();
+                    t.DatabaseSchema = this;
                     t.Schema = reader["TABLE_SCHEMA"] as string;
                     t.Name = reader["TABLE_NAME"] as string;
                     SqlServerTables.Add(t);

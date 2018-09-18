@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -9,7 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PoweredSoft.DbUtils.Core\PoweredSoft.DbUtils.Schema.Core.csproj" />
+    <ProjectReference Include="..\PoweredSoft.DbUtils.Schema.Core\PoweredSoft.DbUtils.Schema.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
