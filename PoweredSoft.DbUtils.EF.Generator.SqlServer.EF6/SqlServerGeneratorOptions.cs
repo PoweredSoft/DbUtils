@@ -8,6 +8,6 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
 {
     public class SqlServerGeneratorOptions : SqlServerGeneratorOptionsBase
     {
-
+        public string ConfigurationClassSuffix { get; set; } = "FluentConfiguration";
     }
 }

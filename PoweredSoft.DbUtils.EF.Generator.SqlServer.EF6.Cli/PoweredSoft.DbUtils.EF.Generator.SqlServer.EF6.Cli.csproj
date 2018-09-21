@@ -4,16 +4,17 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{4D8CACA6-019A-4E4C-AAF2-DC8B23610E73}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6</RootNamespace>
-    <AssemblyName>PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6</AssemblyName>
+    <ProjectGuid>{C4387298-584C-4A4D-9477-EA39308D1049}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6.Cli</RootNamespace>
+    <AssemblyName>PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6.Cli</AssemblyName>
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -23,6 +24,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -41,18 +43,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SqlServerGenerator.cs" />
-    <Compile Include="SqlServerGeneratorOptions.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\CodeGenerator\PoweredSoft.CodeGenerator\PoweredSoft.CodeGenerator.csproj">
-      <Project>{A0B4814E-C2CE-4DE4-9B34-76B0D3B5C990}</Project>
-      <Name>PoweredSoft.CodeGenerator</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\PoweredSoft.DbUtils.EF.Generator.Core\PoweredSoft.DbUtils.EF.Generator.Core.csproj">
-      <Project>{67B3F627-639C-41C3-81DE-D33CCC1BA328}</Project>
-      <Name>PoweredSoft.DbUtils.EF.Generator.Core</Name>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6\PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6.csproj">
+      <Project>{4D8CACA6-019A-4E4C-AAF2-DC8B23610E73}</Project>
+      <Name>PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6</Name>
     </ProjectReference>
     <ProjectReference Include="..\PoweredSoft.DbUtils.EF.Generator.SqlServer\PoweredSoft.DbUtils.EF.Generator.SqlServer.csproj">
       <Project>{2748AE45-AE2E-490B-AD87-9D99971CBE61}</Project>
@@ -62,14 +62,15 @@
       <Project>{8A693570-EDFE-4F96-87BF-F5ECFDEF59B9}</Project>
       <Name>PoweredSoft.DbUtils.EF.Generator</Name>
     </ProjectReference>
-    <ProjectReference Include="..\PoweredSoft.DbUtils.Schema.Core\PoweredSoft.DbUtils.Schema.Core.csproj">
-      <Project>{F28995FD-C833-40A9-B74B-B66079EE836A}</Project>
-      <Name>PoweredSoft.DbUtils.Schema.Core</Name>
-    </ProjectReference>
     <ProjectReference Include="..\PoweredSoft.DbUtils.Schema.SqlServer\PoweredSoft.DbUtils.Schema.SqlServer.csproj">
       <Project>{ECCD8F30-91FB-40A0-8536-8AC636AF5352}</Project>
       <Name>PoweredSoft.DbUtils.Schema.SqlServer</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="System.Data.SqlClient">
+      <Version>4.5.1</Version>
+    </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

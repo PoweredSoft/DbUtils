@@ -23,7 +23,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PoweredSoft.DbUtils.EF.Gene
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.DbUtils.EF.Generator.SqlServer.EFCore.Test", "PoweredSoft.DbUtils.EF.Generator.SqlServer.EFCore.Test\PoweredSoft.DbUtils.EF.Generator.SqlServer.EFCore.Test.csproj", "{B4CC7722-9C98-48D9-9985-90992B68F34A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PoweredSoft.DbUtils.EF.Generator.SqlServer.EFCore.Cli", "PoweredSoft.DbUtils.EF.Generator.SqlServer.EFCore.Cli\PoweredSoft.DbUtils.EF.Generator.SqlServer.EFCore.Cli.csproj", "{0C95EBFA-D871-4706-A919-3ADEC830C234}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.DbUtils.EF.Generator.SqlServer.EFCore.Cli", "PoweredSoft.DbUtils.EF.Generator.SqlServer.EFCore.Cli\PoweredSoft.DbUtils.EF.Generator.SqlServer.EFCore.Cli.csproj", "{0C95EBFA-D871-4706-A919-3ADEC830C234}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6.Cli", "PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6.Cli\PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6.Cli.csproj", "{C4387298-584C-4A4D-9477-EA39308D1049}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.CodeGenerator", "..\..\CodeGenerator\PoweredSoft.CodeGenerator\PoweredSoft.CodeGenerator.csproj", "{A0B4814E-C2CE-4DE4-9B34-76B0D3B5C990}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -75,6 +79,14 @@ Global
 		{0C95EBFA-D871-4706-A919-3ADEC830C234}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0C95EBFA-D871-4706-A919-3ADEC830C234}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0C95EBFA-D871-4706-A919-3ADEC830C234}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4387298-584C-4A4D-9477-EA39308D1049}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4387298-584C-4A4D-9477-EA39308D1049}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4387298-584C-4A4D-9477-EA39308D1049}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4387298-584C-4A4D-9477-EA39308D1049}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A0B4814E-C2CE-4DE4-9B34-76B0D3B5C990}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0B4814E-C2CE-4DE4-9B34-76B0D3B5C990}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0B4814E-C2CE-4DE4-9B34-76B0D3B5C990}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0B4814E-C2CE-4DE4-9B34-76B0D3B5C990}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

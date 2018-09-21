@@ -6,6 +6,7 @@ namespace PoweredSoft.DbUtils.EF.Generator.Core
     {
         List<string> ExcludedTables { get; }
         List<string> IncludedTables { get; }
+        string Namespace { get; set; }
         string ContextName { get; }
         string ContextBaseClassName { get; }
         string ConnectionString { get; }

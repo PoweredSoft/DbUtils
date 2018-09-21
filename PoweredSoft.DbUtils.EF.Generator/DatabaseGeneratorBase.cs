@@ -1,6 +1,8 @@
 ﻿using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Linq;
+using PoweredSoft.CodeGenerator;
 using PoweredSoft.DbUtils.EF.Generator.Core;
 using PoweredSoft.DbUtils.Schema.Core;
 
@@ -13,6 +15,8 @@ namespace PoweredSoft.DbUtils.EF.Generator
         public TOptions Options { get; set; }
         protected TSchema Schema { get; set; }
         protected List<ITable> TablesToGenerate { get; set; }
+        protected GenerationContext GenerationContext { get; set; }
+        protected abstract IDataTypeResolver DataTypeResolver { get; }
 
         public abstract TSchema CreateSchema();
 
@@ -20,12 +24,11 @@ namespace PoweredSoft.DbUtils.EF.Generator
         {
             Schema = CreateAndLoadSchema();
             TablesToGenerate = ResolveTablesToGenerate();
-
-            //var contactTable = TablesToGenerate.FirstOrDefault(t => t.IsNamed("WorkOrderEntry"));
-            //var hasManies = contactTable.HasMany().ToList();
-            //var hasOnes = contactTable.HasOne().ToList();
-            //var hasManyToMany = contactTable.ManyToMany().ToList();
+            GenerationContext = GenerationContext.Create();
+            GenerateCode();
         }
+
+        protected abstract void GenerateCode();
 
         public virtual List<ITable> ResolveTablesToGenerate()
         {

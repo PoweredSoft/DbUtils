@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using PoweredSoft.CodeGenerator;
+using PoweredSoft.DbUtils.EF.Generator.Core;
 using PoweredSoft.DbUtils.Schema.Core;
 using PoweredSoft.DbUtils.Schema.SqlServer;
 
@@ -10,6 +12,7 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer
         where TOptions : SqlServerGeneratorOptionsBase
     {
         public override DatabaseSchema CreateSchema() => new DatabaseSchema();
+        protected override IDataTypeResolver DataTypeResolver { get; } = new DataTypeResolver();
 
         public override List<ITable> ResolveTablesToGenerate()
         {
