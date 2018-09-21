@@ -14,6 +14,18 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer
         public override DatabaseSchema CreateSchema() => new DatabaseSchema();
         protected override IDataTypeResolver DataTypeResolver { get; } = new DataTypeResolver();
 
+        protected string TableNamespace(Table table)
+        {
+            var nsName = Options.Namespace.Replace("[SCHEMA]", table.Schema);
+            return nsName;
+        }
+
+        protected string TableClassName(Table table)
+        {
+            var ret = table.Name;
+            return ret;
+        } 
+
         public override List<ITable> ResolveTablesToGenerate()
         {
             var ret = base.ResolveTablesToGenerate();

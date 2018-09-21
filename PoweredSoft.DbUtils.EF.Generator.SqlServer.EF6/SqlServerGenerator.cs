@@ -27,8 +27,29 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
                     GenerationContext.File(fb => GenerateEntity(table as Table, fb));
             });
 
+            // generate foreign keys and navigation properties.
+            TablesToGenerate.ForEach(table =>
+            {
+                GenerateForeignKeys(table as Table);
+            });
+
             GenerationContext.SaveToDisk(Encoding.UTF8);
         }
+
+        private void GenerateForeignKeys(Table table)
+        {
+            var tableNamespace = TableNamespace(table);
+            var tableClassName = TableClassName(table);
+            var tableClass = GenerationContext.FindClass(tableClassName, tableNamespace);
+
+            throw new NotImplementedException();
+            table.ForeignKeys.ForEach(fk =>
+            {
+                  
+            });
+        }
+
+      
 
         private void GenerateEntity(Table table, FileBuilder fileBuilder)
         {
@@ -40,14 +61,15 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
             fileBuilder.Path(filePath);
 
             // set the namespace.
-            var nsName = Options.Namespace.Replace("[SCHEMA]", table.Schema);
+            var tableNamespace = TableNamespace(table);
+            var tableClassName = TableClassName(table);
 
-            fileBuilder.Namespace(nsName, true, ns =>
+            fileBuilder.Namespace(tableNamespace, true, ns =>
             {
                 ns.Class(tableClass =>
                 {
                     // set basic info.
-                    tableClass.Partial(true).Name(table.Name);
+                    tableClass.Partial(true).Name(tableClassName);
 
                     // set properties.
                     table.SqlServerColumns.ForEach(column =>
@@ -61,7 +83,6 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
 
                             columnProperty
                                 .Name(column.Name)
-                                .Virtual(true)
                                 .SetAccessModifier(AccessModifiers.Public)
                                 .Type(typeName);
                         });
