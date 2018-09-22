@@ -8,7 +8,7 @@ namespace PoweredSoft.DbUtils.Schema.Core
 {
     public static class Extensions
     {
-        public static bool IsHasOne(this IForeignKey fk)
+        public static bool IsOneToOne(this IForeignKey fk)
         {
             var primaryKeyCount = fk.ForeignKeyColumn.Table.Columns.Count(t => t.IsPrimaryKey);
             var fkIsPk = fk.ForeignKeyColumn.IsPrimaryKey;
@@ -25,7 +25,7 @@ namespace PoweredSoft.DbUtils.Schema.Core
         public static bool IsHasMany(this IForeignKey fk)
         {
             var isManyToMany = fk.IsManyToMany();
-            var isHasOne = fk.IsHasOne();
+            var isHasOne = fk.IsOneToOne();
             return !isHasOne && !isManyToMany;
         }
 
@@ -43,9 +43,9 @@ namespace PoweredSoft.DbUtils.Schema.Core
             return q;
         }
 
-        public static IEnumerable<IForeignKey> HasOne(this ITable table)
+        public static IEnumerable<IForeignKey> OneToOne(this ITable table)
         {
-            return table.ReverseNavigations().Where(t => t.IsHasOne());
+            return table.ReverseNavigations().Where(t => t.IsOneToOne());
         }
 
         public static IEnumerable<IForeignKey> HasMany(this ITable table)

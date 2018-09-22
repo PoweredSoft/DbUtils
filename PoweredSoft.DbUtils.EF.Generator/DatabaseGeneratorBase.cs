@@ -45,6 +45,15 @@ namespace PoweredSoft.DbUtils.EF.Generator
             return ret;
         }
 
+        protected string RemoveIdSuffixFromColumnName(string columnName)
+        {
+            var suffix = "Id";
+            if (columnName.EndsWith(suffix))
+                return columnName.Substring(0, columnName.Length - suffix.Length);
+   
+             return columnName;
+        }
+
         protected TSchema CreateAndLoadSchema()
         {
             var schema = CreateSchema();

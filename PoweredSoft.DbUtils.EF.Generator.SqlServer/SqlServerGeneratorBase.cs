@@ -24,7 +24,22 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer
         {
             var ret = table.Name;
             return ret;
-        } 
+        }
+
+        public string TableClassFullName(Table table)
+        {
+            var ns = TableNamespace(table);
+            var cn = TableClassName(table);
+            return $"{ns}.{cn}";
+        }
+
+        protected string ForeignKeyPropertyName(ForeignKey fk)
+        {
+            if (fk.IsOneToOne())
+                return fk.PrimaryKeyColumn.Table.Name;
+
+            return RemoveIdSuffixFromColumnName(fk.ForeignKeyColumn.Name);
+        }
 
         public override List<ITable> ResolveTablesToGenerate()
         {

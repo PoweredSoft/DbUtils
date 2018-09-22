@@ -42,14 +42,16 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
             var tableClassName = TableClassName(table);
             var tableClass = GenerationContext.FindClass(tableClassName, tableNamespace);
 
-            throw new NotImplementedException();
-            table.ForeignKeys.ForEach(fk =>
+            table.SqlServerForeignKeys.ForEach(fk =>
             {
-                  
+                var foreignKeyName = ForeignKeyPropertyName(fk);
+                var foreignKeyTypeName = TableClassFullName(fk.SqlServerPrimaryKeyColumn.SqlServerTable);
+                tableClass.Property(foreignKeyProp => foreignKeyProp.Virtual(true).Type(foreignKeyTypeName).Name(foreignKeyName));
             });
         }
 
-      
+     
+
 
         private void GenerateEntity(Table table, FileBuilder fileBuilder)
         {
