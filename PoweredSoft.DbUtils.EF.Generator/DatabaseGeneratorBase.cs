@@ -2,6 +2,7 @@
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Linq;
+using Pluralize.NET;
 using PoweredSoft.CodeGenerator;
 using PoweredSoft.DbUtils.EF.Generator.Core;
 using PoweredSoft.DbUtils.Schema.Core;
@@ -18,6 +19,8 @@ namespace PoweredSoft.DbUtils.EF.Generator
         protected GenerationContext GenerationContext { get; set; }
         protected abstract IDataTypeResolver DataTypeResolver { get; }
 
+        protected Pluralizer Plurializer { get; } = new Pluralizer();
+
         public abstract TSchema CreateSchema();
 
         public void Generate()
@@ -29,6 +32,12 @@ namespace PoweredSoft.DbUtils.EF.Generator
         }
 
         protected abstract void GenerateCode();
+
+        protected virtual string Pluralize(string text)
+        {
+            var ret = Plurializer.Pluralize(text);
+            return ret;
+        }
 
         public virtual List<ITable> ResolveTablesToGenerate()
         {
@@ -51,7 +60,7 @@ namespace PoweredSoft.DbUtils.EF.Generator
             if (columnName.EndsWith(suffix))
                 return columnName.Substring(0, columnName.Length - suffix.Length);
    
-             return columnName;
+            return columnName;
         }
 
         protected TSchema CreateAndLoadSchema()

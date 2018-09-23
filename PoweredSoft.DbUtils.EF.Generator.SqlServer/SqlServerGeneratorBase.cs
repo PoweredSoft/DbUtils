@@ -33,6 +33,18 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer
             return $"{ns}.{cn}";
         }
 
+        protected string OneToOnePropertyName(ForeignKey fk)
+        {
+            return fk.ForeignKeyColumn.Table.Name;
+        }
+
+        protected virtual string HasManyPropertyName(ForeignKey fk)
+        {
+            var prop = fk.ForeignKeyColumn.Table.Name;
+            prop = Pluralize(prop);
+            return prop;
+        }
+
         protected string ForeignKeyPropertyName(ForeignKey fk)
         {
             if (fk.IsOneToOne())
