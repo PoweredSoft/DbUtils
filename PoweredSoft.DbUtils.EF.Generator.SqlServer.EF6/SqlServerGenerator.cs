@@ -65,7 +65,7 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
                 // the type of the property.
                 var pocoType = TableClassFullName(otherPk);
                 var propType = $"System.Collections.Generic.ICollection<{pocoType}>";
-                var defaultValue = $"new {propType}()";
+                var defaultValue = $"new System.Collections.Generic.List<{pocoType}>()";
 
                 // generate property :)
                 tableClass.Property(p => p.Virtual(true).Type(propType).Name(propName).DefaultValue(defaultValue).Comment("Many to Many"));
@@ -85,7 +85,7 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
                 var propName = HasManyPropertyName(sqlServerFk);
                 var pocoType = TableClassFullName(sqlServerFk.SqlServerForeignKeyColumn.SqlServerTable);
                 var propType = $"System.Collections.Generic.ICollection<{pocoType}>";
-                var defaultValue = $"new {propType}()";
+                var defaultValue = $"new System.Collections.Generic.List<{pocoType}>()";
                 tableClass.Property(p => p.Virtual(true).Type(propType).Name(propName).DefaultValue(defaultValue).Comment("Has Many"));
             });
         }
