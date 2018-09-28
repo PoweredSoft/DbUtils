@@ -66,5 +66,20 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer
 
             return typeof(string);
         }
+
+        public bool IsFixLength(IColumn column)
+        {
+            return fixedLengthTypes.Contains(column.DataType);
+        }
+
+        public bool IsString(IColumn column)
+        {
+            return stringTypes.Contains(column.DataType);
+        }
+
+        public bool IsUnicode(IColumn column)
+        {
+            return column.DataType.StartsWith("n");
+        }
     }
 }

@@ -8,5 +8,8 @@ namespace PoweredSoft.DbUtils.EF.Generator.Core
     public interface IDataTypeResolver
     {
         Type ResolveType(IColumn column);
+        bool IsFixLength(IColumn column);
+        bool IsString(IColumn column);
+        bool IsUnicode(IColumn column);
     }
 }
