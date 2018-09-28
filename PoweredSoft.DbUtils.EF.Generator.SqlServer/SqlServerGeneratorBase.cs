@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using PoweredSoft.CodeGenerator;
 using PoweredSoft.DbUtils.EF.Generator.Core;
@@ -33,24 +34,30 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer
             return $"{ns}.{cn}";
         }
 
-        protected string OneToOnePropertyName(ForeignKey fk)
+        protected virtual string OneToOnePropertyName(ForeignKey fk)
         {
             return fk.ForeignKeyColumn.Table.Name;
         }
 
-        protected virtual string HasManyPropertyName(ForeignKey fk)
+        protected virtual string HasManyPropertyName(ForeignKey fk, bool withForeignKeyName = false)
         {
             var prop = fk.ForeignKeyColumn.Table.Name;
             prop = Pluralize(prop);
+
+            if (withForeignKeyName)
+                prop = $"{prop}_{fk.ForeignKeyColumn.Name}";
+
             return prop;
         }
 
-        protected string ForeignKeyPropertyName(ForeignKey fk)
+        protected string ForeignKeyPropertyName(ForeignKey fk, bool withForeignKeyName = false)
         {
-            if (fk.IsOneToOne())
-                return fk.PrimaryKeyColumn.Table.Name;
+            var prop = fk.IsOneToOne() ? fk.PrimaryKeyColumn.Table.Name : RemoveIdSuffixFromColumnName(fk.ForeignKeyColumn.Name);
 
-            return RemoveIdSuffixFromColumnName(fk.ForeignKeyColumn.Name);
+            if (withForeignKeyName)
+                prop = $"{prop}_{fk.ForeignKeyColumn.Name}";
+
+            return prop;
         }
 
         public override List<ITable> ResolveTablesToGenerate()

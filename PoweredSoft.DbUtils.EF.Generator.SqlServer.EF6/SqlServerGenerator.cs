@@ -61,6 +61,7 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
 
                 // pluralize this name.
                 var propName = Pluralize(otherPk.Name);
+                propName = tableClass.GetUniqueMemberName(propName);
 
                 // the type of the property.
                 var pocoType = TableClassFullName(otherPk);
@@ -68,7 +69,7 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
                 var defaultValue = $"new System.Collections.Generic.List<{pocoType}>()";
 
                 // generate property :)
-                tableClass.Property(p => p.Virtual(true).Type(propType).Name(propName).DefaultValue(defaultValue).Comment("Many to Many"));
+                tableClass.Property(p => p.Virtual(true).Type(propType).Name(propName).DefaultValue(defaultValue).Comment("Many to Many").Meta(fk));
             });
         }
 
@@ -83,6 +84,16 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
             {
                 var sqlServerFk = fk as ForeignKey;
                 var propName = HasManyPropertyName(sqlServerFk);
+
+                // attempt to get a nicer name. than manies1
+                if (tableClass.HasMemberWithName(propName))
+                {
+                    var tempPropName = HasManyPropertyName(sqlServerFk, true);
+                    if (!tableClass.HasMemberWithName(tempPropName))
+                        propName = tempPropName;
+                }
+
+                propName = tableClass.GetUniqueMemberName(propName);
                 var pocoType = TableClassFullName(sqlServerFk.SqlServerForeignKeyColumn.SqlServerTable);
                 var propType = $"System.Collections.Generic.ICollection<{pocoType}>";
                 var defaultValue = $"new System.Collections.Generic.List<{pocoType}>()";
@@ -100,8 +111,9 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
             {
                 var sqlServerFk = fk as ForeignKey;
                 var propName = OneToOnePropertyName(sqlServerFk);
+                propName = tableClass.GetUniqueMemberName(propName);
                 var propType = TableClassFullName(sqlServerFk.SqlServerForeignKeyColumn.SqlServerTable);
-                tableClass.Property(p => p.Virtual(true).Type(propType).Name(propName).Comment("One to One"));
+                tableClass.Property(p => p.Virtual(true).Type(propType).Name(propName).Comment("One to One").Meta(fk));
             });
         }
 
@@ -113,9 +125,19 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
 
             table.SqlServerForeignKeys.ForEach(fk =>
             {
-                var foreignKeyName = ForeignKeyPropertyName(fk);
+                var propName = ForeignKeyPropertyName(fk);
+
+                // attempt to get a nicer name. (include foreign key column name in case of multiple fk to same table)
+                if (tableClass.HasMemberWithName(propName))
+                {
+                    var tempPropName = ForeignKeyPropertyName(fk, true);
+                    if (!tableClass.HasMemberWithName(tempPropName))
+                        propName = tempPropName;
+                }
+
+                propName = tableClass.GetUniqueMemberName(propName);
                 var foreignKeyTypeName = TableClassFullName(fk.SqlServerPrimaryKeyColumn.SqlServerTable);
-                tableClass.Property(foreignKeyProp => foreignKeyProp.Virtual(true).Type(foreignKeyTypeName).Name(foreignKeyName).Comment("Foreign Key"));
+                tableClass.Property(foreignKeyProp => foreignKeyProp.Virtual(true).Type(foreignKeyTypeName).Name(propName).Comment("Foreign Key").Meta(fk));
             });
         }
 
@@ -152,7 +174,8 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
                             columnProperty
                                 .Name(column.Name)
                                 .SetAccessModifier(AccessModifiers.Public)
-                                .Type(typeName);
+                                .Type(typeName)
+                                .Meta(column);
                         });
                     });
                 });
