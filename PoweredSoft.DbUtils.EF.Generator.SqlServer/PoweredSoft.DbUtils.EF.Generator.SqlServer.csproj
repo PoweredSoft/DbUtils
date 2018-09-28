@@ -5,7 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\CodeGenerator\PoweredSoft.CodeGenerator\PoweredSoft.CodeGenerator.csproj" />
     <ProjectReference Include="..\PoweredSoft.DbUtils.EF.Generator.SqlServer.Core\PoweredSoft.DbUtils.EF.Generator.SqlServer.Core.csproj" />
     <ProjectReference Include="..\PoweredSoft.DbUtils.EF.Generator\PoweredSoft.DbUtils.EF.Generator.csproj" />
     <ProjectReference Include="..\PoweredSoft.DbUtils.Schema.SqlServer\PoweredSoft.DbUtils.Schema.SqlServer.csproj" />

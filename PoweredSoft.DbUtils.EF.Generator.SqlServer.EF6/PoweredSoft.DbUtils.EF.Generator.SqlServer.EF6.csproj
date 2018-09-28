@@ -46,8 +46,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\CodeGenerator\PoweredSoft.CodeGenerator\PoweredSoft.CodeGenerator.csproj">
-      <Project>{A0B4814E-C2CE-4DE4-9B34-76B0D3B5C990}</Project>
+    <ProjectReference Include="..\..\CodeGenerator\PoweredSoft.CodeGenerator\PoweredSoft.CodeGenerator.csproj">
+      <Project>{44C9C724-8ED1-4DEE-9E4E-3A639FE0FB54}</Project>
       <Name>PoweredSoft.CodeGenerator</Name>
     </ProjectReference>
     <ProjectReference Include="..\PoweredSoft.DbUtils.EF.Generator.Core\PoweredSoft.DbUtils.EF.Generator.Core.csproj">
