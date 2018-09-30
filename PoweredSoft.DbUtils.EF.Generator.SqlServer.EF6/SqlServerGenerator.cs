@@ -262,11 +262,14 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
                                         line.Append($"HasRequired(t => t.{fkProp.GetName()})");
 
                                     if (fk.IsOneToOne())
+                                    {
                                         line.Append($".WithOptional(t => t.{reverseNav.GetName()})");
+                                    }
                                     else
+                                    { 
                                         line.Append($".WithMany(t => t.{reverseNav.GetName()})");
-
-                                    line.Append($".HasForeignKey(t => t.{fkColumnProp.GetName()})");
+                                        line.Append($".HasForeignKey(t => t.{fkColumnProp.GetName()})");
+                                    }
                                     constructor.Add(line);
                                 }
                             });
