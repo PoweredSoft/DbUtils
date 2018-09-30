@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using PoweredSoft.CodeGenerator;
 using PoweredSoft.CodeGenerator.Constants;
@@ -19,7 +20,133 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
         {
             GenerateEntities();
             GenerateFluentConfigurations();
+            GenerateContext();
             GenerationContext.SaveToDisk(Encoding.UTF8);
+        }
+
+        private void GenerateContext()
+        {
+            var contextNamespace = string.Join(".", Options.Namespace.Replace("[SCHEMA]", "").Split('.').Where(t => !string.IsNullOrWhiteSpace(t)));
+
+            Action<FileBuilder> generateContextInline = (FileBuilder fileBuilder) =>
+            {
+                // set the path.
+                var outputDir = Options.OutputDir;
+                var filePath = Options.OutputToSingleFile
+                    ? $"{outputDir}\\{Options.OutputSingleFileName}"
+                    : $"{outputDir}\\{Options.ContextName}.generated.cs";
+                fileBuilder.Path(filePath);
+
+                fileBuilder.Namespace(contextNamespace, true, ns =>
+                {
+                    ns.Class(Options.ContextName, true, contextClass =>
+                    {
+                        contextClass.Partial(true).Inherits(Options.ContextBaseClassName);
+
+                        TablesToGenerateWithoutManyToMany.Cast<Table>().ToList().ForEach(table =>
+                        {
+                            var tableClassFullName = TableClassFullName(table);
+                            var tableNamePlural = Pluralize(table.Name);
+                            contextClass.Property(tableNamePlural, true, dbSetProp =>
+                            {
+                                dbSetProp.Type($"System.Data.Entity.DbSet<{tableClassFullName}>");
+                            });
+                        });
+
+                        contextClass.Constructor(c => c
+                            .AccessModifier(AccessModifiers.Omit)
+                            .IsStatic(true)
+                            .Class(contextClass)
+                            .RawLine($"System.Data.Entity.Database.SetInitializer<{Options.ContextName}>(null)")
+                        );
+
+                        contextClass.Constructor(c => c
+                            .Class(contextClass)
+                            .BaseParameter($"\"{Options.ConnectionStringName}\"")
+                            .RawLine("InitializePartial()")
+                        );
+
+                        contextClass.Constructor(c => c
+                            .Class(contextClass)
+                            .Parameter(p => p.Type("string").Name("connectionString"))
+                            .BaseParameter("connectionString")
+                            .RawLine("InitializePartial()")
+                        );
+
+                        contextClass.Constructor(c => c
+                            .Class(contextClass)
+                            .Parameter(p => p.Type("string").Name("connectionString"))
+                            .Parameter(p => p.Type("System.Data.Entity.Infrastructure.DbCompiledModel").Name("model"))
+                            .BaseParameter("connectionString")
+                            .BaseParameter("model")
+                            .RawLine("InitializePartial()")
+                        );
+
+                        contextClass.Method(addConfigurationMethod =>
+                        {
+                            addConfigurationMethod
+                                .IsStatic(true)
+                                .ReturnType("void")
+                                .AccessModifier(AccessModifiers.Protected)
+                                .Name("AddFluentConfigurations")
+                                .Parameter(p => p.Type("System.Data.Entity.DbModelBuilder").Name("modelBuilder"));
+
+                            TablesToGenerateWithoutManyToMany.Cast<Table>().ToList().ForEach(table =>
+                            {
+                                var fcc = TableClassFullName(table) + Options.FluentConfigurationClassSuffix;
+                                addConfigurationMethod.RawLine($"modelBuilder.Configurations.Add(new {fcc}())");
+                            });
+                        });
+
+                        contextClass.Method(m => m
+                            .AccessModifier(AccessModifiers.Omit)
+                            .Name("OnModelCreatingPartial")
+                            .ReturnType("void")
+                            .Partial(true)
+                            .Parameter(p => p.Type("System.Data.Entity.DbModelBuilder").Name("modelBuilder"))
+                        );
+
+                        contextClass.Method(m => m
+                            .AccessModifier(AccessModifiers.Omit)
+                            .Name("InitializePartial")
+                            .ReturnType("void")
+                            .Partial(true)
+                        );
+
+                        contextClass.Method(m =>
+                        {
+                            m
+                                .AccessModifier(AccessModifiers.Protected)
+                                .Override(true)
+                                .ReturnType("void")
+                                .Name("OnModelCreating")
+                                .Parameter(p => p.Type("System.Data.Entity.DbModelBuilder").Name("modelBuilder"))
+                                .RawLine("base.OnModelCreating(modelBuilder)")
+                                .RawLine("AddFluentConfigurations(modelBuilder)")
+                                .RawLine("OnModelCreatingPartial(modelBuilder)");
+                        });
+
+                        contextClass.Method(m =>
+                        {
+                            m
+                                .AccessModifier(AccessModifiers.Public)
+                                .IsStatic(true)
+                                .ReturnType("System.Data.Entity.DbModelBuilder")
+                                .Name("CreateModel")
+                                .Parameter(p => p.Type("System.Data.Entity.DbModelBuilder").Name("modelBuilder"))
+                                .Parameter(p => p.Type("string").Name("schema"))
+                                .RawLine("AddFluentConfigurations(modelBuilder)")
+                                .RawLine("return modelBuilder");
+                        });
+
+                    });
+                });
+            };
+
+            if (Options.OutputToSingleFile)
+                GenerationContext.SingleFile(fb => generateContextInline(fb));
+            else
+                GenerationContext.File(fb => generateContextInline(fb));
         }
 
         private void GenerateFluentConfigurations()
@@ -60,6 +187,8 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
                         .Inherits($"System.Data.Entity.ModelConfiguration.EntityTypeConfiguration<{tableClassName}>")
                         .Constructor(constructor =>
                         {
+                            constructor.AddComment("Table mapping & keys");
+
                             // to table mapping.
                             constructor.RawLine($"ToTable(\"{table.Schema}.{table.Name}\")");
 
@@ -67,6 +196,8 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
                             var pk = table.SqlServerColumns.FirstOrDefault(t => t.IsPrimaryKey);
                             var pkProp = entityClass.FindByMeta<PropertyBuilder>(pk);
                             constructor.RawLine($"HasKey(t => t.{pkProp.GetName()})");
+
+                            constructor.AddComment("Columns");
 
                             // columns mapping.
                             table.SqlServerColumns.ForEach(column =>
@@ -109,10 +240,62 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
                                 constructor.Add(columnLine);
                             });
 
-                            /*
-                             *
-                             * itBonus->getMinSpend()
-                             */
+                            constructor.AddComment("Navigations");
+                            table.SqlServerForeignKeys.ForEach(fk =>
+                            {
+                                // todo skip if table is filtered.
+
+                                var line = RawLineBuilder.Create();
+                                var fkProp = entityClass.FindByMeta<PropertyBuilder>(fk);
+                                var fkColumnProp = entityClass.FindByMeta<PropertyBuilder>(fk.SqlServerForeignKeyColumn);
+                                if (fkProp != null)
+                                {
+                                    var primaryNamespace = TableNamespace(fk.SqlServerPrimaryKeyColumn.SqlServerTable);
+                                    var primaryClassName = TableClassName(fk.SqlServerPrimaryKeyColumn.SqlServerTable);
+                                    var primaryEntity = GenerationContext.FindClass(primaryClassName, primaryNamespace);
+                                    var reverseNav = primaryEntity.FindByMeta<PropertyBuilder>(fk);
+
+
+                                    if (fk.SqlServerForeignKeyColumn.IsNullable)
+                                        line.Append($"HasOptional(t => t.{fkProp.GetName()})");
+                                    else
+                                        line.Append($"HasRequired(t => t.{fkProp.GetName()})");
+
+                                    if (fk.IsOneToOne())
+                                        line.Append($".WithOptional(t => t.{reverseNav.GetName()})");
+                                    else
+                                        line.Append($".WithMany(t => t.{reverseNav.GetName()})");
+
+                                    line.Append($".HasForeignKey(t => t.{fkColumnProp.GetName()})");
+                                    constructor.Add(line);
+                                }
+                            });
+
+                            constructor.AddComment("Many to Many");
+                            table.ManyToMany().ToList().ForEach(mtm =>
+                            {
+                                if (mtm.ForeignKeyColumn.PrimaryKeyOrder > 1)
+                                    return;
+
+                                var manyToManyTable = mtm.ForeignKeyColumn.Table as Table;
+                                var manyProp = entityClass.FindByMeta<PropertyBuilder>(mtm);
+
+                                // other prop.
+                                var otherFk = mtm.ForeignKeyColumn.Table.ForeignKeys.First(t => t.ForeignKeyColumn.PrimaryKeyOrder > 1);
+                                var otherTable = otherFk.PrimaryKeyColumn.Table as Table;
+                                var otherNamespace = TableNamespace(otherTable);
+                                var otherClassName = TableClassName(otherTable);
+                                var otherEntity = GenerationContext.FindClass(otherClassName, otherNamespace);
+                                var otherProp = otherEntity.FindByMeta<PropertyBuilder>(otherFk);
+
+                                var line = RawLineBuilder.Create();
+                                line.Append($"HasMany(t => t.{manyProp.GetName()})");
+                                line.Append($".WithMany(t => t.{otherProp.GetName()})");
+                                line.Append($".Map(t => t.ToTable(\"{manyToManyTable.Name}\", \"{manyToManyTable.Schema}\")");
+                                line.Append($".MapLeftKey(\"{mtm.ForeignKeyColumn.Name}\")");
+                                line.Append($".MapRightKey(\"{otherFk.ForeignKeyColumn.Name}\"))");
+                                constructor.Add(line);
+                            });
                         });
                 });
             });
@@ -150,7 +333,7 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
             manyToManyList.ForEach(fk =>
             {
                 var sqlServerFk = fk as ForeignKey;
-                
+
                 // get the other foreign key of this many to many.
                 var otherFk = sqlServerFk.SqlServerForeignKeyColumn.SqlServerTable.SqlServerForeignKeys.FirstOrDefault(t => t != sqlServerFk);
 
@@ -181,21 +364,14 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
             hasManyList.ForEach(fk =>
             {
                 var sqlServerFk = fk as ForeignKey;
-                var propName = HasManyPropertyName(sqlServerFk);
-
-                // attempt to get a nicer name. than manies1
-                if (tableClass.HasMemberWithName(propName))
-                {
-                    var tempPropName = HasManyPropertyName(sqlServerFk, true);
-                    if (!tableClass.HasMemberWithName(tempPropName))
-                        propName = tempPropName;
-                }
+                var hasMoreThanOne = table.HasMany().Count(t => t.ForeignKeyColumn.Table == sqlServerFk.ForeignKeyColumn.Table) > 1;
+                var propName = HasManyPropertyName(sqlServerFk, hasMoreThanOne);
 
                 propName = tableClass.GetUniqueMemberName(propName);
                 var pocoType = TableClassFullName(sqlServerFk.SqlServerForeignKeyColumn.SqlServerTable);
                 var propType = $"System.Collections.Generic.ICollection<{pocoType}>";
                 var defaultValue = $"new System.Collections.Generic.List<{pocoType}>()";
-                tableClass.Property(p => p.Virtual(true).Type(propType).Name(propName).DefaultValue(defaultValue).Comment("Has Many"));
+                tableClass.Property(p => p.Virtual(true).Type(propType).Name(propName).DefaultValue(defaultValue).Comment("Has Many").Meta(fk));
             });
         }
 
@@ -224,8 +400,6 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
             table.SqlServerForeignKeys.ForEach(fk =>
             {
                 var propName = ForeignKeyPropertyName(fk);
-
-                // attempt to get a nicer name. (include foreign key column name in case of multiple fk to same table)
                 if (tableClass.HasMemberWithName(propName))
                 {
                     var tempPropName = ForeignKeyPropertyName(fk, true);
@@ -280,6 +454,6 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
             });
         }
 
-       
+
     }
 }

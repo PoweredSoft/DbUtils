@@ -31,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Pluralize.NET">
+      <HintPath>..\..\..\Users\PS-DEV2\.nuget\packages\pluralize.net\0.1.84\lib\netstandard2.0\Pluralize.NET.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />

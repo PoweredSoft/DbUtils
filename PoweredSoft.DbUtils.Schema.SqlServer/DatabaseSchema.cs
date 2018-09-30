@@ -180,6 +180,7 @@ namespace PoweredSoft.DbUtils.Schema.SqlServer
                     var tableSchema = reader["TABLE_SCHEMA"] as string;
                     var tableName = reader["TABLE_NAME"] as string;
                     var columnName = reader["COLUMN_NAME"] as string;
+                    int ordinalPosition = (int) reader["ORDINAL_POSITION"];
 
                     // find the table.
                     var table = SqlServerTables.FirstOrDefault(t => t.Schema == tableSchema && t.Name == tableName);
@@ -192,6 +193,7 @@ namespace PoweredSoft.DbUtils.Schema.SqlServer
                         throw new Exception($"could not find {columnName} inside table {tableSchema}.{tableName}");
 
                     column.IsPrimaryKey = true;
+                    column.PrimaryKeyOrder = ordinalPosition;
                 }
             }
         }

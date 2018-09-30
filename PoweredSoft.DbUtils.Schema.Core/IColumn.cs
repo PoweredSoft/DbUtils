@@ -14,6 +14,7 @@ namespace PoweredSoft.DbUtils.Schema.Core
         int? NumericScale { get; }
         bool IsAutoIncrement { get; }
         bool IsPrimaryKey { get; }
+        int PrimaryKeyOrder { get; set; }
         bool IsForeignKey { get; }
         bool IsNullable { get; }
         ITable Table { get; }
