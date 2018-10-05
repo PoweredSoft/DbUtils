@@ -375,6 +375,11 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
                     if (Options.GenerateModelsInterfaces)
                         modelClass.Inherits(modelInterfaceName);
 
+                    Options?.ModelInheritances.ForEach(mi =>
+                    {
+                        modelClass.Inherits(ReplaceMetas(mi, table));
+                    });
+
 
                     MethodBuilder from = null;
                     MethodBuilder to = null;

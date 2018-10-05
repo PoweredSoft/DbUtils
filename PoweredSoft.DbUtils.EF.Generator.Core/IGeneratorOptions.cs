@@ -21,5 +21,6 @@ namespace PoweredSoft.DbUtils.EF.Generator.Core
         bool GenerateModelPropertyAsNullable { get; }
         string ModelSuffix { get; }
         string ModelInterfaceSuffix { get; }
+        List<string> ModelInheritances { get; }
     }
 }

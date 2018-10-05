@@ -54,6 +54,11 @@ namespace PoweredSoft.DbUtils.EF.Generator
             return ret;
         }
 
+        protected virtual string ReplaceMetas(string model, ITable table)
+        {
+            return model.Replace("[ENTITY]", table.Name);
+        }
+
         public virtual List<ITable> ResolveTablesToGenerate()
         {
             List<ITable> ret;

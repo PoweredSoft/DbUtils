@@ -17,7 +17,7 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer
 
         protected string TableNamespace(Table table)
         {
-            var nsName = Options.Namespace.Replace("[SCHEMA]", table.Schema);
+            var nsName = ReplaceMetas(Options.Namespace, table);
             return nsName;
         }
 
@@ -35,7 +35,13 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer
         protected string ContextClassName() => Options.ContextName;
         protected string ContextFullClassName() => $"{ContextNamespace()}.{ContextClassName()}";
 
-
+        protected override string ReplaceMetas(string model, ITable table)
+        {
+            var ret = base.ReplaceMetas(model, table);
+            ret = ret.Replace("[SCHEMA]", (table as Table)?.Schema);
+            ret = ret.Replace("[CONTEXT]", ContextFullClassName());
+            return ret;
+        }
 
         protected string ModelClassName(Table table, bool includeSuffix = true)
         {

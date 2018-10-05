@@ -24,6 +24,10 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6.Cli
                 GenerateModels = true,
                 GenerateModelPropertyAsNullable = true,
                 GenerateModelsInterfaces = true,
+                ModelInheritances = new List<string>()
+                {
+                    "ITestInherit<[ENTITY], [CONTEXT]>"
+                }
             };
             g.Generate();
         }
