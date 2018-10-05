@@ -419,16 +419,16 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
 
                             if (isPropertyNullable && !column.IsNullable)
                             {
+
                                 var matchingProp = tableClass.FindByMeta<PropertyBuilder>(column);
-                                to.Add(IfBuilder
-                                        .Create()
-                                        .RawCondition(rc => rc.Condition($"{column.Name} != null"))
-                                        .Add(RawLineBuilder.Create($"entity.{column.Name} = {column.Name}"))
-                                );
-                                to.Add(ElseBuilder
+                                var ternary = TernaryBuilder
                                     .Create()
-                                    .Add(RawLineBuilder.Create($"entity.{column.Name} = default({matchingProp.GetTypeName()})"))
-                                );
+                                    .RawCondition(rc => rc.Condition($"{column.Name} != null"))
+                                    .True(RawInlineBuilder.Create($"entity.{column.Name} = {column.Name}"))
+                                    .False(RawInlineBuilder.Create($"entity.{column.Name} = default({matchingProp.GetTypeName()})"));
+
+                                to.RawLine($"entity.{column.Name} = {ternary.GenerateInline()}");
+                                
                             }
                             else
                             {
