@@ -375,8 +375,8 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
                         modelClass.Inherits(modelInterfaceName);
 
 
-                    MethodBuilder from;
-                    MethodBuilder to;
+                    MethodBuilder from = null;
+                    MethodBuilder to = null;
 
                     modelClass.Method(m =>
                     {
@@ -405,7 +405,8 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
                         {
                             var type = DataTypeResolver.ResolveType(column);
                             var typeName = type.GetOutputType();
-                            if (type.IsValueType && (column.IsNullable || Options.GenerateModelPropertyAsNullable))
+                            bool isPropertyNullable = column.IsNullable || Options.GenerateModelPropertyAsNullable;
+                            if (type.IsValueType && isPropertyNullable)
                                 typeName = $"{typeName}?";
 
                             columnProperty
@@ -413,6 +414,26 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
                                 .Name(column.Name)
                                 .Type(typeName)
                                 .Meta(column);
+
+                            from.RawLine($"{column.Name} = entity.{column.Name}");
+
+                            if (isPropertyNullable && !column.IsNullable)
+                            {
+                                var matchingProp = tableClass.FindByMeta<PropertyBuilder>(column);
+                                to.Add(IfBuilder
+                                        .Create()
+                                        .RawCondition(rc => rc.Condition($"{column.Name} != null"))
+                                        .Add(RawLineBuilder.Create($"entity.{column.Name} = {column.Name}"))
+                                );
+                                to.Add(ElseBuilder
+                                    .Create()
+                                    .Add(RawLineBuilder.Create($"entity.{column.Name} = default({matchingProp.GetTypeName()})"))
+                                );
+                            }
+                            else
+                            {
+                                to.RawLine($"entity.{column.Name} = {column.Name}");
+                            }
                         });
                     });
 
