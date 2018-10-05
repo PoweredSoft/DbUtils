@@ -1,6 +1,7 @@
 ﻿using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Pluralize.NET;
 using PoweredSoft.CodeGenerator;
@@ -23,11 +24,25 @@ namespace PoweredSoft.DbUtils.EF.Generator
 
         public abstract TSchema CreateSchema();
 
+        protected virtual void CleanOutputDir()
+        {
+            if (!Options.CleanOutputDir)
+                return;
+            
+            var dir = new DirectoryInfo(Options.OutputDir);
+            foreach (var fi in dir.GetFiles())
+                fi.Delete();
+
+            foreach (var di in dir.GetDirectories())
+                di.Delete(true);
+        }
+
         public void Generate()
         {
             Schema = CreateAndLoadSchema();
             TablesToGenerate = ResolveTablesToGenerate();
             GenerationContext = GenerationContext.Create();
+            CleanOutputDir();
             GenerateCode();
         }
 

@@ -12,9 +12,15 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer
         public virtual string ContextBaseClassName { get; set; }
         public virtual string ConnectionString { get; set; }
         public virtual string OutputDir { get; set; }
+        public bool CleanOutputDir { get; set; } = false;
         public virtual bool OutputToSingleFile => !string.IsNullOrWhiteSpace(OutputSingleFileName);
         public virtual string OutputSingleFileName { get; set; }
+        public bool GenerateInterfaces { get; set; } = false;
+        public bool GenerateModels { get; set; } = false;
+        public bool GenerateModelPropertyAsNullable { get; set; } = false;
+        public string ModelSuffix { get; set; } = "ModelBase";
         public virtual List<string> IncludedSchemas { get; set; }
         public virtual List<string> ExcludedSchemas { get; set; }
+        public string InterfaceNameSuffix { get; set; }
     }
 }

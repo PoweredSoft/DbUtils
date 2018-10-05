@@ -10,8 +10,14 @@ namespace PoweredSoft.DbUtils.EF.Generator.Core
         string ContextName { get; }
         string ContextBaseClassName { get; }
         string ConnectionString { get; }
-        string OutputDir { get; set; }
+        string OutputDir { get; }
+        bool CleanOutputDir { get; }
         bool OutputToSingleFile { get; }
         string OutputSingleFileName { get; }
+        bool GenerateInterfaces { get;}
+        string InterfaceNameSuffix { get; }
+        bool GenerateModels { get; }
+        bool GenerateModelPropertyAsNullable { get; }
+        string ModelSuffix { get; }
     }
 }

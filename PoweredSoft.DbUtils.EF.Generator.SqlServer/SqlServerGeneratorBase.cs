@@ -27,6 +27,13 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer
             return ret;
         }
 
+        protected string TableInterfaceName(Table table)
+        {
+            var ret = TableClassName(table);
+            ret = $"I{ret}{Options.InterfaceNameSuffix}";
+            return ret;
+        }
+
         public string TableClassFullName(Table table)
         {
             var ns = TableNamespace(table);

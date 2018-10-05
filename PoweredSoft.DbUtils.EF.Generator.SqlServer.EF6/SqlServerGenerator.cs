@@ -18,11 +18,14 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
 
         protected override void GenerateCode()
         {
+            CleanOutputDir();
             GenerateEntities();
             GenerateFluentConfigurations();
             GenerateContext();
             GenerationContext.SaveToDisk(Encoding.UTF8);
         }
+
+     
 
         private void GenerateContext()
         {
@@ -266,7 +269,7 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
                                         line.Append($".WithOptional(t => t.{reverseNav.GetName()})");
                                     }
                                     else
-                                    { 
+                                    {
                                         line.Append($".WithMany(t => t.{reverseNav.GetName()})");
                                         line.Append($".HasForeignKey(t => t.{fkColumnProp.GetName()})");
                                     }
@@ -311,9 +314,15 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
             tables.ForEach(table =>
             {
                 if (Options.OutputToSingleFile)
+                {
+                    GenerationContext.SingleFile(fb => GenerateEntityInterface(table as Table, fb));
                     GenerationContext.SingleFile(fb => GenerateEntity(table as Table, fb));
+                }
                 else
+                {
+                    GenerationContext.File(fb => GenerateEntityInterface(table as Table, fb));
                     GenerationContext.File(fb => GenerateEntity(table as Table, fb));
+                }
             });
 
             // generate foreign keys and navigation properties.
@@ -416,10 +425,53 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
             });
         }
 
+        private void GenerateEntityInterface(Table table, FileBuilder fileBuilder)
+        {
+            if (!Options.GenerateInterfaces)
+                return;
+
+            var tableNamespace = TableNamespace(table);
+            var tableClassName = TableClassName(table);
+            var tableInterfaceName = TableInterfaceName(table);
+
+            // set the path.
+            var outputDir = Options.OutputDir;
+            var filePath = Options.OutputToSingleFile
+                ? $"{outputDir}\\{Options.OutputSingleFileName}"
+                : $"{outputDir}\\{tableInterfaceName}.generated.cs";
+
+            fileBuilder.Path(filePath);
+
+            fileBuilder.Namespace(tableNamespace, true, ns =>
+            {
+                ns.Interface(tableInterface =>
+                {
+                    tableInterface.Partial(true).Name(tableInterfaceName);
+                    table.SqlServerColumns.ForEach(column =>
+                    {
+                        tableInterface.Property(columnProperty =>
+                        {
+                            var type = DataTypeResolver.ResolveType(column);
+                            var typeName = type.GetOutputType();
+                            if (type.IsValueType && column.IsNullable)
+                                typeName = $"{typeName}?";
+
+                            columnProperty
+                                .Name(column.Name)
+                                .AccessModifier(AccessModifiers.Omit)
+                                .Type(typeName)
+                                .Meta(column);
+                        });
+                    });
+                });
+            });
+        }
+
         private void GenerateEntity(Table table, FileBuilder fileBuilder)
         {
             var tableNamespace = TableNamespace(table);
             var tableClassName = TableClassName(table);
+            var tableInterfaceName = TableInterfaceName(table);
 
             // set the path.
             var outputDir = Options.OutputDir;
@@ -436,6 +488,9 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
                     // set basic info.
                     tableClass.Partial(true).Name(tableClassName);
 
+                    if (Options.GenerateInterfaces)
+                        tableClass.Inherits(tableInterfaceName);
+
                     // set properties.
                     table.SqlServerColumns.ForEach(column =>
                     {
@@ -448,7 +503,6 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
 
                             columnProperty
                                 .Name(column.Name)
-                                .SetAccessModifier(AccessModifiers.Public)
                                 .Type(typeName)
                                 .Meta(column);
                         });
@@ -456,7 +510,5 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
                 });
             });
         }
-
-
     }
 }
