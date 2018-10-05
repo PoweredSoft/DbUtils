@@ -19,7 +19,8 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6.Cli
                 ContextName = "AcmeContext",
                 ConnectionString = "Server=ps-sql.dev;Database=Acme;user id=acme;password=-acmepw2016-",
                 ConnectionStringName = "Acme",
-                GenerateInterfaces = true
+                GenerateInterfaces = true,
+                GenerateModels = true
             };
             g.Generate();
         }

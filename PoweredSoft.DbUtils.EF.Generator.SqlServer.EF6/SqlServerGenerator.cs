@@ -345,10 +345,80 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
             });
         }
 
-        private void GenerateModel(Table table, FileBuilder fb)
+        private void GenerateModel(Table table, FileBuilder fileBuilder)
         {
             if (!Options.GenerateModels)
                 return;
+
+            var tableNamespace = TableNamespace(table);
+            var tableClassName = TableClassName(table);
+            var modelClassName = ModelClassName(table);
+            var modelInterfaceName = ModelInterfaceName(table);
+            var tableClassFullName = TableClassFullName(table);
+            var tableClass = GenerationContext.FindClass(tableClassName, tableNamespace);
+
+
+            if (!Options.OutputToSingleFile)
+            {
+                var filePath = $"{Options.OutputDir}{Path.DirectorySeparatorChar}{modelClassName}.generated.cs";
+                fileBuilder.Path(filePath);
+            }
+
+            fileBuilder.Namespace(tableNamespace, true, ns =>
+            {
+                ns.Class(modelClass =>
+                {
+                    // set basic info.
+                    modelClass.Partial(true).Name(modelClassName);
+
+                    if (Options.GenerateModelsInterfaces)
+                        modelClass.Inherits(modelInterfaceName);
+
+
+                    MethodBuilder from;
+                    MethodBuilder to;
+
+                    modelClass.Method(m =>
+                    {
+                        m
+                            .AccessModifier(AccessModifiers.Public)
+                            .ReturnType("void")
+                            .Name("From")
+                            .Parameter(p => p.Type(tableClassFullName).Name("entity"));
+                        from = m;
+                    });
+
+                    modelClass.Method(m =>
+                    {
+                        m
+                            .AccessModifier(AccessModifiers.Public)
+                            .ReturnType("void")
+                            .Name("To")
+                            .Parameter(p => p.Type(tableClassFullName).Name("entity"));
+                        to = m;
+                    });
+
+                    // set properties.
+                    table.SqlServerColumns.ForEach(column =>
+                    {
+                        modelClass.Property(columnProperty =>
+                        {
+                            var type = DataTypeResolver.ResolveType(column);
+                            var typeName = type.GetOutputType();
+                            if (type.IsValueType && (column.IsNullable || Options.GenerateModelPropertyAsNullable))
+                                typeName = $"{typeName}?";
+
+                            columnProperty
+                                .Virtual(true)
+                                .Name(column.Name)
+                                .Type(typeName)
+                                .Meta(column);
+                        });
+                    });
+
+                    
+                });
+            });
         }
 
         private void GenerateModelInterface(Table table, FileBuilder fb)
@@ -356,6 +426,7 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
             if (!Options.GenerateModelsInterfaces)
                 return;
 
+            
 
         }
 

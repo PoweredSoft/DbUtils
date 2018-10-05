@@ -27,6 +27,19 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer
             return ret;
         }
 
+        protected string ModelClassName(Table table)
+        {
+            var ret = $"{table.Name}{Options.ModelSuffix}";
+            return ret;
+        }
+
+        protected string ModelInterfaceName(Table table)
+        {
+            var ret = ModelClassName(table);
+            ret = $"I{ret}";
+            return ret;
+        }
+
         protected string TableInterfaceName(Table table)
         {
             var ret = TableClassName(table);
