@@ -18,7 +18,6 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
 
         protected override void GenerateCode()
         {
-            CleanOutputDir();
             GenerateEntities();
             GenerateFluentConfigurations();
             GenerateContext();
