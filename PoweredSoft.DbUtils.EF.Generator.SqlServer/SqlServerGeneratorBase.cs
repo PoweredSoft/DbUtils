@@ -37,16 +37,16 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer
 
 
 
-        protected string ModelClassName(Table table)
+        protected string ModelClassName(Table table, bool includeSuffix = true)
         {
-            var ret = $"{table.Name}{Options.ModelSuffix}";
+            var ret = $"{table.Name}Model{(includeSuffix ? Options.ModelSuffix : "")}";
             return ret;
         }
 
         protected string ModelInterfaceName(Table table)
         {
-            var ret = ModelClassName(table);
-            ret = $"I{ret}";
+            var ret = ModelClassName(table, false);
+            ret = $"I{ret}{Options.ModelInterfaceSuffix}";
             return ret;
         }
 

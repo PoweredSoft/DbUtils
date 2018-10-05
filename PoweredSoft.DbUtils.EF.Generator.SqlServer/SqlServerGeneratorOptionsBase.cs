@@ -19,7 +19,8 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer
         public bool GenerateModelsInterfaces { get; set; } = false;
         public bool GenerateModels { get; set; } = false;
         public bool GenerateModelPropertyAsNullable { get; set; } = false;
-        public string ModelSuffix { get; set; } = "ModelBase";
+        public string ModelSuffix { get; set; } = "Base";
+        public string ModelInterfaceSuffix { get; set; } = "";
         public virtual List<string> IncludedSchemas { get; set; }
         public virtual List<string> ExcludedSchemas { get; set; }
         public string InterfaceNameSuffix { get; set; }

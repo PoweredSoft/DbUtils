@@ -400,6 +400,7 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
                     });
 
                     modelClass.Method(m => m
+                        .Virtual(true)
                         .ReturnType("System.Type")
                         .Name("GetContextType")
                         .RawLine($"return typeof({ContextFullClassName()})")
@@ -452,12 +453,52 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
             });
         }
 
-        private void GenerateModelInterface(Table table, FileBuilder fb)
+        private void GenerateModelInterface(Table table, FileBuilder fileBuilder)
         {
             if (!Options.GenerateModelsInterfaces)
                 return;
 
-            
+            var tableNamespace = TableNamespace(table);
+            var tableClassName = TableClassName(table);
+            var modelInterfaceName = ModelInterfaceName(table);
+            var tableClassFullName = TableClassFullName(table);
+            var tableClass = GenerationContext.FindClass(tableClassName, tableNamespace);
+
+
+            if (!Options.OutputToSingleFile)
+            {
+                var filePath = $"{Options.OutputDir}{Path.DirectorySeparatorChar}{modelInterfaceName}.generated.cs";
+                fileBuilder.Path(filePath);
+            }
+
+            fileBuilder.Namespace(tableNamespace, true, ns =>
+            {
+                ns.Interface(modelInterface =>
+                {
+                    // set basic info.
+                    modelInterface.Partial(true).Name(modelInterfaceName);
+
+                    // set properties.
+                    table.SqlServerColumns.ForEach(column =>
+                    {
+                        modelInterface.Property(columnProperty =>
+                        {
+                            var type = DataTypeResolver.ResolveType(column);
+                            var typeName = type.GetOutputType();
+                            bool isPropertyNullable = column.IsNullable || Options.GenerateModelPropertyAsNullable;
+                            if (type.IsValueType && isPropertyNullable)
+                                typeName = $"{typeName}?";
+
+                            columnProperty
+                                .AccessModifier(AccessModifiers.Omit)
+                                .Name(column.Name)
+                                .Type(typeName)
+                                .Meta(column);
+                        });
+                    });
+                });
+            });
+
 
         }
 
