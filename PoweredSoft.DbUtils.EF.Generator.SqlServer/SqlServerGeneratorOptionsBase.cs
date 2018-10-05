@@ -16,6 +16,7 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer
         public virtual bool OutputToSingleFile => !string.IsNullOrWhiteSpace(OutputSingleFileName);
         public virtual string OutputSingleFileName { get; set; }
         public bool GenerateInterfaces { get; set; } = false;
+        public bool GenerateModelsInterfaces { get; set; } = false;
         public bool GenerateModels { get; set; } = false;
         public bool GenerateModelPropertyAsNullable { get; set; } = false;
         public string ModelSuffix { get; set; } = "ModelBase";

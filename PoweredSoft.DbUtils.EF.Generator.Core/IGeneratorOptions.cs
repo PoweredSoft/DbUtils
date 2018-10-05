@@ -17,6 +17,7 @@ namespace PoweredSoft.DbUtils.EF.Generator.Core
         bool GenerateInterfaces { get;}
         string InterfaceNameSuffix { get; }
         bool GenerateModels { get; }
+        bool GenerateModelsInterfaces { get; }
         bool GenerateModelPropertyAsNullable { get; }
         string ModelSuffix { get; }
     }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -32,12 +33,11 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
 
             Action<FileBuilder> generateContextInline = (FileBuilder fileBuilder) =>
             {
-                // set the path.
-                var outputDir = Options.OutputDir;
-                var filePath = Options.OutputToSingleFile
-                    ? $"{outputDir}\\{Options.OutputSingleFileName}"
-                    : $"{outputDir}\\{Options.ContextName}.generated.cs";
-                fileBuilder.Path(filePath);
+                if (!Options.OutputToSingleFile)
+                {
+                    var filePath = $"{Options.OutputDir}{Path.DirectorySeparatorChar}{Options.ContextName}.generated.cs";
+                    fileBuilder.Path(filePath);
+                }
 
                 fileBuilder.Namespace(contextNamespace, true, ns =>
                 {
@@ -148,7 +148,7 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
             if (Options.OutputToSingleFile)
                 GenerationContext.SingleFile(fb => generateContextInline(fb));
             else
-                GenerationContext.File(fb => generateContextInline(fb));
+                GenerationContext.FileIfPathIsSet(fb => generateContextInline(fb));
         }
 
         private void GenerateFluentConfigurations()
@@ -314,13 +314,24 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
             {
                 if (Options.OutputToSingleFile)
                 {
-                    GenerationContext.SingleFile(fb => GenerateEntityInterface(table as Table, fb));
-                    GenerationContext.SingleFile(fb => GenerateEntity(table as Table, fb));
+                    GenerationContext.SingleFile(fb =>
+                    {
+                        var filePath = $"{Options.OutputDir}{Path.DirectorySeparatorChar}{Options.OutputSingleFileName}";
+                        fb.Path(filePath);
+
+                        GenerateEntityInterface(table as Table, fb);
+                        GenerateEntity(table as Table, fb);
+                        GenerateModelInterface(table as Table, fb);
+                        GenerateModel(table as Table, fb);
+                    });
                 }
                 else
                 {
-                    GenerationContext.File(fb => GenerateEntityInterface(table as Table, fb));
-                    GenerationContext.File(fb => GenerateEntity(table as Table, fb));
+                    GenerationContext
+                        .FileIfPathIsSet(fb => GenerateEntityInterface(table as Table, fb))
+                        .FileIfPathIsSet(fb => GenerateEntity(table as Table, fb))
+                        .FileIfPathIsSet(fb => GenerateModelInterface(table as Table, fb))
+                        .FileIfPathIsSet(fb => GenerateModel(table as Table, fb));
                 }
             });
 
@@ -332,6 +343,20 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
                 GenerateHasMany(table as Table);
                 GenerateManyToMany(table as Table);
             });
+        }
+
+        private void GenerateModel(Table table, FileBuilder fb)
+        {
+            if (!Options.GenerateModels)
+                return;
+        }
+
+        private void GenerateModelInterface(Table table, FileBuilder fb)
+        {
+            if (!Options.GenerateModelsInterfaces)
+                return;
+
+
         }
 
         private void GenerateManyToMany(Table table)
@@ -433,13 +458,11 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
             var tableClassName = TableClassName(table);
             var tableInterfaceName = TableInterfaceName(table);
 
-            // set the path.
-            var outputDir = Options.OutputDir;
-            var filePath = Options.OutputToSingleFile
-                ? $"{outputDir}\\{Options.OutputSingleFileName}"
-                : $"{outputDir}\\{tableInterfaceName}.generated.cs";
-
-            fileBuilder.Path(filePath);
+            if (!Options.OutputToSingleFile)
+            {
+                var filePath = $"{Options.OutputDir}{Path.DirectorySeparatorChar}{tableInterfaceName}.generated.cs";
+                fileBuilder.Path(filePath);
+            }
 
             fileBuilder.Namespace(tableNamespace, true, ns =>
             {
@@ -472,13 +495,11 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
             var tableClassName = TableClassName(table);
             var tableInterfaceName = TableInterfaceName(table);
 
-            // set the path.
-            var outputDir = Options.OutputDir;
-            var filePath = Options.OutputToSingleFile
-                ? $"{outputDir}\\{Options.OutputSingleFileName}"
-                : $"{outputDir}\\{tableClassName}.generated.cs";
-
-            fileBuilder.Path(filePath);
+            if (!Options.OutputToSingleFile)
+            {
+                var filePath = $"{Options.OutputDir}{Path.DirectorySeparatorChar}{tableClassName}.generated.cs";
+                fileBuilder.Path(filePath);
+            }
 
             fileBuilder.Namespace(tableNamespace, true, ns =>
             {
