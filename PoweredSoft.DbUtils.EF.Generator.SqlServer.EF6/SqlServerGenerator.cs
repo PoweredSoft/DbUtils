@@ -29,7 +29,8 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
 
         private void GenerateContext()
         {
-            var contextNamespace = string.Join(".", Options.Namespace.Replace("[SCHEMA]", "").Split('.').Where(t => !string.IsNullOrWhiteSpace(t)));
+            var contextNamespace = ContextNamespace();
+            var contextClassName = ContextClassName();
 
             Action<FileBuilder> generateContextInline = (FileBuilder fileBuilder) =>
             {
@@ -41,7 +42,7 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
 
                 fileBuilder.Namespace(contextNamespace, true, ns =>
                 {
-                    ns.Class(Options.ContextName, true, contextClass =>
+                    ns.Class(contextClassName, true, contextClass =>
                     {
                         contextClass.Partial(true).Inherits(Options.ContextBaseClassName);
 
@@ -398,6 +399,18 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
                         to = m;
                     });
 
+                    modelClass.Method(m => m
+                        .ReturnType("System.Type")
+                        .Name("GetContextType")
+                        .RawLine($"return typeof({ContextFullClassName()})")
+                    );
+
+                    modelClass.Method(m => m
+                        .ReturnType("System.Type")
+                        .Name("GetEntityType")
+                        .RawLine($"return typeof({tableClassFullName})")
+                    );
+
                     // set properties.
                     table.SqlServerColumns.ForEach(column =>
                     {
@@ -428,7 +441,6 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
                                     .False(RawInlineBuilder.Create($"entity.{column.Name} = default({matchingProp.GetTypeName()})"));
 
                                 to.RawLine($"entity.{column.Name} = {ternary.GenerateInline()}");
-                                
                             }
                             else
                             {
@@ -436,8 +448,6 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
                             }
                         });
                     });
-
-                    
                 });
             });
         }

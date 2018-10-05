@@ -27,6 +27,16 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer
             return ret;
         }
 
+        protected string ContextNamespace()
+        {
+            return string.Join(".", Options.Namespace.Replace("[SCHEMA]", "").Split('.').Where(t => !string.IsNullOrWhiteSpace(t)));
+        }
+
+        protected string ContextClassName() => Options.ContextName;
+        protected string ContextFullClassName() => $"{ContextNamespace()}.{ContextClassName()}";
+
+
+
         protected string ModelClassName(Table table)
         {
             var ret = $"{table.Name}{Options.ModelSuffix}";
