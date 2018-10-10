@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using PoweredSoft.CodeGenerator;
 using PoweredSoft.CodeGenerator.Constants;
+using PoweredSoft.CodeGenerator.Extensions;
 using PoweredSoft.DbUtils.Schema.Core;
 using PoweredSoft.DbUtils.Schema.SqlServer;
 
@@ -98,19 +99,26 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EFCore
                             {
                                 return IfBuilder.Create()
                                     .RawCondition(c => c.Condition("!optionsBuilder.IsConfigured"))
-                                    .Add(RawLineBuilder.Create("#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings."))
+                                    .Add(RawLineBuilder.Create("#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.").NoEndOfLine())
                                     .Add(RawLineBuilder.Create($"optionsBuilder.UseSqlServer(\"{Options.ConnectionString}\")"));
                             })
                         );
 
                         // model creating.
-                        contextClass.Method(m => m
-                            .AccessModifier(AccessModifiers.Protected)
-                            .Override(true)
-                            .ReturnType("void")
-                            .Name("OnModelCreating")
-                            .Parameter(p => p.Type("ModelBuilder").Name("modelBuilder"))
-                        );
+                        contextClass.Method(m =>
+                        {
+                            m
+                                .AccessModifier(AccessModifiers.Protected)
+                                .Override(true)
+                                .ReturnType("void")
+                                .Name("OnModelCreating")
+                                .Parameter(p => p.Type("ModelBuilder").Name("modelBuilder"));
+
+                            TablesToGenerate.ForEach(table =>
+                            {
+                                AddFluentToMethod(m, table as Table);
+                            });
+                        });
                     });
                 });
             };
@@ -119,6 +127,148 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EFCore
                 GenerationContext.SingleFile(fb => generateContextInline(fb));
             else
                 GenerationContext.FileIfPathIsSet(fb => generateContextInline(fb));
+        }
+
+        protected virtual void AddFluentToMethod(MethodBuilder methodBuilder, Table table)
+        {
+            var tableNamespace = TableNamespace(table);
+            var tableClassName = TableClassName(table);
+            var tableFullClassName = TableClassFullName(table);
+            var tableClass = GenerationContext.FindClass(tableClassName, tableNamespace);
+
+            var fluentExpression = MultiLineLambdaExpression.Create()
+                .Parameter(p => p.Name("entity"))
+                .RawLine($"entity.ToTable(\"{table.Name}\", \"{table.Schema}\")");
+
+            var pks = table.SqlServerColumns.Where(t => t.IsPrimaryKey);
+            var hasCompositeKey = pks.Count() > 1;
+;           if (hasCompositeKey)
+            {
+                var def = string.Join(", ", pks.Select(pk =>
+                {
+                    var pkProp = tableClass.FindByMeta<PropertyBuilder>(pk);
+                    return $"t.{pkProp.GetName()}";
+                }));
+                fluentExpression.RawLine($"entity.HasKey(t => new {{ {def} }})");
+            }
+            else
+            {
+                var pk = pks.First();
+                var pkProp = tableClass.FindByMeta<PropertyBuilder>(pk);
+                fluentExpression.RawLine($"entity.HasKey(t => t.{pkProp.GetName()})");
+            }
+
+            table.SqlServerIndexes.ForEach(i =>
+            {
+                var line = RawLineBuilder.Create();
+
+                string rightExpr;
+                if (i.SqlServerColumns.Count == 1)
+                {
+                    var indexProp = tableClass.FindByMeta<PropertyBuilder>(i.SqlServerColumns.First());
+                    rightExpr = $"t.{indexProp.GetName()}";
+                }
+                else
+                {
+                    var cols = string.Join(", ",i.SqlServerColumns.Select(t => $"t.{tableClass.FindByMeta<PropertyBuilder>(t).GetName()}"));
+                    rightExpr = $"new {{ {cols} }}";
+                }
+
+                line.Append($"entity.HasIndex(t => {rightExpr})");
+                line.Append($"\n\t.HasName(\"{i.Name}\")");
+                if (i.IsUnique)
+                    line.Append("\n\t.IsUnique()");
+
+                fluentExpression.Add(line);
+            });
+
+            table.SqlServerColumns.ForEach(c =>
+            {
+                var columnProp = tableClass.FindByMeta<PropertyBuilder>(c);
+                var line = RawLineBuilder.Create();
+                line.Append($"entity.Property(t => t.{columnProp.GetName()})");
+                line.Append($".HasColumnType(\"{FluentColumnType(c)}\")");
+
+                if (c.IsPrimaryKey)
+                {
+                    if (c.IsAutoIncrement)
+                        line.Append(".ValueGeneratedOnAdd()");
+                    else
+                        line.Append(".ValueGeneratedNever()");
+                }
+                else if (!string.IsNullOrWhiteSpace(c.DefaultValue))
+                {
+                    line.Append($".HasDefaultValueSql(\"{c.DefaultValue}\")");
+                }
+
+                if (!c.IsNullable)
+                    line.Append(".IsRequired()");
+
+                if (c.CharacterMaximumLength.HasValue && c.CharacterMaximumLength != -1)
+                    line.Append($".HasMaxLength({c.CharacterMaximumLength})");
+
+                if (DataTypeResolver.IsString(c) && !DataTypeResolver.IsUnicode(c))
+                    line.Append(".IsUnicode(false)");
+
+                fluentExpression.Add(line);
+            });
+
+            table.SqlServerForeignKeys.ForEach(fk =>
+            {
+                var fkProp = tableClass.FindByMeta<PropertyBuilder>(fk);
+                var fkColumnProp = tableClass.FindByMeta<PropertyBuilder>(fk.ForeignKeyColumn);
+                var fkTableNamespace = TableNamespace(fk.SqlServerPrimaryKeyColumn.SqlServerTable);
+                var fkTableClassName = TableClassName(fk.SqlServerPrimaryKeyColumn.SqlServerTable);
+                var fkTableClass = GenerationContext.FindClass(fkTableClassName, fkTableNamespace);
+                var reverseProp = fkTableClass.FindByMeta<PropertyBuilder>(fk);
+
+                var line = RawLineBuilder.Create();
+
+                line.Append($"entity.HasOne(t => t.{fkProp.GetName()})");
+
+                if (!fk.IsOneToOne())
+                {
+                    line.Append($"\n\t.WithMany(t => t.{reverseProp.GetName()})");
+                    line.Append($"\n\t.HasForeignKey(t => t.{fkColumnProp.GetName()})");
+                }
+                else
+                {
+                    line.Append($"\n\t.WithOne(t => t.{reverseProp.GetName()})");
+                    line.Append($"\n\t.HasForeignKey<{tableFullClassName}>(t => t.{fkColumnProp.GetName()})");
+                }
+
+
+                if (fk.DeleteCascadeAction == "CASCADE")
+                    line.Append("\n\t.OnDelete(DeleteBehavior.Delete)");
+                else if (fk.DeleteCascadeAction == "SET_NULL")
+                    line.Append("\n\t.OnDelete(DeleteBehavior.SetNull)");
+                else 
+                    line.Append("\n\t.OnDelete(DeleteBehavior.ClientSetNull)");
+
+                line.Append($"\n\t.HasConstraintName(\"{fk.Name}\")");
+
+                line.Comment("Foreign Key");
+                fluentExpression.Add(line);
+            });
+            
+
+            var modelFluentLine = $"modelBuilder.Entity<{tableFullClassName}>({fluentExpression.GenerateInline()})";
+            methodBuilder.Add(RawLineBuilder.Create(modelFluentLine));
+            methodBuilder.AddEmptyLine();
+        }
+
+        private string FluentColumnType(Column column)
+        {
+            if (column.DateTimePrecision.HasValue)
+                return $"{column.DataType}({column.DateTimePrecision})";
+
+            if (column.NumericPrecision.HasValue && column.NumericScale.HasValue && column.NumericScale != 0 && DataTypeResolver.NeedFluentPrecisionSpecification(column))
+                return $"{column.DataType}({column.NumericPrecision}, {column.NumericScale})";
+
+            if (column.CharacterMaximumLength.HasValue)
+                return $"{column.DataType}({(column.CharacterMaximumLength == -1 ? "MAX" : $"{column.CharacterMaximumLength}")})";
+
+            return column.DataType;
         }
     }
 }

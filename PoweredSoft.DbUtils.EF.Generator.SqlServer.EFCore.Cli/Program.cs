@@ -11,7 +11,7 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EFCore.Cli
             g.Options = new SqlServerGeneratorOptions
             {
                 OutputDir = @"C:\test",
-                //OutputSingleFileName = "All.generated.cs",
+                OutputSingleFileName = "All.generated.cs",
                 CleanOutputDir = true,
                 Namespace = "Acme.[SCHEMA].Dal",
                 ContextName = "AcmeContext",

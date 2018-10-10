@@ -19,6 +19,12 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer
             "char", "nchar", "binary"
         };
 
+        public static readonly List<string> noNeedOfScaleAndPrecision = new List<string>
+        {
+            "money",
+            "smallmoney",
+        };
+
         private static readonly Dictionary<string, Type> mapping = new Dictionary<string, Type>
         {
             ["bigint"] = typeof(long),
@@ -81,5 +87,10 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer
         {
             return column.DataType.StartsWith("n");
         }
+
+        public bool NeedFluentPrecisionSpecification(IColumn column)
+        {
+            return !noNeedOfScaleAndPrecision.Contains(column.DataType);
+        } 
     }
 }

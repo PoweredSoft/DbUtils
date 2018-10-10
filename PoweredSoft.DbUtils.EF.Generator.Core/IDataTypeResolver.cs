@@ -11,5 +11,6 @@ namespace PoweredSoft.DbUtils.EF.Generator.Core
         bool IsFixLength(IColumn column);
         bool IsString(IColumn column);
         bool IsUnicode(IColumn column);
+        bool NeedFluentPrecisionSpecification(IColumn column);
     }
 }
