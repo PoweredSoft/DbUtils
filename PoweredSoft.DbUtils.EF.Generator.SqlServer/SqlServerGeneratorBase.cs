@@ -18,7 +18,6 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer
     {
         public override DatabaseSchema CreateSchema() => new DatabaseSchema();
         protected override IDataTypeResolver DataTypeResolver { get; } = new DataTypeResolver();
-        protected IEnumerable<ITable> TablesToGenerateWithoutManyToMany => TablesToGenerate.Where(t => !t.IsManyToMany());
 
         protected string TableNamespace(Table table)
         {
@@ -289,36 +288,10 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer
 
         }
 
-        protected virtual void GenerateManyToMany(Table table)
-        {
-            var tableNamespace = TableNamespace(table);
-            var tableClassName = TableClassName(table);
-            var tableClass = GenerationContext.FindClass(tableClassName, tableNamespace);
+        protected abstract void GenerateManyToMany(Table table);
 
-            var manyToManyList = table.ManyToMany().ToList();
-            manyToManyList.ForEach(fk =>
-            {
-                var sqlServerFk = fk as ForeignKey;
 
-                // get the other foreign key of this many to many.
-                var otherFk = sqlServerFk.SqlServerForeignKeyColumn.SqlServerTable.SqlServerForeignKeys.FirstOrDefault(t => t != sqlServerFk);
-
-                // other table attached to this many to many.
-                var otherPk = otherFk.SqlServerPrimaryKeyColumn.SqlServerTable;
-
-                // pluralize this name.
-                var propName = Pluralize(otherPk.Name);
-                propName = tableClass.GetUniqueMemberName(propName);
-
-                // the type of the property.
-                var pocoType = TableClassFullName(otherPk);
-                var propType = $"System.Collections.Generic.ICollection<{pocoType}>";
-                var defaultValue = $"new System.Collections.Generic.List<{pocoType}>()";
-
-                // generate property :)
-                tableClass.Property(p => p.Virtual(true).Type(propType).Name(propName).DefaultValue(defaultValue).Comment("Many to Many").Meta(fk));
-            });
-        }
+        protected abstract string CollectionInstanceType();
 
         protected virtual void GenerateHasMany(Table table)
         {
@@ -463,7 +436,7 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer
 
         protected void GenerateEntities()
         {
-            var tables = TablesToGenerateWithoutManyToMany.ToList();
+            var tables = TablesToGenerate.ToList();
 
             tables.ForEach(table =>
             {

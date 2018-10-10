@@ -15,12 +15,52 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
 {
     public class SqlServerGenerator : SqlServerGeneratorBase<SqlServerGeneratorOptions>
     {
+        public override List<ITable> ResolveTablesToGenerate()
+        {
+            var ret = base.ResolveTablesToGenerate();
+            ret = ret.Where(t => !t.IsManyToMany()).ToList();
+            return ret;
+        }
+
         protected override void BeforeSaveToDisk()
         {
             base.BeforeSaveToDisk();
             GenerateFluentConfigurations();
         }
 
+
+        protected override void GenerateManyToMany(Table table)
+        {
+            var tableNamespace = TableNamespace(table);
+            var tableClassName = TableClassName(table);
+            var tableClass = GenerationContext.FindClass(tableClassName, tableNamespace);
+
+            var manyToManyList = table.ManyToMany().ToList();
+            manyToManyList.ForEach(fk =>
+            {
+                var sqlServerFk = fk as ForeignKey;
+
+                // get the other foreign key of this many to many.
+                var otherFk = sqlServerFk.SqlServerForeignKeyColumn.SqlServerTable.SqlServerForeignKeys.FirstOrDefault(t => t != sqlServerFk);
+
+                // other table attached to this many to many.
+                var otherPk = otherFk.SqlServerPrimaryKeyColumn.SqlServerTable;
+
+                // pluralize this name.
+                var propName = Pluralize(otherPk.Name);
+                propName = tableClass.GetUniqueMemberName(propName);
+
+                // the type of the property.
+                var pocoType = TableClassFullName(otherPk);
+                var propType = $"System.Collections.Generic.ICollection<{pocoType}>";
+                var defaultValue = $"new {CollectionInstanceType()}<{pocoType}>()";
+
+                // generate property :)
+                tableClass.Property(p => p.Virtual(true).Type(propType).Name(propName).DefaultValue(defaultValue).Comment("Many to Many").Meta(fk));
+            });
+        }
+
+        protected override string CollectionInstanceType() => "System.Collections.Generic.List";
 
         protected override void GenerateContext()
         {
@@ -41,7 +81,7 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
                     {
                         contextClass.Partial(true).Inherits(Options.ContextBaseClassName);
 
-                        TablesToGenerateWithoutManyToMany.Cast<Table>().ToList().ForEach(table =>
+                        TablesToGenerate.Cast<Table>().ToList().ForEach(table =>
                         {
                             var tableClassFullName = TableClassFullName(table);
                             var tableNamePlural = Pluralize(table.Name);
@@ -89,7 +129,7 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
                                 .Name("AddFluentConfigurations")
                                 .Parameter(p => p.Type("System.Data.Entity.DbModelBuilder").Name("modelBuilder"));
 
-                            TablesToGenerateWithoutManyToMany.Cast<Table>().ToList().ForEach(table =>
+                            TablesToGenerate.Cast<Table>().ToList().ForEach(table =>
                             {
                                 var fcc = TableClassFullName(table) + Options.FluentConfigurationClassSuffix;
                                 addConfigurationMethod.RawLine($"modelBuilder.Configurations.Add(new {fcc}())");
@@ -149,7 +189,7 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
 
         private void GenerateFluentConfigurations()
         {
-            var tables = TablesToGenerateWithoutManyToMany.ToList();
+            var tables = TablesToGenerate.ToList();
             tables.ForEach(table =>
             {
                 if (Options.OutputToSingleFile)
@@ -301,9 +341,5 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
                 });
             });
         }
-
-        
-
-        
     }
 }
