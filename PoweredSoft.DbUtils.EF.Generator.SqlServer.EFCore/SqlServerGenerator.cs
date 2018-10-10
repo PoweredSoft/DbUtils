@@ -32,11 +32,14 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EFCore
                 var defaultValue = $"new {CollectionInstanceType()}<{manyToManyPocoFullClass}>()";
 
                 // generate property :)
-                tableClass.Property(p => p.Virtual(true).Type(propType).Name(propName).DefaultValue(defaultValue).Comment("Many to Many").Meta(fk));
+                tableClass.Property(p => p.Type(propType).Name(propName).DefaultValue(defaultValue).Comment("Many to Many").Meta(fk));
             });
         }
 
         protected override string CollectionInstanceType() => "System.Collections.Generic.HashSet";
+        public override bool HasManyShouldBeVirtual() => false;
+        public override bool OneToShouldBeVirtual() => false;
+        public override bool ForeignKeysShouldBeVirtual() => false;
 
         protected override void GenerateContext()
         {

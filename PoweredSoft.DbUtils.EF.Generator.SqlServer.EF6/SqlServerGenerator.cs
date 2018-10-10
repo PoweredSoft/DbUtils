@@ -61,6 +61,9 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
         }
 
         protected override string CollectionInstanceType() => "System.Collections.Generic.List";
+        public override bool HasManyShouldBeVirtual() => true;
+        public override bool OneToShouldBeVirtual() => true;
+        public override bool ForeignKeysShouldBeVirtual() => true;
 
         protected override void GenerateContext()
         {

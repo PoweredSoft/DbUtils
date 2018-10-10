@@ -292,6 +292,10 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer
 
 
         protected abstract string CollectionInstanceType();
+        public abstract bool HasManyShouldBeVirtual();
+        public abstract bool OneToShouldBeVirtual();
+        public abstract bool ForeignKeysShouldBeVirtual();
+
 
         protected virtual void GenerateHasMany(Table table)
         {
@@ -310,7 +314,7 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer
                 var pocoType = TableClassFullName(sqlServerFk.SqlServerForeignKeyColumn.SqlServerTable);
                 var propType = $"System.Collections.Generic.ICollection<{pocoType}>";
                 var defaultValue = $"new System.Collections.Generic.List<{pocoType}>()";
-                tableClass.Property(p => p.Virtual(true).Type(propType).Name(propName).DefaultValue(defaultValue).Comment("Has Many").Meta(fk));
+                tableClass.Property(p => p.Virtual(HasManyShouldBeVirtual()).Type(propType).Name(propName).DefaultValue(defaultValue).Comment("Has Many").Meta(fk));
             });
         }
 
@@ -326,7 +330,7 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer
                 var propName = OneToOnePropertyName(sqlServerFk);
                 propName = tableClass.GetUniqueMemberName(propName);
                 var propType = TableClassFullName(sqlServerFk.SqlServerForeignKeyColumn.SqlServerTable);
-                tableClass.Property(p => p.Virtual(true).Type(propType).Name(propName).Comment("One to One").Meta(fk));
+                tableClass.Property(p => p.Virtual(OneToShouldBeVirtual()).Type(propType).Name(propName).Comment("One to One").Meta(fk));
             });
         }
 
@@ -348,7 +352,7 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer
 
                 propName = tableClass.GetUniqueMemberName(propName);
                 var foreignKeyTypeName = TableClassFullName(fk.SqlServerPrimaryKeyColumn.SqlServerTable);
-                tableClass.Property(foreignKeyProp => foreignKeyProp.Virtual(true).Type(foreignKeyTypeName).Name(propName).Comment("Foreign Key").Meta(fk));
+                tableClass.Property(foreignKeyProp => foreignKeyProp.Virtual(ForeignKeysShouldBeVirtual()).Type(foreignKeyTypeName).Name(propName).Comment("Foreign Key").Meta(fk));
             });
         }
 
