@@ -11,22 +11,23 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EFCore.Cli
             g.Options = new SqlServerGeneratorOptions
             {
                 OutputDir = @"C:\test",
+                //OutputSingleFileName = "All.generated.cs",
+                CleanOutputDir = true,
+                Namespace = "Acme.[SCHEMA].Dal",
+                ContextName = "AcmeContext",
                 ConnectionString = "Server=ps-sql.dev;Database=Acme;user id=acme;password=-acmepw2016-",
-                //IncludedTables = new List<string>()
-                //{
-                //    "Carrier",
-                //    "CarrierRegistry.CarrierContact"
-                //},
-                //IncludedSchemas = new List<string>()
-                //{
-                //    "Core",
-                //    "CarrierRegistry"
-                //}
-                ExcludedTables = new List<string>(){"sysdiagrams"}
+                GenerateInterfaces = true,
+                GenerateModels = true,
+                GenerateModelPropertyAsNullable = true,
+                GenerateModelsInterfaces = true,
+                ModelInheritances = new List<string>()
+                {
+                    "ITestInherit<[ENTITY], [CONTEXT]>"
+                }
             };
             g.Generate();
 
-            
+
         }
     }
 }

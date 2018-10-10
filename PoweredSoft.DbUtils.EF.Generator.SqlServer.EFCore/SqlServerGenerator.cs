@@ -6,9 +6,9 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EFCore
 {
     public class SqlServerGenerator : SqlServerGeneratorBase<SqlServerGeneratorOptions>
     {
-        protected override void GenerateCode()
+        protected override void GenerateContext()
         {
-            throw new NotImplementedException();
+            
         }
     }
 }
