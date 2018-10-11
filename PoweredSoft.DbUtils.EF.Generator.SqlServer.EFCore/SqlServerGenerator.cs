@@ -136,6 +136,14 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EFCore
                 GenerationContext.FileIfPathIsSet(fb => generateContextInline(fb));
         }
 
+        protected override void GenerateGetNextSequenceLines(MethodBuilder method, string outputType, Sequence sequence)
+        {
+            method.RawLine("var command = Database.GetDbConnection().CreateCommand()");
+            method.RawLine($"command.CommandText = \"SELECT NEXT VALUE FOR [{sequence.Schema}].[{sequence.Name}];\"");
+            method.RawLine("Database.OpenConnection()");
+            method.RawLine($"return ({outputType})command.ExecuteScalar()");
+        }
+
         protected virtual void AddFluentToMethod(MethodBuilder methodBuilder, Table table)
         {
             var tableNamespace = TableNamespace(table);

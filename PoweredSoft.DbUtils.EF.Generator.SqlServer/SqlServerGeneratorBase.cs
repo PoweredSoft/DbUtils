@@ -251,7 +251,7 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer
                                 var ternary = TernaryBuilder
                                     .Create()
                                     .RawCondition(rc => rc.Condition($"{column.Name} != null"))
-                                    .True(RawInlineBuilder.Create($"entity.{column.Name} = {column.Name}"))
+                                    .True(RawInlineBuilder.Create($"entity.{column.Name} = ({matchingProp.GetTypeName()}){column.Name}"))
                                     .False(RawInlineBuilder.Create($"entity.{column.Name} = default({matchingProp.GetTypeName()})"));
 
                                 to.RawLine($"entity.{column.Name} = {ternary.GenerateInline()}");
@@ -340,7 +340,7 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer
                 propName = tableClass.GetUniqueMemberName(propName);
                 var pocoType = TableClassFullName(sqlServerFk.SqlServerForeignKeyColumn.SqlServerTable);
                 var propType = $"System.Collections.Generic.ICollection<{pocoType}>";
-                var defaultValue = $"new System.Collections.Generic.List<{pocoType}>()";
+                var defaultValue = $"new {CollectionInstanceType()}<{pocoType}>()";
                 tableClass.Property(p => p.Virtual(HasManyShouldBeVirtual()).Type(propType).Name(propName).DefaultValue(defaultValue).Comment("Has Many").Meta(fk));
             });
         }
@@ -534,19 +534,17 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer
                 var dataType = DataTypeResolver.ResolveType(sequence);
                 var outputType = dataType.GetOutputType();
 
-                var methodName = $"GetNext{sequence.Name}Value";
+                var methodName = $"NextValueFor{sequence.Name}";
                 var sqlServerSequence = sequence as Sequence;
 
-                contextClass.Method(m => m
-                    .AccessModifier(AccessModifiers.Public)
-                    .ReturnType(outputType)
-                    .Name(methodName)
-                    .RawLine(
-                        $"var rawQuery = Database.SqlQuery<{outputType}>(\"SELECT NEXT VALUE FOR [{sqlServerSequence.Schema}].[{sequence.Name}];\")")
-                    .RawLine("var task = raqQuery.SingleASync()")
-                    .RawLine("var nextVal = task.Result")
-                    .RawLine("return nextVal")
-                );
+                contextClass.Method(m =>
+                {
+                    m.AccessModifier(AccessModifiers.Public)
+                        .ReturnType(outputType)
+                        .Name(methodName);
+
+                    GenerateGetNextSequenceLines(m, outputType, sqlServerSequence);
+                });
 
                 /*
                 var rawQuery = Database.SqlQuery<int>("SELECT NEXT VALUE FOR dbo.TestSequence;");
@@ -555,6 +553,8 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer
                 return nextVal;*/
             });
         }
+
+        protected abstract void GenerateGetNextSequenceLines(MethodBuilder method, string outputType, Sequence sequence);
     }
 
 

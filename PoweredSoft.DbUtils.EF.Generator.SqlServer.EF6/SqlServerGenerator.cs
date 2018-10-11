@@ -28,6 +28,10 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
             GenerateFluentConfigurations();
         }
 
+        protected override void GenerateGetNextSequenceLines(MethodBuilder method, string outputType, Sequence sequence)
+        {
+            
+        }
 
         protected override void GenerateManyToMany(Table table)
         {

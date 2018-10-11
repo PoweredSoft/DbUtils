@@ -14,7 +14,7 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6.Cli
             g.Options = new SqlServerGeneratorOptions
             {
                 OutputDir = @"C:\test",
-                //OutputSingleFileName = "All.generated.cs",
+                OutputSingleFileName = "All.generated.cs",
                 CleanOutputDir = true,
                 Namespace = "Acme.[SCHEMA].Dal",
                 ContextName = "AcmeContext",
@@ -26,7 +26,7 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6.Cli
                 //GenerateModelsInterfaces = true,
                 ModelInheritances = new List<string>()
                 {
-                    "ITestInherit<[ENTITY], [CONTEXT]>"
+                    //"ITestInherit<[ENTITY], [CONTEXT]>"
                 }
             };
             g.Generate();
