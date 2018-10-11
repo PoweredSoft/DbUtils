@@ -201,6 +201,9 @@ ORDER BY
 	TC.TABLE_NAME,
 	KCU.ORDINAL_POSITION</value>
   </data>
+  <data name="FetchSequences" xml:space="preserve">
+    <value>SELECT * FROM INFORMATION_SCHEMA.SEQUENCES</value>
+  </data>
   <data name="FetchTables" xml:space="preserve">
     <value>SELECT 
 	*
@@ -210,5 +213,8 @@ WHERE
 	T.TABLE_TYPE = 'Base Table'
 ORDER BY 
                   T.TABLE_SCHEMA, T.TABLE_NAME</value>
+  </data>
+  <data name="FetchVersion" xml:space="preserve">
+    <value>SELECT SERVERPROPERTY ('productversion')</value>
   </data>
 </root>

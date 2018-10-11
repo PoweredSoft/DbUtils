@@ -10,18 +10,21 @@ namespace PoweredSoft.DbUtils.Schema.SqlServer
 {
     public class DatabaseSchema : IDatabaseSchema
     {
-        public List<Table> SqlServerTables { get; set; } = new List<Table>();
+        public List<Table> SqlServerTables { get; } = new List<Table>();
+        public List<Sequence> SqlServerSequences { get; } = new List<Sequence>();
         public List<ITable> Tables => SqlServerTables.Cast<ITable>().ToList();
-        private SqlConnection _connection;
+        public List<ISequence> Sequences => SqlServerSequences.Cast<ISequence>().ToList();
 
+        private SqlConnection _connection;
         public string ConnectionString { get; set; }
 
         public void LoadSchema()
         {
-            // clear tables.
+            // clear 
             SqlServerTables.Clear();
+            SqlServerSequences.Clear();
 
-            // connect.
+            // connect & collect
             using (_connection = new SqlConnection(ConnectionString))
             {
                 _connection.Open();
@@ -31,6 +34,51 @@ namespace PoweredSoft.DbUtils.Schema.SqlServer
                 GetPrimaryKeys();
                 GetForeignKeys();
                 GetIndexes();
+                GetSequences();
+            }
+        }
+
+        private int GetMajorVersion()
+        {
+            using (var command = new SqlCommand(SqlServerShemaQueries.FetchVersion, _connection))
+            {
+                var fullVersion = (string)command.ExecuteScalar();
+                var parts = fullVersion.Split('.');
+                return Convert.ToInt32(parts[0]);
+            }
+        }
+
+        private void GetSequences()
+        {
+            // does not support sequences.
+            var majorVersion = GetMajorVersion();
+            if (majorVersion < 11)
+                return;
+
+
+            // some sql server don't have sequences so it won't crash if we wrap it.
+            using (var command = new SqlCommand(SqlServerShemaQueries.FetchSequences, _connection))
+            using (var reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    var seq = new Sequence();
+                    seq.Name = (string) reader["SEQUENCE_NAME"];
+                    seq.Schema = (string) reader["SEQUENCE_SCHEMA"];
+                    seq.DataType = (string) reader["DATA_TYPE"];
+
+                    if (false == (reader["NUMERIC_PRECISION"] is DBNull))
+                        seq.NumericPrecision = Convert.ToByte(reader["NUMERIC_PRECISION"]);
+
+                    if (false == (reader["NUMERIC_SCALE"] is DBNull))
+                        seq.NumericScale = Convert.ToByte(reader["NUMERIC_SCALE"]);
+
+                    seq.IncrementsBy = reader["INCREMENT"];
+                    seq.MinValue = reader["MINIMUM_VALUE"];
+                    seq.MaxValue = reader["MAXIMUM_VALUE"];
+                    seq.SqlServerDatabaseSchema = this;
+                    SqlServerSequences.Add(seq);
+                }
             }
         }
 

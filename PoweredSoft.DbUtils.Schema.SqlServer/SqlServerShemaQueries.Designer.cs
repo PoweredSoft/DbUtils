@@ -158,6 +158,15 @@ namespace PoweredSoft.DbUtils.Schema.SqlServer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to SELECT * FROM INFORMATION_SCHEMA.SEQUENCES.
+        /// </summary>
+        internal static string FetchSequences {
+            get {
+                return ResourceManager.GetString("FetchSequences", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to SELECT 
         ///	*
         ///FROM
@@ -170,6 +179,15 @@ namespace PoweredSoft.DbUtils.Schema.SqlServer {
         internal static string FetchTables {
             get {
                 return ResourceManager.GetString("FetchTables", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SELECT SERVERPROPERTY (&apos;productversion&apos;).
+        /// </summary>
+        internal static string FetchVersion {
+            get {
+                return ResourceManager.GetString("FetchVersion", resourceCulture);
             }
         }
     }

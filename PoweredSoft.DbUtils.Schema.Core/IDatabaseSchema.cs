@@ -8,6 +8,7 @@ namespace PoweredSoft.DbUtils.Schema.Core
     {
         string ConnectionString { get; set; }
         List<ITable> Tables { get; }
+        List<ISequence> Sequences { get; }
 
         void LoadSchema();
     }
