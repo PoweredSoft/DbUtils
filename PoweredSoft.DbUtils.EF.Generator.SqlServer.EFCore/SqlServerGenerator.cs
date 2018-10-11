@@ -59,6 +59,7 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EFCore
                 }
 
                 fileBuilder
+                    .Using("System.Linq")
                     .Using("Microsoft.EntityFrameworkCore")
                     .Using("Microsoft.EntityFrameworkCore.Metadata");
 

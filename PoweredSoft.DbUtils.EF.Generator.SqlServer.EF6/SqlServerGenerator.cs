@@ -30,7 +30,7 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
 
         protected override void GenerateGetNextSequenceLines(MethodBuilder method, string outputType, Sequence sequence)
         {
-            
+            method.RawLine($"return Database.SqlQuery<{outputType}>(\"SELECT NEXT VALUE FOR [{sequence.Schema}].[{sequence.Name}];\").First()");
         }
 
         protected override void GenerateManyToMany(Table table)
@@ -81,6 +81,8 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
                     var filePath = $"{Options.OutputDir}{Path.DirectorySeparatorChar}{Options.ContextName}.generated.cs";
                     fileBuilder.Path(filePath);
                 }
+
+                fileBuilder.Using("System.Linq");
 
                 fileBuilder.Namespace(contextNamespace, true, ns =>
                 {

@@ -534,7 +534,7 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer
                 var dataType = DataTypeResolver.ResolveType(sequence);
                 var outputType = dataType.GetOutputType();
 
-                var methodName = $"NextValueFor{sequence.Name}";
+                var methodName = $"GetNextValueFor{sequence.Name}";
                 var sqlServerSequence = sequence as Sequence;
 
                 contextClass.Method(m =>
