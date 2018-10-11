@@ -58,10 +58,7 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EFCore
                     fileBuilder.Path(filePath);
                 }
 
-                fileBuilder
-                    .Using("System.Linq")
-                    .Using("Microsoft.EntityFrameworkCore")
-                    .Using("Microsoft.EntityFrameworkCore.Metadata");
+                fileBuilder.Using("Microsoft.EntityFrameworkCore");
 
                 fileBuilder.Namespace(contextNamespace, true, ns =>
                 {
@@ -90,20 +87,29 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EFCore
                         );
 
                         // override On Configuring
-                        contextClass.Method(m => m
-                            .AccessModifier(AccessModifiers.Protected)
-                            .Override(true)
-                            .ReturnType("void")
-                            .Name("OnConfiguring")
-                            .Parameter(p => p.Type("DbContextOptionsBuilder").Name("optionsBuilder"))
-                            .Add(() =>
+                        contextClass.Method(m =>
+                        {
+                            m
+                                .AccessModifier(AccessModifiers.Protected)
+                                .Override(true)
+                                .ReturnType("void")
+                                .Name("OnConfiguring")
+                                .Parameter(p => p.Type("DbContextOptionsBuilder").Name("optionsBuilder"));
+
+                            if (Options.AddConnectionStringOnGenerate)
                             {
-                                return IfBuilder.Create()
-                                    .RawCondition(c => c.Condition("!optionsBuilder.IsConfigured"))
-                                    .Add(RawLineBuilder.Create("#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.").NoEndOfLine())
-                                    .Add(RawLineBuilder.Create($"optionsBuilder.UseSqlServer(\"{Options.ConnectionString}\")"));
-                            })
-                        );
+                                m.Add(() =>
+                                {
+                                    return IfBuilder.Create()
+                                        .RawCondition(c => c.Condition("!optionsBuilder.IsConfigured"))
+                                        .Add(RawLineBuilder.Create(
+                                                "#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.")
+                                            .NoEndOfLine())
+                                        .Add(RawLineBuilder.Create(
+                                            $"optionsBuilder.UseSqlServer(\"{Options.ConnectionString}\")"));
+                                });
+                            }
+                        });
 
                         // model creating.
                         contextClass.Method(m =>
