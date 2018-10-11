@@ -100,6 +100,33 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer
             return prop;
         }
 
+        protected override List<ISequence> ResolveSequencesToGenerate()
+        {
+            var ret = base.ResolveSequencesToGenerate();
+
+            // schema filtering.
+            if (Options.IncludedSchemas?.Any() == true)
+            {
+                ret = ret
+                    .Cast<Sequence>()
+                    .Where(t => Options.IncludedSchemas.Any(t2 =>
+                        t2.Equals(t.Schema, StringComparison.CurrentCultureIgnoreCase)))
+                    .Cast<ISequence>()
+                    .ToList();
+            }
+            else if (Options.ExcludedSchemas?.Any() == true)
+            {
+                ret = ret
+                    .Cast<Sequence>()
+                    .Where(t => !Options.ExcludedSchemas.Any(t2 =>
+                        t2.Equals(t.Schema, StringComparison.CurrentCultureIgnoreCase)))
+                    .Cast<ISequence>()
+                    .ToList();
+            }
+
+            return ret;
+        }
+
         public override List<ITable> ResolveTablesToGenerate()
         {
             var ret = base.ResolveTablesToGenerate();
@@ -488,8 +515,45 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer
         {
             GenerateEntities();
             GenerateContext();
+            GenerateSequenceMethods();
             BeforeSaveToDisk();
             GenerationContext.SaveToDisk(Encoding.UTF8);
+        }
+
+        protected virtual void GenerateSequenceMethods()
+        {
+            if (!Options.GenerateContextSequenceMethods)
+                return;
+
+            var contextNamespace = ContextNamespace();
+            var contextClassName = ContextClassName();
+            var contextClass = GenerationContext.FindClass(contextClassName, contextNamespace);
+
+            SequenceToGenerate.ForEach(sequence =>
+            {
+                var dataType = DataTypeResolver.ResolveType(sequence);
+                var outputType = dataType.GetOutputType();
+
+                var methodName = $"GetNext{sequence.Name}Value";
+                var sqlServerSequence = sequence as Sequence;
+
+                contextClass.Method(m => m
+                    .AccessModifier(AccessModifiers.Public)
+                    .ReturnType(outputType)
+                    .Name(methodName)
+                    .RawLine(
+                        $"var rawQuery = Database.SqlQuery<{outputType}>(\"SELECT NEXT VALUE FOR [{sqlServerSequence.Schema}].[{sequence.Name}];\")")
+                    .RawLine("var task = raqQuery.SingleASync()")
+                    .RawLine("var nextVal = task.Result")
+                    .RawLine("return nextVal")
+                );
+
+                /*
+                var rawQuery = Database.SqlQuery<int>("SELECT NEXT VALUE FOR dbo.TestSequence;");
+                var task = rawQuery.SingleAsync();
+                int nextVal = task.Result;
+                return nextVal;*/
+            });
         }
     }
 

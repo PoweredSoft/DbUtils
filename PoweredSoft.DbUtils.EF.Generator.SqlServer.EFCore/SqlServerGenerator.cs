@@ -118,6 +118,13 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EFCore
                             {
                                 AddFluentToMethod(m, table as Table);
                             });
+
+                            SequenceToGenerate.ForEach(sequence =>
+                            {
+                                var dataType = DataTypeResolver.ResolveType(sequence);
+                                var outputType = dataType.GetOutputType();
+                                m.RawLine($"modelBuilder.HasSequence<{outputType}>(\"{sequence.Name}\").StartsAt({sequence.StartAt}).IncrementsBy({sequence.IncrementsBy})");
+                            });
                         });
                     });
                 });

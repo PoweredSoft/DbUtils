@@ -20,6 +20,7 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EFCore.Cli
                 //GenerateModels = true,
                 //GenerateModelPropertyAsNullable = true,
                 //GenerateModelsInterfaces = true,
+                GenerateContextSequenceMethods = true,
                 ModelInheritances = new List<string>()
                 {
                     "ITestInherit<[ENTITY], [CONTEXT]>"

@@ -73,6 +73,7 @@ namespace PoweredSoft.DbUtils.Schema.SqlServer
                     if (false == (reader["NUMERIC_SCALE"] is DBNull))
                         seq.NumericScale = Convert.ToByte(reader["NUMERIC_SCALE"]);
 
+                    seq.StartAt = reader["START_VALUE"];
                     seq.IncrementsBy = reader["INCREMENT"];
                     seq.MinValue = reader["MINIMUM_VALUE"];
                     seq.MaxValue = reader["MAXIMUM_VALUE"];

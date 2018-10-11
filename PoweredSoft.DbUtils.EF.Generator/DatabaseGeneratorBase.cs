@@ -17,6 +17,7 @@ namespace PoweredSoft.DbUtils.EF.Generator
         public TOptions Options { get; set; }
         protected TSchema Schema { get; set; }
         protected List<ITable> TablesToGenerate { get; set; }
+        protected List<ISequence> SequenceToGenerate { get; set; }
         protected GenerationContext GenerationContext { get; set; }
         protected abstract IDataTypeResolver DataTypeResolver { get; }
 
@@ -41,9 +42,15 @@ namespace PoweredSoft.DbUtils.EF.Generator
         {
             Schema = CreateAndLoadSchema();
             TablesToGenerate = ResolveTablesToGenerate();
+            SequenceToGenerate = ResolveSequencesToGenerate();
             GenerationContext = GenerationContext.Create();
             CleanOutputDir();
             GenerateCode();
+        }
+
+        protected virtual List<ISequence> ResolveSequencesToGenerate()
+        {
+            return Schema.Sequences;
         }
 
         protected abstract void GenerateCode();

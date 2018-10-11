@@ -61,9 +61,9 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer
             //["hierarchyid"] =  System.Data.Entity.Hierarchy.HierarchyId,
         };
 
-        public Type ResolveType(IColumn column)
+        public Type ResolveType(IHasDataType meta)
         {
-            var sqlType = column.DataType;
+            var sqlType = meta.DataType;
             if (mapping.ContainsKey(sqlType))
             {
                 var type = mapping[sqlType];
@@ -73,24 +73,24 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer
             return typeof(string);
         }
 
-        public bool IsFixLength(IColumn column)
+        public bool IsFixLength(IHasDataType meta)
         {
-            return fixedLengthTypes.Contains(column.DataType);
+            return fixedLengthTypes.Contains(meta.DataType);
         }
 
-        public bool IsString(IColumn column)
+        public bool IsString(IHasDataType meta)
         {
-            return stringTypes.Contains(column.DataType);
+            return stringTypes.Contains(meta.DataType);
         }
 
-        public bool IsUnicode(IColumn column)
+        public bool IsUnicode(IHasDataType meta)
         {
-            return column.DataType.StartsWith("n");
+            return meta.DataType.StartsWith("n");
         }
 
-        public bool NeedFluentPrecisionSpecification(IColumn column)
+        public bool NeedFluentPrecisionSpecification(IHasDataType meta)
         {
-            return !noNeedOfScaleAndPrecision.Contains(column.DataType);
+            return !noNeedOfScaleAndPrecision.Contains(meta.DataType);
         } 
     }
 }

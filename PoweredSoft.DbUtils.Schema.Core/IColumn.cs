@@ -4,14 +4,11 @@ using System.Text;
 
 namespace PoweredSoft.DbUtils.Schema.Core
 {
-    public interface IColumn
+    public interface IColumn : IHasDataType
     {
         string Name { get; }
-        string DataType { get;  }
         string DefaultValue { get; }
         int? CharacterMaximumLength { get; }
-        int? NumericPrecision { get; }
-        int? NumericScale { get; }
         bool IsAutoIncrement { get; }
         bool IsPrimaryKey { get; }
         int PrimaryKeyOrder { get; set; }

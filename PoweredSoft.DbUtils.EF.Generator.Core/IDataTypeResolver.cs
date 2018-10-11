@@ -7,10 +7,10 @@ namespace PoweredSoft.DbUtils.EF.Generator.Core
 {
     public interface IDataTypeResolver
     {
-        Type ResolveType(IColumn column);
-        bool IsFixLength(IColumn column);
-        bool IsString(IColumn column);
-        bool IsUnicode(IColumn column);
-        bool NeedFluentPrecisionSpecification(IColumn column);
+        Type ResolveType(IHasDataType meta);
+        bool IsFixLength(IHasDataType meta);
+        bool IsString(IHasDataType meta);
+        bool IsUnicode(IHasDataType meta);
+        bool NeedFluentPrecisionSpecification(IHasDataType meta);
     }
 }

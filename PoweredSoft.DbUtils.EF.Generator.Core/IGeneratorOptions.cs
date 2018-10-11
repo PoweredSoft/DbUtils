@@ -13,6 +13,7 @@ namespace PoweredSoft.DbUtils.EF.Generator.Core
         string OutputDir { get; }
         bool CleanOutputDir { get; }
         bool OutputToSingleFile { get; }
+        bool GenerateContextSequenceMethods { get; }
         string OutputSingleFileName { get; }
         bool GenerateInterfaces { get;}
         string InterfaceNameSuffix { get; }

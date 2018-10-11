@@ -14,6 +14,7 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer
         public virtual string OutputDir { get; set; }
         public bool CleanOutputDir { get; set; } = false;
         public virtual bool OutputToSingleFile => !string.IsNullOrWhiteSpace(OutputSingleFileName);
+        public bool GenerateContextSequenceMethods { get; set; }
         public virtual string OutputSingleFileName { get; set; }
         public bool GenerateInterfaces { get; set; } = false;
         public bool GenerateModelsInterfaces { get; set; } = false;
