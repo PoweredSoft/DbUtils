@@ -4,6 +4,7 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <RootNamespace>psdb_cli</RootNamespace>
+    <AssemblyName>psdb</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

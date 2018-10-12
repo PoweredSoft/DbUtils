@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using SysCommand.ConsoleApp;
 
-namespace psdb_cli
+namespace psdb
 {
     class Program
     {

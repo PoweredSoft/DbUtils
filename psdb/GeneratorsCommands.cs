@@ -5,7 +5,7 @@ using Newtonsoft.Json.Linq;
 using PoweredSoft.DbUtils.EF.Generator.Core;
 using SysCommand.ConsoleApp;
 
-namespace psdb_cli
+namespace psdb
 {
     public class GeneratorsCommands : Command
     {
