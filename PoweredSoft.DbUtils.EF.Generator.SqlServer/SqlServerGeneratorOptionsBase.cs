@@ -6,7 +6,7 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer
     public class SqlServerGeneratorOptionsBase : ISqlServerGeneratorOptions
     {
         public virtual List<string> ExcludedTables { get; set; } = new List<string>{ "dbo.sysdiagrams" };
-        public virtual List<string> IncludedTables { get; set; }
+        public virtual List<string> IncludedTables { get; set; } = new List<string>();
         public virtual string Namespace { get; set; } 
         public virtual string ContextName { get; set; }
         public virtual string ContextBaseClassName { get; set; }
@@ -22,9 +22,11 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer
         public bool GenerateModelPropertyAsNullable { get; set; } = false;
         public string ModelSuffix { get; set; } = "Base";
         public string ModelInterfaceSuffix { get; set; } = "";
-        public List<string> ModelInheritances { get; set; }
-        public virtual List<string> IncludedSchemas { get; set; }
-        public virtual List<string> ExcludedSchemas { get; set; }
+        public List<string> ModelInheritances { get; set; } = new List<string>();
+        public virtual List<string> IncludedSchemas { get; set; } = new List<string>();
+        public virtual List<string> ExcludedSchemas { get; set; } = new List<string>();
         public string InterfaceNameSuffix { get; set; }
+
+        public bool ShouldSerializeOutputToSingleFile() => false;
     }
 }

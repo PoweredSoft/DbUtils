@@ -44,51 +44,60 @@ var firstTableColumns = tables.FirstOrDefault()?.Columns;
 
 > the generator will replace [SCHEMA] [ENTITY] [CONTEXT] by their respective context
 
-All generators options will support those generic options.
+## using the CLI to generate your EF Context
 
-```csharp
-public interface IGeneratorOptions
+## Options
+
+```json
 {
-    // table names to exclude
-    List<string> ExcludedTables { get; }
-    // table names to include
-    List<string> IncludedTables { get; }
-    // namespace to use
-    string Namespace { get; set; }
-    // context class name
-    string ContextName { get; }
-    // context base class name
-    string ContextBaseClassName { get; }
-    // connection string to use
-    string ConnectionString { get; }
-    // the output directory
-    string OutputDir { get; }
-    // should it clean the output dir
-    bool CleanOutputDir { get; }
-    // should it output to a single file.
-    bool OutputToSingleFile { get; }
-    // single output file path
-    string OutputSingleFileName { get; }
-    // should the context generate sequence methods
-    bool GenerateContextSequenceMethods { get; }
-    // should it generate interfaces for entities
-    bool GenerateInterfaces { get;}
-    // suffix for your interface
-    string InterfaceNameSuffix { get; }
-    // should it generate models.
-    bool GenerateModels { get; }
-    // should it generate model interfaces
-    bool GenerateModelsInterfaces { get; }
-    // should properties of your model all be nullable
-    // (practical for json serialization)
-    bool GenerateModelPropertyAsNullable { get; }
-    // suffix for your model calss name
-    string ModelSuffix { get; }
-    // suffix for your model interface class name
-    string ModelInterfaceSuffix { get; }
-    // what should your model inherit.
-    List<string> ModelInheritances { get; }
+  "FluentConfigurationClassSuffix": "FluentConfiguration",
+  "ContextBaseClassName": "System.Data.Entity.DbContext",
+  "ConnectionStringName": null,
+  "ExcludedTables": [
+    "dbo.sysdiagrams"
+  ],
+  "IncludedTables": [],
+  "Namespace": null,
+  "ContextName": null,
+  "ConnectionString": null,
+  "OutputDir": null,
+  "CleanOutputDir": false,
+  "GenerateContextSequenceMethods": false,
+  "OutputSingleFileName": null,
+  "GenerateInterfaces": false,
+  "GenerateModelsInterfaces": false,
+  "GenerateModels": false,
+  "GenerateModelPropertyAsNullable": false,
+  "ModelSuffix": "Base",
+  "ModelInterfaceSuffix": "",
+  "ModelInheritances": [],
+  "IncludedSchemas": [],
+  "ExcludedSchemas": [],
+  "InterfaceNameSuffix": null
 }
+```
+
+### Command Line 
+
+#### init
+> will create your configuration file 
+
+```
+ init
+      --config-file          Is optional (default <GeneratorOptions.json>).
+      --context-name         Is optional.
+      --connection-string    Is optional.
+      --output-dir           Is optional.
+      --output-file          Is optional.
+```
+
+### generate
+
+> will generate the code
+
+```
+generate
+      --config-file          Is optional (default <GeneratorOptions.json>).
 ```
 
 ## Entity Framework 6.x generator

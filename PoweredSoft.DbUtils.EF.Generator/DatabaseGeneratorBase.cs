@@ -88,6 +88,9 @@ namespace PoweredSoft.DbUtils.EF.Generator
             return ret;
         }
 
+        public IGeneratorOptions GetOptions() => Options;
+        public abstract IGeneratorOptions GetDefaultOptions();
+
         protected string RemoveIdSuffixFromColumnName(string columnName)
         {
             var suffix = "Id";

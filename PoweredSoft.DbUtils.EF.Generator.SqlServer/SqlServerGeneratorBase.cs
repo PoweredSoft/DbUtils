@@ -14,7 +14,7 @@ using PoweredSoft.DbUtils.Schema.SqlServer;
 namespace PoweredSoft.DbUtils.EF.Generator.SqlServer
 {
     public abstract class SqlServerGeneratorBase<TOptions> : DatabaseGeneratorBase<DatabaseSchema, TOptions>
-        where TOptions : SqlServerGeneratorOptionsBase
+        where TOptions : SqlServerGeneratorOptionsBase, new()
     {
         public override DatabaseSchema CreateSchema() => new DatabaseSchema();
         protected override IDataTypeResolver DataTypeResolver { get; } = new DataTypeResolver();
@@ -58,6 +58,11 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer
             var ret = ModelClassName(table, false);
             ret = $"I{ret}{Options.ModelInterfaceSuffix}";
             return ret;
+        }
+
+        public override IGeneratorOptions GetDefaultOptions()
+        {
+            return new TOptions();
         }
 
         protected string TableInterfaceName(Table table)

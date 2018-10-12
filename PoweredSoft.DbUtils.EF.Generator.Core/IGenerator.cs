@@ -8,6 +8,8 @@ namespace PoweredSoft.DbUtils.EF.Generator.Core
         void Generate();
         void LoadOptionsFromJson(string configFile);
         List<ITable> ResolveTablesToGenerate();
+        IGeneratorOptions GetOptions();
+        IGeneratorOptions GetDefaultOptions();
     }
 
     public interface IGenerator<TOptions> : IGenerator
