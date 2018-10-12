@@ -22,6 +22,9 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EFCore
             var manyToManyList = table.ManyToMany().ToList();
             manyToManyList.ForEach(fk =>
             {
+                if (!TablesToGenerate.Contains(fk.ForeignKeyColumn.Table))
+                    return;
+
                 var sqlServerFk = fk as ForeignKey;
 
                 // get the poco of the many to many.
@@ -237,6 +240,9 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EFCore
 
             table.SqlServerForeignKeys.ForEach(fk =>
             {
+                if (!TablesToGenerate.Contains(fk.PrimaryKeyColumn.Table))
+                    return;
+
                 var fkProp = tableClass.FindByMeta<PropertyBuilder>(fk);
                 var fkColumnProp = tableClass.FindByMeta<PropertyBuilder>(fk.ForeignKeyColumn);
                 var fkTableNamespace = TableNamespace(fk.SqlServerPrimaryKeyColumn.SqlServerTable);

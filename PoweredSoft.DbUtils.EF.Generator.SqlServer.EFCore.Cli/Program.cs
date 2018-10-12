@@ -16,12 +16,16 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EFCore.Cli
                 Namespace = "Acme.[SCHEMA].Dal",
                 ContextName = "AcmeContext",
                 ConnectionString = "Server=ps-sql.dev;Database=Acme;user id=acme;password=-acmepw2016-",
-                GenerateInterfaces = true,
-                GenerateModels = true,
+                GenerateInterfaces = false,
+                GenerateModels = false,
                 GenerateModelPropertyAsNullable = true,
-                GenerateModelsInterfaces = true,
-                GenerateContextSequenceMethods = true,
+                GenerateModelsInterfaces = false,
+                GenerateContextSequenceMethods = false,
                 //AddConnectionStringOnGenerate = true,
+                IncludedSchemas = new List<string>()
+                {
+                    "WorkOrder", "Storage"
+                },
                 ModelInheritances = new List<string>()
                 {
                     //"ITestInherit<[ENTITY], [CONTEXT]>"

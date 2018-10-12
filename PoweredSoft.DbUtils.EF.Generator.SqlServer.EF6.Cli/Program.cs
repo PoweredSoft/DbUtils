@@ -27,7 +27,7 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6.Cli
                 //GenerateContextSequenceMethods = true,
                 IncludedSchemas = new List<string>()
                 {
-                    "Storage"
+                    "WorkOrder"
                 },
                 ModelInheritances = new List<string>()
                 {
