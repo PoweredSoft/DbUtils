@@ -6,6 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="SysCommand" Version="1.0.9" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PoweredSoft.DbUtils.EF.Generator.Cli.Core\PoweredSoft.DbUtils.EF.Generator.Cli.Core.csproj" />
     <ProjectReference Include="..\PoweredSoft.DbUtils.EF.Generator.SqlServer.EFCore\PoweredSoft.DbUtils.EF.Generator.SqlServer.EFCore.csproj" />
   </ItemGroup>
 

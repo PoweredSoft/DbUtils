@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SysCommand" Version="1.0.9" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PoweredSoft.DbUtils.EF.Generator.Core\PoweredSoft.DbUtils.EF.Generator.Core.csproj" />
+  </ItemGroup>
+
+</Project>

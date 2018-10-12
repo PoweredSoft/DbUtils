@@ -6,6 +6,7 @@ namespace PoweredSoft.DbUtils.EF.Generator.Core
     public interface IGenerator
     {
         void Generate();
+        void LoadOptionsFromJson(string configFile);
         List<ITable> ResolveTablesToGenerate();
     }
 

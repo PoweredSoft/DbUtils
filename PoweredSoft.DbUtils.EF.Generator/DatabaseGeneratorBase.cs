@@ -3,6 +3,7 @@ using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Newtonsoft.Json;
 using Pluralize.NET;
 using PoweredSoft.CodeGenerator;
 using PoweredSoft.DbUtils.EF.Generator.Core;
@@ -46,6 +47,12 @@ namespace PoweredSoft.DbUtils.EF.Generator
             GenerationContext = GenerationContext.Create();
             CleanOutputDir();
             GenerateCode();
+        }
+
+        public void LoadOptionsFromJson(string configFile)
+        {
+            var json = File.ReadAllText(configFile);
+            Options = JsonConvert.DeserializeObject<TOptions>(json);
         }
 
         protected virtual List<ISequence> ResolveSequencesToGenerate()
