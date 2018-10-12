@@ -123,9 +123,11 @@ generate
       --config-file          Is optional (default <GeneratorOptions.json>).
 ```
 
-## Entity Framework 6.x generator
+## Using generator with your own project
 
-### Sample:
+### Entity Framework 6.x generator
+
+#### Sample:
 
 ```csharp
 var g = new SqlServerGenerator();
@@ -162,9 +164,9 @@ g.Options = new SqlServerGeneratorOptions
 g.Generate();
 ```
 
-## Entity Framework core generator
+###Entity Framework core generator
 
-### Sample:
+#### Sample:
 
 ```csharp
 var g = new SqlServerGenerator();
