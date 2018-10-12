@@ -50,6 +50,14 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\PoweredSoft.DbUtils.EF.Generator.Cli.Core\PoweredSoft.DbUtils.EF.Generator.Cli.Core.csproj">
+      <Project>{EE9EA91E-E3AB-4F25-BE2A-83ADAE0E4B9A}</Project>
+      <Name>PoweredSoft.DbUtils.EF.Generator.Cli.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PoweredSoft.DbUtils.EF.Generator.Core\PoweredSoft.DbUtils.EF.Generator.Core.csproj">
+      <Project>{67B3F627-639C-41C3-81DE-D33CCC1BA328}</Project>
+      <Name>PoweredSoft.DbUtils.EF.Generator.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6\PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6.csproj">
       <Project>{4D8CACA6-019A-4E4C-AAF2-DC8B23610E73}</Project>
       <Name>PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6</Name>
@@ -68,6 +76,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="SysCommand">
+      <Version>1.0.9</Version>
+    </PackageReference>
     <PackageReference Include="System.Data.SqlClient">
       <Version>4.5.1</Version>
     </PackageReference>
