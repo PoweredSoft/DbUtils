@@ -2,6 +2,13 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Copyright>Powered Softwares Inc.</Copyright>
+    <PackageLicenseUrl>https://github.com/PoweredSoft/DbUtils/blob/master/LICENSE.md</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/PoweredSoft/DbUtils</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/PoweredSoft/DbUtils/PoweredSoft.DbUtils.Schema.SqlServer</RepositoryUrl>
+    <RepositoryType>github</RepositoryType>
+    <PackageIconUrl></PackageIconUrl>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>

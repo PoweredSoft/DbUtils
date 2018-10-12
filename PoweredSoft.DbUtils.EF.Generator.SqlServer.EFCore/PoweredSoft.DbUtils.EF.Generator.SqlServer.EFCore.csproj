@@ -2,6 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
+    <PackageLicenseUrl>https://github.com/PoweredSoft/DbUtils/blob/master/LICENSE.md</PackageLicenseUrl>
+    <Copyright>Powered Softwares Inc.</Copyright>
+    <PackageProjectUrl>https://github.com/PoweredSoft/DbUtils</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/PoweredSoft/DbUtils/PoweredSoft.DbUtils.EF.Generator.SqlServer.EFCore</RepositoryUrl>
+    <RepositoryType>github</RepositoryType>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
