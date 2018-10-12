@@ -1,78 +1,17 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{4D8CACA6-019A-4E4C-AAF2-DC8B23610E73}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6</RootNamespace>
-    <AssemblyName>PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6</AssemblyName>
-    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Copyright>Powered Softwares Inc.</Copyright>
+    <PackageLicenseUrl>https://github.com/PoweredSoft/DbUtils/blob/master/LICENSE.md</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/PoweredSoft/DbUtils</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/PoweredSoft/DbUtils/PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6</RepositoryUrl>
+    <RepositoryType>github</RepositoryType>
+    <PackageIconUrl></PackageIconUrl>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="Pluralize.NET">
-      <HintPath>..\..\..\Users\PS-DEV2\.nuget\packages\pluralize.net\0.1.84\lib\netstandard2.0\Pluralize.NET.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
+    <ProjectReference Include="..\PoweredSoft.DbUtils.EF.Generator.SqlServer\PoweredSoft.DbUtils.EF.Generator.SqlServer.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="SqlServerGenerator.cs" />
-    <Compile Include="SqlServerGeneratorOptions.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\CodeGenerator\PoweredSoft.CodeGenerator\PoweredSoft.CodeGenerator.csproj">
-      <Project>{44C9C724-8ED1-4DEE-9E4E-3A639FE0FB54}</Project>
-      <Name>PoweredSoft.CodeGenerator</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\PoweredSoft.DbUtils.EF.Generator.Core\PoweredSoft.DbUtils.EF.Generator.Core.csproj">
-      <Project>{67B3F627-639C-41C3-81DE-D33CCC1BA328}</Project>
-      <Name>PoweredSoft.DbUtils.EF.Generator.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\PoweredSoft.DbUtils.EF.Generator.SqlServer\PoweredSoft.DbUtils.EF.Generator.SqlServer.csproj">
-      <Project>{2748AE45-AE2E-490B-AD87-9D99971CBE61}</Project>
-      <Name>PoweredSoft.DbUtils.EF.Generator.SqlServer</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\PoweredSoft.DbUtils.EF.Generator\PoweredSoft.DbUtils.EF.Generator.csproj">
-      <Project>{8A693570-EDFE-4F96-87BF-F5ECFDEF59B9}</Project>
-      <Name>PoweredSoft.DbUtils.EF.Generator</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\PoweredSoft.DbUtils.Schema.Core\PoweredSoft.DbUtils.Schema.Core.csproj">
-      <Project>{F28995FD-C833-40A9-B74B-B66079EE836A}</Project>
-      <Name>PoweredSoft.DbUtils.Schema.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\PoweredSoft.DbUtils.Schema.SqlServer\PoweredSoft.DbUtils.Schema.SqlServer.csproj">
-      <Project>{ECCD8F30-91FB-40A0-8536-8AC636AF5352}</Project>
-      <Name>PoweredSoft.DbUtils.Schema.SqlServer</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
