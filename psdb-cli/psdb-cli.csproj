@@ -13,6 +13,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\PoweredSoft.DbUtils.EF.Generator.Core\PoweredSoft.DbUtils.EF.Generator.Core.csproj" />
+    <ProjectReference Include="..\PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6\PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6.csproj" />
+    <ProjectReference Include="..\PoweredSoft.DbUtils.EF.Generator.SqlServer.EFCore\PoweredSoft.DbUtils.EF.Generator.SqlServer.EFCore.csproj" />
   </ItemGroup>
 
 </Project>

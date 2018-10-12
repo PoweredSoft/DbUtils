@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using PoweredSoft.DbUtils.EF.Generator.Core;
 using SysCommand.ConsoleApp;
 
@@ -10,36 +11,59 @@ namespace psdb_cli
     {
         internal static Func<IGenerator> CreateGeneratorFunc { get; set; }
 
-        public void Generate(string configFile = "GeneratorOptions.json")
+        private void EnsureGenerator(string version)
         {
-            if (!File.Exists(configFile))
+            if (version.Equals("core", StringComparison.InvariantCultureIgnoreCase))
+                CreateGeneratorFunc = () => new PoweredSoft.DbUtils.EF.Generator.SqlServer.EFCore.SqlServerGenerator();
+            else if (version.Contains("6", StringComparison.OrdinalIgnoreCase))
+                CreateGeneratorFunc = () => new PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6.SqlServerGenerator();
+        }
+
+        public void Generate(string config = "psdb.json")
+        {
+            if (!File.Exists(config))
             {
-                this.App.Console.Error($"{configFile} file could not be found.", true, true);
+                this.App.Console.Error($"{config} file could not be found.", true, true);
                 return;
             }
 
+            EnsureVersionFromConfig(config);
             var generator = CreateGeneratorFunc();
-            generator.LoadOptionsFromJson(configFile);
+            generator.LoadOptionsFromJson(config);
             generator.Generate();
             this.App.Console.Success("Context has been generated successfully", true, true);
         }
 
-        public void Init(string configFile = "GeneratorOptions.json", string contextName = null, string connectionString = null, string outputDir = null, string outputFile = null)
+        private void EnsureVersionFromConfig(string config)
         {
+            var json = File.ReadAllText(config);
+            var anonymous = JsonConvert.DeserializeObject(json) as JObject;
+            var version = anonymous.GetValue("Version").Value<string>();
+            EnsureGenerator(version);
+        }
+
+        public void Init(string config = "psdb.json", string version = "core", 
+            string contextName = null, string connectionString = null, string outputDir = null, string outputFile = null,
+            string @namespace = null, string connectionStringName = null)
+        {
+            EnsureGenerator(version);
+
             var options = CreateGeneratorFunc().GetDefaultOptions();
             options.ContextName = contextName;
             options.ConnectionString = connectionString;
             options.OutputDir = outputDir;
             options.OutputSingleFileName = outputFile;
+            options.Namespace = @namespace;
+
+            if (options is PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6.SqlServerGeneratorOptions)
+            {
+                var ef6Options = options as PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6.SqlServerGeneratorOptions;
+                ef6Options.ConnectionStringName = connectionStringName;
+            }
 
             var json = JsonConvert.SerializeObject(options, Formatting.Indented);
-            File.WriteAllText(configFile, json);
-            this.App.Console.Success($"Options file generated successfully {configFile}");
-        }
-
-        public static void SetGenerator(Func<IGenerator> createGenerator)
-        {
-            CreateGeneratorFunc = createGenerator;
+            File.WriteAllText(config, json);
+            this.App.Console.Success($"Options file generated successfully {config}");
         }
     }
 }

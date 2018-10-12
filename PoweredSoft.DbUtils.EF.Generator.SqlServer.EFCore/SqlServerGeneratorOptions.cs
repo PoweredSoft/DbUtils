@@ -8,5 +8,6 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EFCore
     {
         public override string ContextBaseClassName { get; set; } = "DbContext";
         public bool AddConnectionStringOnGenerate { get; set; } = false;
+        public string Version => "core";
     }
 }

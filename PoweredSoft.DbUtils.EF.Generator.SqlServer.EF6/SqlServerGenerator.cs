@@ -113,7 +113,7 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
 
                         contextClass.Constructor(c => c
                             .Class(contextClass)
-                            .BaseParameter($"\"{Options.ConnectionStringName}\"")
+                            .BaseParameter($"\"{Options.ConnectionStringName ?? Options.ConnectionString}\"")
                             .RawLine("InitializePartial()")
                         );
 

@@ -3,7 +3,7 @@ using PoweredSoft.DbUtils.EF.Generator.SqlServer.Core;
 
 namespace PoweredSoft.DbUtils.EF.Generator.SqlServer
 {
-    public class SqlServerGeneratorOptionsBase : ISqlServerGeneratorOptions
+    public abstract class SqlServerGeneratorOptionsBase : ISqlServerGeneratorOptions
     {
         public virtual List<string> ExcludedTables { get; set; } = new List<string>{ "dbo.sysdiagrams" };
         public virtual List<string> IncludedTables { get; set; } = new List<string>();
@@ -12,20 +12,21 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer
         public virtual string ContextBaseClassName { get; set; }
         public virtual string ConnectionString { get; set; }
         public virtual string OutputDir { get; set; }
-        public bool CleanOutputDir { get; set; } = false;
+        public virtual bool CleanOutputDir { get; set; } = false;
         public virtual bool OutputToSingleFile => !string.IsNullOrWhiteSpace(OutputSingleFileName);
-        public bool GenerateContextSequenceMethods { get; set; }
+        public virtual bool GenerateContextSequenceMethods { get; set; }
         public virtual string OutputSingleFileName { get; set; }
-        public bool GenerateInterfaces { get; set; } = false;
-        public bool GenerateModelsInterfaces { get; set; } = false;
-        public bool GenerateModels { get; set; } = false;
-        public bool GenerateModelPropertyAsNullable { get; set; } = false;
-        public string ModelSuffix { get; set; } = "Base";
-        public string ModelInterfaceSuffix { get; set; } = "";
-        public List<string> ModelInheritances { get; set; } = new List<string>();
+        public virtual bool GenerateInterfaces { get; set; } = false;
+        public virtual bool GenerateModelsInterfaces { get; set; } = false;
+        public virtual bool GenerateModels { get; set; } = false;
+        public virtual bool GenerateModelPropertyAsNullable { get; set; } = false;
+        public virtual string ModelSuffix { get; set; } = "Base";
+        public virtual string ModelInterfaceSuffix { get; set; } = "";
+        public virtual List<string> ModelInheritances { get; set; } = new List<string>();
+        public virtual string Version { get; }
         public virtual List<string> IncludedSchemas { get; set; } = new List<string>();
         public virtual List<string> ExcludedSchemas { get; set; } = new List<string>();
-        public string InterfaceNameSuffix { get; set; }
+        public virtual string InterfaceNameSuffix { get; set; }
 
         public bool ShouldSerializeOutputToSingleFile() => false;
     }
