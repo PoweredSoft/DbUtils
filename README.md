@@ -63,7 +63,7 @@ var firstTableColumns = tables.FirstOrDefault()?.Columns;
 
 > here is how the options looks like
 
-```json
+```js
 {
   // for EF6 suffix of the fluent
   "FluentConfigurationClassSuffix": "FluentConfiguration", 
