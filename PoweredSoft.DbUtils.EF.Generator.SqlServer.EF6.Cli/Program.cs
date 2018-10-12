@@ -25,6 +25,10 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6.Cli
                 //GenerateModelPropertyAsNullable = true,
                 //GenerateModelsInterfaces = true,
                 //GenerateContextSequenceMethods = true,
+                IncludedSchemas = new List<string>()
+                {
+                    "Storage"
+                },
                 ModelInheritances = new List<string>()
                 {
                     //"ITestInherit<[ENTITY], [CONTEXT]>"

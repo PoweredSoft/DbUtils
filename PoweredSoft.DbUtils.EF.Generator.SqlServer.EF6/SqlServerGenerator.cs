@@ -50,6 +50,10 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
                 // other table attached to this many to many.
                 var otherPk = otherFk.SqlServerPrimaryKeyColumn.SqlServerTable;
 
+                // skip if other table is not being generated.
+                if (!TablesToGenerate.Contains(otherPk))
+                    return;
+
                 // pluralize this name.
                 var propName = Pluralize(otherPk.Name);
                 propName = tableClass.GetUniqueMemberName(propName);
@@ -290,13 +294,12 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
                             constructor.AddComment("Navigations");
                             table.SqlServerForeignKeys.ForEach(fk =>
                             {
-                                // todo skip if table is filtered.
-
-                                var line = RawLineBuilder.Create();
                                 var fkProp = entityClass.FindByMeta<PropertyBuilder>(fk);
                                 var fkColumnProp = entityClass.FindByMeta<PropertyBuilder>(fk.SqlServerForeignKeyColumn);
-                                if (fkProp != null)
+                                // if null meaning its being filtered. (excluded table from generation)
+                                if (fkProp != null) 
                                 {
+                                    var line = RawLineBuilder.Create();
                                     var primaryNamespace = TableNamespace(fk.SqlServerPrimaryKeyColumn.SqlServerTable);
                                     var primaryClassName = TableClassName(fk.SqlServerPrimaryKeyColumn.SqlServerTable);
                                     var primaryEntity = GenerationContext.FindClass(primaryClassName, primaryNamespace);
@@ -327,14 +330,17 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6
                                 if (mtm.ForeignKeyColumn.PrimaryKeyOrder > 1)
                                     return;
 
+                                var otherFk = mtm.ForeignKeyColumn.Table.ForeignKeys.First(t => t.ForeignKeyColumn.PrimaryKeyOrder > 1);
+                                var otherFkTable = otherFk.PrimaryKeyColumn.Table as Table;
                                 var manyToManyTable = mtm.ForeignKeyColumn.Table as Table;
                                 var manyProp = entityClass.FindByMeta<PropertyBuilder>(mtm);
 
-                                // other prop.
-                                var otherFk = mtm.ForeignKeyColumn.Table.ForeignKeys.First(t => t.ForeignKeyColumn.PrimaryKeyOrder > 1);
-                                var otherTable = otherFk.PrimaryKeyColumn.Table as Table;
-                                var otherNamespace = TableNamespace(otherTable);
-                                var otherClassName = TableClassName(otherTable);
+                                // exclude if not being generated.
+                                if (!TablesToGenerate.Contains(otherFk.PrimaryKeyColumn.Table) || !TablesToGenerate.Contains(manyToManyTable))
+                                    return;
+                                
+                                var otherNamespace = TableNamespace(otherFkTable);
+                                var otherClassName = TableClassName(otherFkTable);
                                 var otherEntity = GenerationContext.FindClass(otherClassName, otherNamespace);
                                 var otherProp = otherEntity.FindByMeta<PropertyBuilder>(otherFk);
 

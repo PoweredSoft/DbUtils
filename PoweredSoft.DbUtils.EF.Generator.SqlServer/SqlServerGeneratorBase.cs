@@ -333,6 +333,9 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer
             var hasManyList = table.HasMany().ToList();
             hasManyList.ForEach(fk =>
             {
+                if (!TablesToGenerate.Contains(fk.ForeignKeyColumn.Table))
+                    return;
+
                 var sqlServerFk = fk as ForeignKey;
                 var hasMoreThanOne = table.HasMany().Count(t => t.ForeignKeyColumn.Table == sqlServerFk.ForeignKeyColumn.Table) > 1;
                 var propName = HasManyPropertyName(sqlServerFk, hasMoreThanOne);
@@ -353,6 +356,9 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer
 
             table.OneToOne().ToList().ForEach(fk =>
             {
+                if (!TablesToGenerate.Contains(fk.ForeignKeyColumn.Table))
+                    return;
+
                 var sqlServerFk = fk as ForeignKey;
                 var propName = OneToOnePropertyName(sqlServerFk);
                 propName = tableClass.GetUniqueMemberName(propName);
@@ -369,6 +375,9 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer
 
             table.SqlServerForeignKeys.ForEach(fk =>
             {
+                if (!TablesToGenerate.Contains(fk.PrimaryKeyColumn.Table))
+                    return;
+
                 var propName = ForeignKeyPropertyName(fk);
                 if (tableClass.HasMemberWithName(propName))
                 {
