@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>netcoreapp2.1;net47</TargetFrameworks>
+    <TargetFrameworks>netcoreapp2.1</TargetFrameworks>
     <RootNamespace>psdb</RootNamespace>
     <AssemblyName>psdb</AssemblyName>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -11,7 +11,10 @@
     <PackageProjectUrl>https://github.com/PoweredSoft/DbUtils/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/PoweredSoft/DbUtils/</RepositoryUrl>
     <RepositoryType>github</RepositoryType>
-  </PropertyGroup>
+    <Version>1.0.1</Version>
+    <PackAsTool>true</PackAsTool>
+    <PackageOutputPath>./nupkg</PackageOutputPath>
+</PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
@@ -23,5 +26,4 @@
     <ProjectReference Include="..\PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6\PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6.csproj" />
     <ProjectReference Include="..\PoweredSoft.DbUtils.EF.Generator.SqlServer.EFCore\PoweredSoft.DbUtils.EF.Generator.SqlServer.EFCore.csproj" />
   </ItemGroup>
-
 </Project>
