@@ -11,7 +11,7 @@
     <PackageProjectUrl>https://github.com/PoweredSoft/DbUtils/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/PoweredSoft/DbUtils/</RepositoryUrl>
     <RepositoryType>github</RepositoryType>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
     <PackAsTool>true</PackAsTool>
     <PackageOutputPath>./nupkg</PackageOutputPath>
 </PropertyGroup>

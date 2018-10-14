@@ -19,6 +19,11 @@ namespace psdb
                 CreateGeneratorFunc = () => new PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6.SqlServerGenerator();
         }
 
+        public void OutputEnvironmentDir()
+        {
+            this.App.Console.Write(Environment.CurrentDirectory);
+        }
+
         public void Generate(string config = "psdb.json")
         {
             if (!File.Exists(config))
@@ -51,7 +56,7 @@ namespace psdb
             var options = CreateGeneratorFunc().GetDefaultOptions();
             options.ContextName = contextName;
             options.ConnectionString = connectionString;
-            options.OutputDir = outputDir;
+            options.OutputDir = outputDir ?? Environment.CurrentDirectory;
             options.OutputSingleFileName = outputFile;
             options.Namespace = @namespace;
 
