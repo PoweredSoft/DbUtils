@@ -1,18 +1,13 @@
-# Generators
+# Getting started
+
+> dotnet tool install --global psdb
+
+> psdb help
 
 ## Meta data replacement 
 > the generator will replace [SCHEMA] [ENTITY] [CONTEXT] by their respective context
 
-## using the CLI to generate your EF Context
-
-### Command Line 
-
-#### Installing
-
-> dotnet tool install --global psdb
-
-You can then run 
-> psdb help
+### Commands
 
 #### init
 > will create your configuration file 
@@ -86,43 +81,4 @@ You can then run
 ```
 generate
       --config-file          Is optional (default <GeneratorOptions.json>).
-```
-
-
-# Database Schema Discovering
-
-## Core
-
-Only basic interfaces that should be implemented by all architectures
-
-The discover tool supports:
-- Tables
-- Columns
-- Indexes
-- Foreign Keys
-- Primary Keys 
-- Sequences
-
-Also has extension methods for navigations, reverse navigations 
-- Has One (Foreign keys)
-- Many to Many
-- One to one
-- Has Many 
-
-## Sql Server
-You may use the project PoweredSoft.DbUtils.Schema.SqlServer
-
-```csharp
-var schema = new DatabaseSchema
-{
-    ConnectionString = "Your connection string."
-};
-
-schema.LoadSchema();
-
-// what kind of meta data you have after, to be documented later on.
-var tables = schema.Tables;
-var sequences = schema.Sequences;
-var firstTableColumns = tables.FirstOrDefault()?.Columns;
-
 ```
