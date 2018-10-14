@@ -5,7 +5,12 @@
     <TargetFrameworks>netcoreapp2.1;net47</TargetFrameworks>
     <RootNamespace>psdb</RootNamespace>
     <AssemblyName>psdb</AssemblyName>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Copyright>Powered Softwares Inc.</Copyright>
+    <PackageLicenseUrl>https://github.com/PoweredSoft/DbUtils/blob/master/LICENSE.md</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/PoweredSoft/DbUtils/</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/PoweredSoft/DbUtils/</RepositoryUrl>
+    <RepositoryType>github</RepositoryType>
   </PropertyGroup>
 
   <ItemGroup>
