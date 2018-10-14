@@ -15,7 +15,7 @@ namespace psdb
         {
             if (version.Equals("core", StringComparison.InvariantCultureIgnoreCase))
                 CreateGeneratorFunc = () => new PoweredSoft.DbUtils.EF.Generator.SqlServer.EFCore.SqlServerGenerator();
-            else if (version.Contains("6", StringComparison.OrdinalIgnoreCase))
+            else if (version.IndexOf("6", StringComparison.InvariantCultureIgnoreCase) > -1)
                 CreateGeneratorFunc = () => new PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6.SqlServerGenerator();
         }
 
