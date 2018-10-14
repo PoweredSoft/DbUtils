@@ -13,12 +13,15 @@
 > will create your configuration file 
 
 ```
- init
-      --config-file          Is optional (default <GeneratorOptions.json>).
-      --context-name         Is optional.
-      --connection-string    Is optional.
-      --output-dir           Is optional.
-      --output-file          Is optional.
+init
+      --config                    Is optional (default <psdb.json>).
+      --version                   Is optional (default <core>).
+      --context-name              Is optional.
+      --connection-string         Is optional.
+      --output-dir                Is optional.
+      --output-file               Is optional.
+      --namespace                 Is optional.
+      --connection-string-name    Is optional.
 ```
 
 > here is how the options looks like
@@ -79,6 +82,6 @@
 > will generate the code
 
 ```
-generate
-      --config-file          Is optional (default <GeneratorOptions.json>).
+ generate
+      --config                    Is optional (default <psdb.json>).
 ```
