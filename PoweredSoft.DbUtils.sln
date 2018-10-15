@@ -25,21 +25,23 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "psdb", "psdb\psdb.csproj", "{202B8A94-C3A0-4BE0-8772-50905E6759A7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PoweredSoft.DbUtils.Schema.MySql", "PoweredSoft.DbUtils.Schema.MySql\PoweredSoft.DbUtils.Schema.MySql.csproj", "{634FA023-3317-44A1-AF67-CDD60B1D4C87}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.DbUtils.Schema.MySql", "PoweredSoft.DbUtils.Schema.MySql\PoweredSoft.DbUtils.Schema.MySql.csproj", "{634FA023-3317-44A1-AF67-CDD60B1D4C87}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dev-cli", "dev-cli\dev-cli.csproj", "{5A8677AB-A17E-4D64-B4D1-C6737B5132F7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dev-cli", "dev-cli\dev-cli.csproj", "{5A8677AB-A17E-4D64-B4D1-C6737B5132F7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PoweredSoft.DbUtils.EF.Generator.EFCore", "PoweredSoft.DbUtils.EF.Generator.EFCore\PoweredSoft.DbUtils.EF.Generator.EFCore.csproj", "{19E195CF-F579-46A9-AAA5-C093D7C13030}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.DbUtils.EF.Generator.EFCore", "PoweredSoft.DbUtils.EF.Generator.EFCore\PoweredSoft.DbUtils.EF.Generator.EFCore.csproj", "{19E195CF-F579-46A9-AAA5-C093D7C13030}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PoweredSoft.DbUtils.EF.Generator.EF6", "PoweredSoft.DbUtils.EF.Generator.EF6\PoweredSoft.DbUtils.EF.Generator.EF6.csproj", "{34B0C8AF-C5E6-49CD-9AD1-1EA4157B6A76}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.DbUtils.EF.Generator.EF6", "PoweredSoft.DbUtils.EF.Generator.EF6\PoweredSoft.DbUtils.EF.Generator.EF6.csproj", "{34B0C8AF-C5E6-49CD-9AD1-1EA4157B6A76}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PoweredSoft.DbUtils.EF.Generator.EFCore.Core", "PoweredSoft.DbUtils.EF.Generator.EFCore.Core\PoweredSoft.DbUtils.EF.Generator.EFCore.Core.csproj", "{684CB2E9-B437-4246-A5D3-A8AFC2122B99}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.DbUtils.EF.Generator.EFCore.Core", "PoweredSoft.DbUtils.EF.Generator.EFCore.Core\PoweredSoft.DbUtils.EF.Generator.EFCore.Core.csproj", "{684CB2E9-B437-4246-A5D3-A8AFC2122B99}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PoweredSoft.DbUtils.EF.Generator.EF6.Core", "PoweredSoft.DbUtils.EF.Generator.EF6.Core\PoweredSoft.DbUtils.EF.Generator.EF6.Core.csproj", "{4DA2E15A-8AA8-4549-9C52-46F7C9AA761A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.DbUtils.EF.Generator.EF6.Core", "PoweredSoft.DbUtils.EF.Generator.EF6.Core\PoweredSoft.DbUtils.EF.Generator.EF6.Core.csproj", "{4DA2E15A-8AA8-4549-9C52-46F7C9AA761A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PoweredSoft.DbUtils.EF.Generator.EF6.SqlServer", "PoweredSoft.DbUtils.EF.Generator.EF6.SqlServer\PoweredSoft.DbUtils.EF.Generator.EF6.SqlServer.csproj", "{4DE0CDD2-7A12-42D9-8383-991B52EEC4C6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.DbUtils.EF.Generator.EF6.SqlServer", "PoweredSoft.DbUtils.EF.Generator.EF6.SqlServer\PoweredSoft.DbUtils.EF.Generator.EF6.SqlServer.csproj", "{4DE0CDD2-7A12-42D9-8383-991B52EEC4C6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PoweredSoft.DbUtils.EF.Generator.EFCore.SqlServer", "PoweredSoft.DbUtils.EF.Generator.EFCore.SqlServer\PoweredSoft.DbUtils.EF.Generator.EFCore.SqlServer.csproj", "{2B956074-1371-4117-9525-D9C545939357}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.DbUtils.EF.Generator.EFCore.SqlServer", "PoweredSoft.DbUtils.EF.Generator.EFCore.SqlServer\PoweredSoft.DbUtils.EF.Generator.EFCore.SqlServer.csproj", "{2B956074-1371-4117-9525-D9C545939357}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PoweredSoft.DbUtils.EF.Generator.MySql", "PoweredSoft.DbUtils.EF.Generator.MySql\PoweredSoft.DbUtils.EF.Generator.MySql.csproj", "{D74610A0-E309-4F51-A168-2B9EA3E20C55}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -111,6 +113,10 @@ Global
 		{2B956074-1371-4117-9525-D9C545939357}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2B956074-1371-4117-9525-D9C545939357}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2B956074-1371-4117-9525-D9C545939357}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D74610A0-E309-4F51-A168-2B9EA3E20C55}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D74610A0-E309-4F51-A168-2B9EA3E20C55}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D74610A0-E309-4F51-A168-2B9EA3E20C55}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D74610A0-E309-4F51-A168-2B9EA3E20C55}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
