@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <RootNamespace>dev_cli</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PoweredSoft.DbUtils.EF.Generator.EF6.SqlServer\PoweredSoft.DbUtils.EF.Generator.EF6.SqlServer.csproj" />
+    <ProjectReference Include="..\PoweredSoft.DbUtils.EF.Generator.EFCore.SqlServer\PoweredSoft.DbUtils.EF.Generator.EFCore.SqlServer.csproj" />
+  </ItemGroup>
+
+</Project>

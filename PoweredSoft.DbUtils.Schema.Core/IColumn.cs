@@ -4,6 +4,11 @@ using System.Text;
 
 namespace PoweredSoft.DbUtils.Schema.Core
 {
+    public interface IColumnWithDateTimePrecision : IColumn
+    {
+        int? DateTimePrecision { get; }
+    }
+
     public interface IColumn : IHasDataType
     {
         string Name { get; }

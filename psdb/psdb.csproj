@@ -22,8 +22,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PoweredSoft.DbUtils.EF.Generator.Core\PoweredSoft.DbUtils.EF.Generator.Core.csproj" />
-    <ProjectReference Include="..\PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6\PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6.csproj" />
-    <ProjectReference Include="..\PoweredSoft.DbUtils.EF.Generator.SqlServer.EFCore\PoweredSoft.DbUtils.EF.Generator.SqlServer.EFCore.csproj" />
+    <ProjectReference Include="..\PoweredSoft.DbUtils.EF.Generator.EF6.Core\PoweredSoft.DbUtils.EF.Generator.EF6.Core.csproj" />
+    <ProjectReference Include="..\PoweredSoft.DbUtils.EF.Generator.EF6.SqlServer\PoweredSoft.DbUtils.EF.Generator.EF6.SqlServer.csproj" />
+    <ProjectReference Include="..\PoweredSoft.DbUtils.EF.Generator.EFCore.SqlServer\PoweredSoft.DbUtils.EF.Generator.EFCore.SqlServer.csproj" />
   </ItemGroup>
 </Project>

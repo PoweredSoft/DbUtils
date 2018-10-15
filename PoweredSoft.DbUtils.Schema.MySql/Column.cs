@@ -1,15 +1,12 @@
-﻿using PoweredSoft.DbUtils.Schema.Core;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
+using PoweredSoft.DbUtils.Schema.Core;
 
-namespace PoweredSoft.DbUtils.Schema.SqlServer
+namespace PoweredSoft.DbUtils.Schema.MySql
 {
     public class Column : IColumnWithDateTimePrecision
     {
-        public Table SqlServerTable { get; set; }
-        public ITable Table => SqlServerTable;
+        public Table MySqlTable { get; set; }
+        public ITable Table => MySqlTable;
 
         public string Name { get; set; }
         public string DataType { get; set; }
@@ -26,7 +23,7 @@ namespace PoweredSoft.DbUtils.Schema.SqlServer
 
         public override string ToString()
         {
-            var ret = $"{Table}.[{Name}]";
+            var ret = $"{Table}.`{Name}`";
             ret += $" {DataType} ";
             
             // possible data precision
