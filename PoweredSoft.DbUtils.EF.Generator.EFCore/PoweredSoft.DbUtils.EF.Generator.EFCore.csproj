@@ -2,20 +2,20 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>1.0.3</Version>
     <Copyright>Powered Softwares Inc.</Copyright>
     <PackageLicenseUrl>https://github.com/PoweredSoft/DbUtils/blob/master/LICENSE.md</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/PoweredSoft/DbUtils</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/PoweredSoft/DbUtils/PoweredSoft.DbUtils.EF.Generator.SqlServer</RepositoryUrl>
+    <RepositoryUrl>https://github.com/PoweredSoft/DbUtils/PoweredSoft.DbUtils.EF.Generator.EFCore</RepositoryUrl>
     <RepositoryType>github</RepositoryType>
     <PackageIconUrl></PackageIconUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.0.3</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PoweredSoft.DbUtils.EF.Generator.SqlServer.Core\PoweredSoft.DbUtils.EF.Generator.SqlServer.Core.csproj" />
+    <ProjectReference Include="..\PoweredSoft.DbUtils.EF.Generator.EFCore.Core\PoweredSoft.DbUtils.EF.Generator.EFCore.Core.csproj" />
     <ProjectReference Include="..\PoweredSoft.DbUtils.EF.Generator\PoweredSoft.DbUtils.EF.Generator.csproj" />
-    <ProjectReference Include="..\PoweredSoft.DbUtils.Schema.SqlServer\PoweredSoft.DbUtils.Schema.SqlServer.csproj" />
   </ItemGroup>
 
 </Project>

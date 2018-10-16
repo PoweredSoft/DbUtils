@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.DbUtils.Schema.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.DbUtils.Schema.Core", "PoweredSoft.DbUtils.Schema.Core\PoweredSoft.DbUtils.Schema.Core.csproj", "{F28995FD-C833-40A9-B74B-B66079EE836A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.DbUtils.EF.Generator.SqlServer.EFCore", "PoweredSoft.DbUtils.EF.Generator.SqlServer.EFCore\PoweredSoft.DbUtils.EF.Generator.SqlServer.EFCore.csproj", "{2B30A4DE-769A-4CEA-AADD-252550BADB0D}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.DbUtils.EF.Generator", "PoweredSoft.DbUtils.EF.Generator\PoweredSoft.DbUtils.EF.Generator.csproj", "{8A693570-EDFE-4F96-87BF-F5ECFDEF59B9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.DbUtils.EF.Generator.Core", "PoweredSoft.DbUtils.EF.Generator.Core\PoweredSoft.DbUtils.EF.Generator.Core.csproj", "{67B3F627-639C-41C3-81DE-D33CCC1BA328}"
@@ -16,8 +14,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.DbUtils.EF.Generator.SqlServer", "PoweredSoft.DbUtils.EF.Generator.SqlServer\PoweredSoft.DbUtils.EF.Generator.SqlServer.csproj", "{2748AE45-AE2E-490B-AD87-9D99971CBE61}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.DbUtils.EF.Generator.SqlServer.Core", "PoweredSoft.DbUtils.EF.Generator.SqlServer.Core\PoweredSoft.DbUtils.EF.Generator.SqlServer.Core.csproj", "{DF674EB3-D3D4-4B38-92B5-47ADF692A307}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6", "PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6\PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6.csproj", "{4D8CACA6-019A-4E4C-AAF2-DC8B23610E73}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.CodeGenerator", "..\CodeGenerator\PoweredSoft.CodeGenerator\PoweredSoft.CodeGenerator.csproj", "{44C9C724-8ED1-4DEE-9E4E-3A639FE0FB54}"
 EndProject
@@ -28,6 +24,26 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "psdb", "psdb\psdb.csproj", "{202B8A94-C3A0-4BE0-8772-50905E6759A7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.DbUtils.Schema.MySql", "PoweredSoft.DbUtils.Schema.MySql\PoweredSoft.DbUtils.Schema.MySql.csproj", "{634FA023-3317-44A1-AF67-CDD60B1D4C87}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dev-cli", "dev-cli\dev-cli.csproj", "{5A8677AB-A17E-4D64-B4D1-C6737B5132F7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.DbUtils.EF.Generator.EFCore", "PoweredSoft.DbUtils.EF.Generator.EFCore\PoweredSoft.DbUtils.EF.Generator.EFCore.csproj", "{19E195CF-F579-46A9-AAA5-C093D7C13030}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.DbUtils.EF.Generator.EF6", "PoweredSoft.DbUtils.EF.Generator.EF6\PoweredSoft.DbUtils.EF.Generator.EF6.csproj", "{34B0C8AF-C5E6-49CD-9AD1-1EA4157B6A76}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.DbUtils.EF.Generator.EFCore.Core", "PoweredSoft.DbUtils.EF.Generator.EFCore.Core\PoweredSoft.DbUtils.EF.Generator.EFCore.Core.csproj", "{684CB2E9-B437-4246-A5D3-A8AFC2122B99}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.DbUtils.EF.Generator.EF6.Core", "PoweredSoft.DbUtils.EF.Generator.EF6.Core\PoweredSoft.DbUtils.EF.Generator.EF6.Core.csproj", "{4DA2E15A-8AA8-4549-9C52-46F7C9AA761A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.DbUtils.EF.Generator.EF6.SqlServer", "PoweredSoft.DbUtils.EF.Generator.EF6.SqlServer\PoweredSoft.DbUtils.EF.Generator.EF6.SqlServer.csproj", "{4DE0CDD2-7A12-42D9-8383-991B52EEC4C6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.DbUtils.EF.Generator.EFCore.SqlServer", "PoweredSoft.DbUtils.EF.Generator.EFCore.SqlServer\PoweredSoft.DbUtils.EF.Generator.EFCore.SqlServer.csproj", "{2B956074-1371-4117-9525-D9C545939357}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PoweredSoft.DbUtils.EF.Generator.MySql", "PoweredSoft.DbUtils.EF.Generator.MySql\PoweredSoft.DbUtils.EF.Generator.MySql.csproj", "{D74610A0-E309-4F51-A168-2B9EA3E20C55}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PoweredSoft.DbUtils.EF.Generator.EFCore.MySql", "PoweredSoft.DbUtils.EF.Generator.EFCore.MySql\PoweredSoft.DbUtils.EF.Generator.EFCore.MySql.csproj", "{82174FEB-C78F-47C2-AEF8-471FDAE8248A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,10 +59,6 @@ Global
 		{F28995FD-C833-40A9-B74B-B66079EE836A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F28995FD-C833-40A9-B74B-B66079EE836A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F28995FD-C833-40A9-B74B-B66079EE836A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2B30A4DE-769A-4CEA-AADD-252550BADB0D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2B30A4DE-769A-4CEA-AADD-252550BADB0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2B30A4DE-769A-4CEA-AADD-252550BADB0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2B30A4DE-769A-4CEA-AADD-252550BADB0D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8A693570-EDFE-4F96-87BF-F5ECFDEF59B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8A693570-EDFE-4F96-87BF-F5ECFDEF59B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8A693570-EDFE-4F96-87BF-F5ECFDEF59B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -63,10 +75,6 @@ Global
 		{DF674EB3-D3D4-4B38-92B5-47ADF692A307}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DF674EB3-D3D4-4B38-92B5-47ADF692A307}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DF674EB3-D3D4-4B38-92B5-47ADF692A307}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4D8CACA6-019A-4E4C-AAF2-DC8B23610E73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4D8CACA6-019A-4E4C-AAF2-DC8B23610E73}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4D8CACA6-019A-4E4C-AAF2-DC8B23610E73}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4D8CACA6-019A-4E4C-AAF2-DC8B23610E73}.Release|Any CPU.Build.0 = Release|Any CPU
 		{44C9C724-8ED1-4DEE-9E4E-3A639FE0FB54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{44C9C724-8ED1-4DEE-9E4E-3A639FE0FB54}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{44C9C724-8ED1-4DEE-9E4E-3A639FE0FB54}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -75,6 +83,46 @@ Global
 		{202B8A94-C3A0-4BE0-8772-50905E6759A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{202B8A94-C3A0-4BE0-8772-50905E6759A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{202B8A94-C3A0-4BE0-8772-50905E6759A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{634FA023-3317-44A1-AF67-CDD60B1D4C87}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{634FA023-3317-44A1-AF67-CDD60B1D4C87}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{634FA023-3317-44A1-AF67-CDD60B1D4C87}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{634FA023-3317-44A1-AF67-CDD60B1D4C87}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A8677AB-A17E-4D64-B4D1-C6737B5132F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A8677AB-A17E-4D64-B4D1-C6737B5132F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A8677AB-A17E-4D64-B4D1-C6737B5132F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A8677AB-A17E-4D64-B4D1-C6737B5132F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19E195CF-F579-46A9-AAA5-C093D7C13030}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19E195CF-F579-46A9-AAA5-C093D7C13030}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19E195CF-F579-46A9-AAA5-C093D7C13030}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19E195CF-F579-46A9-AAA5-C093D7C13030}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34B0C8AF-C5E6-49CD-9AD1-1EA4157B6A76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34B0C8AF-C5E6-49CD-9AD1-1EA4157B6A76}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34B0C8AF-C5E6-49CD-9AD1-1EA4157B6A76}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34B0C8AF-C5E6-49CD-9AD1-1EA4157B6A76}.Release|Any CPU.Build.0 = Release|Any CPU
+		{684CB2E9-B437-4246-A5D3-A8AFC2122B99}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{684CB2E9-B437-4246-A5D3-A8AFC2122B99}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{684CB2E9-B437-4246-A5D3-A8AFC2122B99}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{684CB2E9-B437-4246-A5D3-A8AFC2122B99}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4DA2E15A-8AA8-4549-9C52-46F7C9AA761A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4DA2E15A-8AA8-4549-9C52-46F7C9AA761A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4DA2E15A-8AA8-4549-9C52-46F7C9AA761A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4DA2E15A-8AA8-4549-9C52-46F7C9AA761A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4DE0CDD2-7A12-42D9-8383-991B52EEC4C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4DE0CDD2-7A12-42D9-8383-991B52EEC4C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4DE0CDD2-7A12-42D9-8383-991B52EEC4C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4DE0CDD2-7A12-42D9-8383-991B52EEC4C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B956074-1371-4117-9525-D9C545939357}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B956074-1371-4117-9525-D9C545939357}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B956074-1371-4117-9525-D9C545939357}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B956074-1371-4117-9525-D9C545939357}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D74610A0-E309-4F51-A168-2B9EA3E20C55}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D74610A0-E309-4F51-A168-2B9EA3E20C55}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D74610A0-E309-4F51-A168-2B9EA3E20C55}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D74610A0-E309-4F51-A168-2B9EA3E20C55}.Release|Any CPU.Build.0 = Release|Any CPU
+		{82174FEB-C78F-47C2-AEF8-471FDAE8248A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{82174FEB-C78F-47C2-AEF8-471FDAE8248A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{82174FEB-C78F-47C2-AEF8-471FDAE8248A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{82174FEB-C78F-47C2-AEF8-471FDAE8248A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

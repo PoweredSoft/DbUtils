@@ -1,15 +1,12 @@
-﻿using PoweredSoft.DbUtils.Schema.Core;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
+using PoweredSoft.DbUtils.Schema.Core;
 
-namespace PoweredSoft.DbUtils.Schema.SqlServer
+namespace PoweredSoft.DbUtils.Schema.MySql
 {
     public class Column : IColumnWithDateTimePrecision
     {
-        public Table SqlServerTable { get; set; }
-        public ITable Table => SqlServerTable;
+        public Table MySqlTable { get; set; }
+        public ITable Table => MySqlTable;
 
         public string Name { get; set; }
         public string DataType { get; set; }
@@ -23,11 +20,12 @@ namespace PoweredSoft.DbUtils.Schema.SqlServer
         public int PrimaryKeyOrder { get; set; }
         public bool IsForeignKey => Table.ForeignKeys.Any(t => t.ForeignKeyColumn.Name == Name);
         public bool IsNullable { get; set; }
-        public bool IsUnsigned => false;
+        public string RawColumnType { get; set; }
+        public bool IsUnsigned => RawColumnType.IndexOf("unsigned", System.StringComparison.InvariantCultureIgnoreCase) > -1;
 
         public override string ToString()
         {
-            var ret = $"{Table}.[{Name}]";
+            var ret = $"{Table}.`{Name}`";
             ret += $" {DataType} ";
             
             // possible data precision
