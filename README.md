@@ -16,6 +16,7 @@
 init
       --config                    Is optional (default <psdb.json>).
       --version                   Is optional (default <core>).
+      --engine                    Is optional (default <SqlServer>). (other option is MySql)
       --context-name              Is optional.
       --connection-string         Is optional.
       --output-dir                Is optional.
