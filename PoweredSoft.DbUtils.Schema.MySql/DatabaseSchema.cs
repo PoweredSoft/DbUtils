@@ -231,7 +231,7 @@ namespace PoweredSoft.DbUtils.Schema.MySql
                         column.DataType = reader["DATA_TYPE"] as string;
                         column.Name = reader["COLUMN_NAME"] as string;
                         column.IsAutoIncrement = reader["IS_AUTO_INCREMENT"] is DBNull ? false : Convert.ToBoolean(reader["IS_AUTO_INCREMENT"]);
-
+                        column.IsUnsigned = (reader["COLUMN_TYPE"] as string).IndexOf("unsigned", StringComparison.InvariantCultureIgnoreCase) > -1;
 
 
                         // default.

@@ -67,7 +67,7 @@ namespace PoweredSoft.DbUtils.Schema.MySql {
         ///    DATA_TYPE,
         ///    COLUMN_NAME,
         ///    COLUMN_DEFAULT,
-        ///    CHARACTER_MAXIMUM_LENGTH,
+        ///   COLUMN_TYPE, CHARACTER_MAXIMUM_LENGTH,
         ///    NUMERIC_PRECISION,
         ///    NUMERIC_SCALE,
         ///    DATETIME_PRECISION,

@@ -14,5 +14,6 @@ namespace PoweredSoft.DbUtils.Schema.MySql
         public int? NumericPrecision { get; set; }
         public int? NumericScale { get; set; }
         public object MinValue { get; set; }
+        public bool IsUnsigned => false;
     }
 }

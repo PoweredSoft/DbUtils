@@ -9,5 +9,6 @@ namespace PoweredSoft.DbUtils.Schema.Core
         string DataType { get; }
         int? NumericPrecision { get; }
         int? NumericScale { get; }
+        bool IsUnsigned { get; }
     }
 }

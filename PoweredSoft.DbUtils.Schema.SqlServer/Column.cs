@@ -23,6 +23,7 @@ namespace PoweredSoft.DbUtils.Schema.SqlServer
         public int PrimaryKeyOrder { get; set; }
         public bool IsForeignKey => Table.ForeignKeys.Any(t => t.ForeignKeyColumn.Name == Name);
         public bool IsNullable { get; set; }
+        public bool IsUnsigned => false;
 
         public override string ToString()
         {
