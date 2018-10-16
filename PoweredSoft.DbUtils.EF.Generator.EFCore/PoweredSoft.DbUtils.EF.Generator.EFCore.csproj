@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PoweredSoft.DbUtils.EF.Generator.EFCore.Core\PoweredSoft.DbUtils.EF.Generator.EFCore.Core.csproj" />
+    <ProjectReference Include="..\PoweredSoft.DbUtils.EF.Generator\PoweredSoft.DbUtils.EF.Generator.csproj" />
+  </ItemGroup>
+
+</Project>

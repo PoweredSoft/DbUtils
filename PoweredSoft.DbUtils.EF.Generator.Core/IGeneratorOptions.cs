@@ -24,5 +24,6 @@ namespace PoweredSoft.DbUtils.EF.Generator.Core
         string ModelInterfaceSuffix { get; set; }
         List<string> ModelInheritances { get; set; }
         string Version { get; }
+        string Engine { get; }
     }
 }

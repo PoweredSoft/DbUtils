@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PoweredSoft.DbUtils.EF.Generator.EFCore.Core\PoweredSoft.DbUtils.EF.Generator.EFCore.Core.csproj" />
+    <ProjectReference Include="..\PoweredSoft.DbUtils.EF.Generator.EFCore\PoweredSoft.DbUtils.EF.Generator.EFCore.csproj" />
+    <ProjectReference Include="..\PoweredSoft.DbUtils.EF.Generator.MySql\PoweredSoft.DbUtils.EF.Generator.MySql.csproj" />
+    <ProjectReference Include="..\PoweredSoft.DbUtils.Schema.MySql\PoweredSoft.DbUtils.Schema.MySql.csproj" />
+  </ItemGroup>
+
+</Project>

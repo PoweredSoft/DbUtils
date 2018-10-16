@@ -3,6 +3,7 @@ using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using PoweredSoft.DbUtils.EF.Generator.Core;
+using PoweredSoft.DbUtils.EF.Generator.EF6.Core;
 using SysCommand.ConsoleApp;
 
 namespace psdb
@@ -11,12 +12,28 @@ namespace psdb
     {
         internal static Func<IGenerator> CreateGeneratorFunc { get; set; }
 
-        private void EnsureGenerator(string version)
+        private void EnsureGenerator(string version, string engine)
         {
+            CreateGeneratorFunc = null;
+
             if (version.Equals("core", StringComparison.InvariantCultureIgnoreCase))
-                CreateGeneratorFunc = () => new PoweredSoft.DbUtils.EF.Generator.SqlServer.EFCore.SqlServerGenerator();
+            {
+                if (engine.Equals("SqlServer", StringComparison.InvariantCultureIgnoreCase))
+                    CreateGeneratorFunc = () => new PoweredSoft.DbUtils.EF.Generator.EFCore.SqlServer.DatabaseGenerator();
+                else if (engine.Equals("MySql", StringComparison.InvariantCultureIgnoreCase))
+                    CreateGeneratorFunc = () => new PoweredSoft.DbUtils.EF.Generator.EFCore.MySql.DatabaseGenerator();
+            }
             else if (version.IndexOf("6", StringComparison.InvariantCultureIgnoreCase) > -1)
-                CreateGeneratorFunc = () => new PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6.SqlServerGenerator();
+            {
+                if (engine.Equals("SqlServer", StringComparison.InvariantCultureIgnoreCase))
+                    CreateGeneratorFunc = () => new PoweredSoft.DbUtils.EF.Generator.EF6.SqlServer.DatabaseGenerator();
+            }
+
+            if (CreateGeneratorFunc == null)
+            {
+                this.App.Console.Error($"{engine} is not supported for entity framework {version}");
+                CreateGeneratorFunc = () => null;
+            }
         }
 
         public void OutputEnvironmentDir()
@@ -34,6 +51,9 @@ namespace psdb
 
             EnsureVersionFromConfig(config);
             var generator = CreateGeneratorFunc();
+            if (generator == null)
+                return;
+
             generator.LoadOptionsFromJson(config);
             generator.Generate();
             this.App.Console.Success("Context has been generated successfully", true, true);
@@ -44,25 +64,29 @@ namespace psdb
             var json = File.ReadAllText(config);
             var anonymous = JsonConvert.DeserializeObject(json) as JObject;
             var version = anonymous.GetValue("Version").Value<string>();
-            EnsureGenerator(version);
+            var engine = anonymous.GetValue("Engine").Value<string>();
+            EnsureGenerator(version, engine);
         }
 
-        public void Init(string config = "psdb.json", string version = "core", 
+        public void Init(string config = "psdb.json", string version = "core", string engine = "SqlServer",
             string contextName = null, string connectionString = null, string outputDir = null, string outputFile = null,
             string @namespace = null, string connectionStringName = null)
         {
-            EnsureGenerator(version);
+            EnsureGenerator(version, engine);
+            var gen = CreateGeneratorFunc();
+            if (gen == null)
+                return;
 
-            var options = CreateGeneratorFunc().GetDefaultOptions();
+            var options = gen.GetDefaultOptions();
             options.ContextName = contextName;
             options.ConnectionString = connectionString;
             options.OutputDir = outputDir ?? Environment.CurrentDirectory;
             options.OutputSingleFileName = outputFile;
             options.Namespace = @namespace;
 
-            if (options is PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6.SqlServerGeneratorOptions)
+            if (options is IEF6GeneratorOptions)
             {
-                var ef6Options = options as PoweredSoft.DbUtils.EF.Generator.SqlServer.EF6.SqlServerGeneratorOptions;
+                var ef6Options = options as IEF6GeneratorOptions;
                 ef6Options.ConnectionStringName = connectionStringName;
             }
 
