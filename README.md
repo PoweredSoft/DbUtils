@@ -1,6 +1,9 @@
 # Getting started
 
-> dotnet tool install --global psdb
+## Download
+NuGet | NuGet Install
+:-------------: | :-------------:
+<a href="https://www.nuget.org/packages/psdb/" target="_blank">[![NuGet](https://img.shields.io/nuget/v/psdb.svg?style=flat-square&label=nuget)](https://www.nuget.org/packages/psdb/)</a> | ```PM> dotnet tool install --global psdb```
 
 > psdb help
 
