@@ -14,15 +14,25 @@ namespace psdb
 
         private void EnsureGenerator(string version, string engine)
         {
+            CreateGeneratorFunc = null;
+
             if (version.Equals("core", StringComparison.InvariantCultureIgnoreCase))
             {
                 if (engine.Equals("SqlServer", StringComparison.InvariantCultureIgnoreCase))
                     CreateGeneratorFunc = () => new PoweredSoft.DbUtils.EF.Generator.EFCore.SqlServer.DatabaseGenerator();
+                else if (engine.Equals("MySql", StringComparison.InvariantCultureIgnoreCase))
+                    CreateGeneratorFunc = () => new PoweredSoft.DbUtils.EF.Generator.EFCore.MySql.DatabaseGenerator();
             }
             else if (version.IndexOf("6", StringComparison.InvariantCultureIgnoreCase) > -1)
             {
                 if (engine.Equals("SqlServer", StringComparison.InvariantCultureIgnoreCase))
                     CreateGeneratorFunc = () => new PoweredSoft.DbUtils.EF.Generator.EF6.SqlServer.DatabaseGenerator();
+            }
+
+            if (CreateGeneratorFunc == null)
+            {
+                this.App.Console.Error($"{engine} is not supported for entity framework {version}");
+                CreateGeneratorFunc = () => null;
             }
         }
 
@@ -41,6 +51,9 @@ namespace psdb
 
             EnsureVersionFromConfig(config);
             var generator = CreateGeneratorFunc();
+            if (generator == null)
+                return;
+
             generator.LoadOptionsFromJson(config);
             generator.Generate();
             this.App.Console.Success("Context has been generated successfully", true, true);
@@ -60,8 +73,11 @@ namespace psdb
             string @namespace = null, string connectionStringName = null)
         {
             EnsureGenerator(version, engine);
+            var gen = CreateGeneratorFunc();
+            if (gen == null)
+                return;
 
-            var options = CreateGeneratorFunc().GetDefaultOptions();
+            var options = gen.GetDefaultOptions();
             options.ContextName = contextName;
             options.ConnectionString = connectionString;
             options.OutputDir = outputDir ?? Environment.CurrentDirectory;
