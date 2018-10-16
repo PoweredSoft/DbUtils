@@ -171,14 +171,6 @@ where
 FROM 
 	INFORMATION_SCHEMA.STATISTICS S
 WHERE
-	S.TABLE_SCHEMA = 'Acme'
-;
-
-SELECT
-	*
-FROM 
-	INFORMATION_SCHEMA.STATISTICS S
-WHERE
 	S.TABLE_SCHEMA = @DatabaseName;</value>
   </data>
   <data name="FetchPrimaryKeys" xml:space="preserve">

@@ -26,6 +26,7 @@ namespace PoweredSoft.DbUtils.EF.Generator.EFCore
         protected abstract bool IsSetNull(string action);
         protected abstract string GetNextValueRawSql(ISequence sequence);
 
+        protected virtual bool ShouldGenerateIndex(IIndex index) => true;
         protected virtual string ToTableFluent(ITable table) => $"ToTable(\"{table.Name}\")";
 
         protected override void GenerateManyToMany(ITable table)
@@ -195,6 +196,9 @@ namespace PoweredSoft.DbUtils.EF.Generator.EFCore
 
             table.Indexes.ForEach(i =>
             {
+                if (!ShouldGenerateIndex(i))
+                    return;
+
                 var line = RawLineBuilder.Create();
 
                 string rightExpr;
@@ -295,6 +299,8 @@ namespace PoweredSoft.DbUtils.EF.Generator.EFCore
             methodBuilder.Add(RawLineBuilder.Create(modelFluentLine));
             methodBuilder.AddEmptyLine();
         }
+
+       
 
         protected virtual void OnBeforeIndexLineAdded(RawLineBuilder line, IIndex index)
         {

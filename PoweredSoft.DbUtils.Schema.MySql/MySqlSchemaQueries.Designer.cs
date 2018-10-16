@@ -118,14 +118,6 @@ namespace PoweredSoft.DbUtils.Schema.MySql {
         ///FROM 
         ///	INFORMATION_SCHEMA.STATISTICS S
         ///WHERE
-        ///	S.TABLE_SCHEMA = &apos;Acme&apos;
-        ///;
-        ///
-        ///SELECT
-        ///	*
-        ///FROM 
-        ///	INFORMATION_SCHEMA.STATISTICS S
-        ///WHERE
         ///	S.TABLE_SCHEMA = @DatabaseName;.
         /// </summary>
         internal static string FetchIndexes {

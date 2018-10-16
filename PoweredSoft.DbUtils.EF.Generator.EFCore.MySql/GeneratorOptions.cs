@@ -28,5 +28,7 @@ namespace PoweredSoft.DbUtils.EF.Generator.EFCore.MySql
         public string Engine => "MySql";
         public string ConnectionStringName { get; set; }
         public bool AddConnectionStringOnGenerate { get; set; } = false;
+        public bool DontGeneratePrimaryIndexes { get; set; } = true;
+        public bool DontGenerateForeignKeyIndexes { get; set; } = true;
     }
 }

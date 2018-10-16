@@ -20,7 +20,8 @@ namespace PoweredSoft.DbUtils.Schema.MySql
         public int PrimaryKeyOrder { get; set; }
         public bool IsForeignKey => Table.ForeignKeys.Any(t => t.ForeignKeyColumn.Name == Name);
         public bool IsNullable { get; set; }
-        public bool IsUnsigned { get; set; }
+        public string RawColumnType { get; set; }
+        public bool IsUnsigned => RawColumnType.IndexOf("unsigned", System.StringComparison.InvariantCultureIgnoreCase) > -1;
 
         public override string ToString()
         {
