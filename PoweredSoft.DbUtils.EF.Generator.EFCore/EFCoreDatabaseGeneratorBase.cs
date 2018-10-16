@@ -21,10 +21,12 @@ namespace PoweredSoft.DbUtils.EF.Generator.EFCore
         public override bool ForeignKeysShouldBeVirtual() => false;
 
         protected abstract RawLineBuilder UseDatabaseEngineConnectionStringLine();
-        protected abstract string ToTableFluent(ITable table);
+        
         protected abstract bool IsCascade(string action);
         protected abstract bool IsSetNull(string action);
         protected abstract string GetNextValueRawSql(ISequence sequence);
+
+        protected virtual string ToTableFluent(ITable table) => $"ToTable(\"{table.Name}\")";
 
         protected override void GenerateManyToMany(ITable table)
         {

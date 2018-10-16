@@ -43,6 +43,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.DbUtils.EF.Gene
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PoweredSoft.DbUtils.EF.Generator.MySql", "PoweredSoft.DbUtils.EF.Generator.MySql\PoweredSoft.DbUtils.EF.Generator.MySql.csproj", "{D74610A0-E309-4F51-A168-2B9EA3E20C55}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PoweredSoft.DbUtils.EF.Generator.EFCore.MySql", "PoweredSoft.DbUtils.EF.Generator.EFCore.MySql\PoweredSoft.DbUtils.EF.Generator.EFCore.MySql.csproj", "{82174FEB-C78F-47C2-AEF8-471FDAE8248A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -117,6 +119,10 @@ Global
 		{D74610A0-E309-4F51-A168-2B9EA3E20C55}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D74610A0-E309-4F51-A168-2B9EA3E20C55}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D74610A0-E309-4F51-A168-2B9EA3E20C55}.Release|Any CPU.Build.0 = Release|Any CPU
+		{82174FEB-C78F-47C2-AEF8-471FDAE8248A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{82174FEB-C78F-47C2-AEF8-471FDAE8248A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{82174FEB-C78F-47C2-AEF8-471FDAE8248A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{82174FEB-C78F-47C2-AEF8-471FDAE8248A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -18,5 +18,6 @@ namespace PoweredSoft.DbUtils.Schema.SqlServer
         public int? NumericPrecision { get; set; }
         public int? NumericScale { get; set; }
         public object MinValue { get; set; }
+        public bool IsUnsigned => false;
     }
 }
