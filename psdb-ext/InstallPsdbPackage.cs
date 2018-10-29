@@ -37,6 +37,7 @@ namespace psdb_ext
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [Guid(InstallPsdbPackage.PackageGuidString)]
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "pkgdef, VS and vsixmanifest are valid VS terms")]
+    [ProvideToolWindow(typeof(InitWindow))]
     public sealed class InstallPsdbPackage : AsyncPackage
     {
         /// <summary>
@@ -71,6 +72,9 @@ namespace psdb_ext
             await this.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
             await InstallPsdb.InitializeAsync(this);
             await UpdatePsdb.InitializeAsync(this);
+            await InitCommand.InitializeAsync(this);
+            await InitWindowCommand.InitializeAsync(this);
+            await GenerateCommand.InitializeAsync(this);
         }
 
         #endregion

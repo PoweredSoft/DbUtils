@@ -26,7 +26,7 @@ namespace psdb_ext
             }
         }
 
-        public static void InvokeCommandLineAndOutput(string exeName, string arguments, int timeout = 5000)
+        public static void InvokeCommandLineAndOutput(string exeName, string arguments, int timeout = 5000, string executeIn = null)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
@@ -37,6 +37,10 @@ namespace psdb_ext
             process.StartInfo.RedirectStandardOutput = true;
             process.StartInfo.RedirectStandardError = true;
             process.StartInfo.CreateNoWindow = true;
+
+            if (executeIn != null)
+                process.StartInfo.WorkingDirectory = executeIn;
+
             process.Start();
 
 
