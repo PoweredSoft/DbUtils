@@ -41,9 +41,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.DbUtils.EF.Gene
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.DbUtils.EF.Generator.EFCore.SqlServer", "PoweredSoft.DbUtils.EF.Generator.EFCore.SqlServer\PoweredSoft.DbUtils.EF.Generator.EFCore.SqlServer.csproj", "{2B956074-1371-4117-9525-D9C545939357}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PoweredSoft.DbUtils.EF.Generator.MySql", "PoweredSoft.DbUtils.EF.Generator.MySql\PoweredSoft.DbUtils.EF.Generator.MySql.csproj", "{D74610A0-E309-4F51-A168-2B9EA3E20C55}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.DbUtils.EF.Generator.MySql", "PoweredSoft.DbUtils.EF.Generator.MySql\PoweredSoft.DbUtils.EF.Generator.MySql.csproj", "{D74610A0-E309-4F51-A168-2B9EA3E20C55}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PoweredSoft.DbUtils.EF.Generator.EFCore.MySql", "PoweredSoft.DbUtils.EF.Generator.EFCore.MySql\PoweredSoft.DbUtils.EF.Generator.EFCore.MySql.csproj", "{82174FEB-C78F-47C2-AEF8-471FDAE8248A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.DbUtils.EF.Generator.EFCore.MySql", "PoweredSoft.DbUtils.EF.Generator.EFCore.MySql\PoweredSoft.DbUtils.EF.Generator.EFCore.MySql.csproj", "{82174FEB-C78F-47C2-AEF8-471FDAE8248A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "psdb-ext", "psdb-ext\psdb-ext.csproj", "{8B7B79BB-E29A-4569-8184-077A82B8F68D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -123,6 +125,10 @@ Global
 		{82174FEB-C78F-47C2-AEF8-471FDAE8248A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{82174FEB-C78F-47C2-AEF8-471FDAE8248A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{82174FEB-C78F-47C2-AEF8-471FDAE8248A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8B7B79BB-E29A-4569-8184-077A82B8F68D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B7B79BB-E29A-4569-8184-077A82B8F68D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B7B79BB-E29A-4569-8184-077A82B8F68D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B7B79BB-E29A-4569-8184-077A82B8F68D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
