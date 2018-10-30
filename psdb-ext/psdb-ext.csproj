@@ -52,8 +52,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="GenerateCommand.cs" />
+    <Compile Include="GenerateOnProjectCommand.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="InitCommand.cs" />
+    <Compile Include="InitOnProjectCommand.cs" />
     <Compile Include="InitWindow.cs" />
     <Compile Include="InitWindowCommand.cs" />
     <Compile Include="InitWindowControl.xaml.cs">
@@ -76,7 +78,9 @@
       <ResourceName>Menus.ctmenu</ResourceName>
     </VSCTCompile>
     <Content Include="Resources\GenerateCommand.png" />
+    <Content Include="Resources\GenerateOnProjectcommand.png" />
     <Content Include="Resources\InitCommand.png" />
+    <Content Include="Resources\InitOnProjectCommand.png" />
     <Content Include="Resources\InitWindowCommand.png" />
     <Content Include="Resources\InstallPsdb.png" />
     <Content Include="Resources\InstallPsdbPackage.ico" />

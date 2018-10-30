@@ -75,6 +75,8 @@ namespace psdb_ext
             await InitCommand.InitializeAsync(this);
             await InitWindowCommand.InitializeAsync(this);
             await GenerateCommand.InitializeAsync(this);
+            await InitOnProjectCommand.InitializeAsync(this);
+            await GenerateOnProjectCommand.InitializeAsync(this);
         }
 
         #endregion

@@ -17,7 +17,7 @@
         public void ResolveNamespace()
         {
             var start = CurrentDirectory.IndexOf(ProjectName);
-            var nameSpace = CurrentDirectory.Substring(start).Replace('\\', '.');
+            var nameSpace = CurrentDirectory.Substring(start).Replace('\\', '.').TrimEnd('.');
             this.textNamespace.Text = nameSpace;
         }
 
@@ -41,14 +41,12 @@
             var version = this.cbEngine.SelectedIndex == 0 ? "core" : "6";
             var engine = this.cbEngine.SelectedIndex == 0 ? "SqlServer" : "MySQL";
 
-            var cmdText = $"init --version {version} --engine {engine} --context-name=\"{this.textContextName.Text}\" --output-dir \"./\" --namespace {this.textNamespace.Text} --connection-string \"{this.txtConnectionString.Text}\"";
+            var cmdText = $"init --version {version} --engine {engine} --context-name=\"{this.textContextName.Text}\" --output-dir \"./\" --namespace {this.textNamespace.Text} --connection-string \"{this.txtConnectionString.Text}\" --output-file=\"{this.textContextName.Text}.generated.cs\"";
 
             Helpers.InvokeCommandLineAndOutput("psdb", cmdText, executeIn: CurrentDirectory);
             var window = Window.GetWindow(this);
             window.Close();
         }
-
-        
 
         /// <summary>
         /// Handles click on the button by displaying a message box.
@@ -61,16 +59,6 @@
         {
             var window = Window.GetWindow(this);
             window.Close();
-        }
-
-        private void ComboBoxItem_Selected(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
         }
     }
 }

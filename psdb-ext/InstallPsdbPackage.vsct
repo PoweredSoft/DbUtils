@@ -36,8 +36,12 @@
          group as the part of a menu contained between two lines. The parent of a group
          must be a menu. -->
     <Groups>
-      <Group guid="guidInstallPsdbPackageCmdSet" id="MySolutionExplorerGroup" priority="0xF000">
-        <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_FOLDERNODE" />
+      <Group guid="guidInstallPsdbPackageCmdSet" id="MySolutionExplorerFolderGroup" priority="0xF000">
+          <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_FOLDERNODE" />
+      </Group>
+
+      <Group guid="guidInstallPsdbPackageCmdSet" id="MySolutionExplorerProjectGroup" priority="0xF000">
+        <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_PROJNODE" />
       </Group>
       
       <Group guid="guidInstallPsdbPackageCmdSet" id="MyMenuGroup" priority="0x0600">
@@ -71,15 +75,29 @@
         </Strings>
       </Button>
       <Button guid="guidInstallPsdbPackageCmdSet" id="cmdidInitCommand" priority="0x0100" type="Button">
-        <Parent guid="guidInstallPsdbPackageCmdSet" id="MySolutionExplorerGroup" />
+        <Parent guid="guidInstallPsdbPackageCmdSet" id="MySolutionExplorerFolderGroup" />
         <Icon guid="guidImages3" id="bmpPic1" />
         <Strings>
           <ButtonText>PSDB Init</ButtonText>
         </Strings>
       </Button>
       <Button guid="guidInstallPsdbPackageCmdSet" id="cmdidGenerateCommand" priority="0x0100" type="Button">
-        <Parent guid="guidInstallPsdbPackageCmdSet" id="MySolutionExplorerGroup" />
+        <Parent guid="guidInstallPsdbPackageCmdSet" id="MySolutionExplorerFolderGroup" />
         <Icon guid="guidImages5" id="bmpPic1" />
+        <Strings>
+          <ButtonText>PSDB Generate</ButtonText>
+        </Strings>
+      </Button>
+      <Button guid="guidInstallPsdbPackageCmdSet" id="cmdidInitOnProjectCommand" priority="0x0100" type="Button">
+        <Parent guid="guidInstallPsdbPackageCmdSet" id="MySolutionExplorerProjectGroup" />
+        <Icon guid="guidImages6" id="bmpPic1" />
+        <Strings>
+          <ButtonText>PSDB Init</ButtonText>
+        </Strings>
+      </Button>
+      <Button guid="guidInstallPsdbPackageCmdSet" id="cmdidGenerateOnProjectcommand" priority="0x0100" type="Button">
+        <Parent guid="guidInstallPsdbPackageCmdSet" id="MySolutionExplorerProjectGroup" />
+        <Icon guid="guidImages7" id="bmpPic1" />
         <Strings>
           <ButtonText>PSDB Generate</ButtonText>
         </Strings>
@@ -98,6 +116,8 @@
       <Bitmap guid="guidImages3" href="Resources\InitCommand.png" usedList="bmpPic1, bmpPic2, bmpPicSearch, bmpPicX, bmpPicArrows, bmpPicStrikethrough" />
       <Bitmap guid="guidImages4" href="Resources\InitWindowCommand.png" usedList="bmpPic1, bmpPic2, bmpPicSearch, bmpPicX, bmpPicArrows, bmpPicStrikethrough" />
       <Bitmap guid="guidImages5" href="Resources\GenerateCommand.png" usedList="bmpPic1, bmpPic2, bmpPicSearch, bmpPicX, bmpPicArrows, bmpPicStrikethrough" />
+      <Bitmap guid="guidImages6" href="Resources\InitOnProjectCommand.png" usedList="bmpPic1, bmpPic2, bmpPicSearch, bmpPicX, bmpPicArrows, bmpPicStrikethrough" />
+      <Bitmap guid="guidImages7" href="Resources\GenerateOnProjectcommand.png" usedList="bmpPic1, bmpPic2, bmpPicSearch, bmpPicX, bmpPicArrows, bmpPicStrikethrough" />
     </Bitmaps>
   </Commands>
 
@@ -108,12 +128,15 @@
     <!-- This is the guid used to group the menu commands together -->
     <GuidSymbol name="guidInstallPsdbPackageCmdSet" value="{c589c84a-06cb-406f-a31b-a8ebf4d137c8}">
       <IDSymbol name="MyMenuGroup" value="0x1020" />
-      <IDSymbol name="MySolutionExplorerGroup" value="0x190" />
+      <IDSymbol name="MySolutionExplorerFolderGroup" value="0x190" />
+      <IDSymbol name="MySolutionExplorerProjectGroup" value="0x191" />
       <IDSymbol name="InstallPsdbId" value="0x0100" />
       <IDSymbol value="4129" name="cmdidUpdatePsdb" />
       <IDSymbol value="4130" name="cmdidInitCommand" />
       <IDSymbol value="4131" name="cmdidInitWindowCommand" />
       <IDSymbol value="4132" name="cmdidGenerateCommand" />
+      <IDSymbol value="4133" name="cmdidInitOnProjectCommand" />
+      <IDSymbol value="4134" name="cmdidGenerateOnProjectcommand" />
     </GuidSymbol>
 
     <GuidSymbol name="guidImages" value="{aaf61f72-8c4c-4f71-afd8-047aeb8c24e7}">
@@ -162,6 +185,24 @@
     </GuidSymbol>
   
     <GuidSymbol value="{3cc34732-7049-47b6-a211-956364362ed0}" name="guidImages5">
+      <IDSymbol name="bmpPic1" value="1" />
+      <IDSymbol name="bmpPic2" value="2" />
+      <IDSymbol name="bmpPicSearch" value="3" />
+      <IDSymbol name="bmpPicX" value="4" />
+      <IDSymbol name="bmpPicArrows" value="5" />
+      <IDSymbol name="bmpPicStrikethrough" value="6" />
+    </GuidSymbol>
+  
+    <GuidSymbol value="{aa3a7401-9c26-4acf-9058-55bcb1fe2397}" name="guidImages6">
+      <IDSymbol name="bmpPic1" value="1" />
+      <IDSymbol name="bmpPic2" value="2" />
+      <IDSymbol name="bmpPicSearch" value="3" />
+      <IDSymbol name="bmpPicX" value="4" />
+      <IDSymbol name="bmpPicArrows" value="5" />
+      <IDSymbol name="bmpPicStrikethrough" value="6" />
+    </GuidSymbol>
+  
+    <GuidSymbol value="{7043951d-b65f-46ed-b366-40635442f42c}" name="guidImages7">
       <IDSymbol name="bmpPic1" value="1" />
       <IDSymbol name="bmpPic2" value="2" />
       <IDSymbol name="bmpPicSearch" value="3" />

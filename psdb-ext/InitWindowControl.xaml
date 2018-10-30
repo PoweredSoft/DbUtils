@@ -7,53 +7,55 @@
              Background="{DynamicResource {x:Static vsshell:VsBrushes.WindowKey}}"
              Foreground="{DynamicResource {x:Static vsshell:VsBrushes.WindowTextKey}}"
              mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="500"
+             d:DesignHeight="200" d:DesignWidth="500"
              Name="MyToolWindow">
+
     <Grid>
+
         <Grid.ColumnDefinitions>
-            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition Width="1*"></ColumnDefinition>
+            <ColumnDefinition Width="2*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
-            <RowDefinition></RowDefinition>
-            <RowDefinition></RowDefinition>
-            <RowDefinition></RowDefinition>
-            <RowDefinition></RowDefinition>
-            <RowDefinition></RowDefinition>
-            <RowDefinition></RowDefinition>
-            <RowDefinition></RowDefinition>
-            <RowDefinition></RowDefinition>
-            <RowDefinition></RowDefinition>
-            <RowDefinition></RowDefinition>
-            <RowDefinition></RowDefinition>
+            <RowDefinition MinHeight="28"></RowDefinition>
+            <RowDefinition MinHeight="28"></RowDefinition>
+            <RowDefinition MinHeight="28"></RowDefinition>
+            <RowDefinition MinHeight="28"></RowDefinition>
+            <RowDefinition MinHeight="28"></RowDefinition>
+            <RowDefinition MinHeight="28"></RowDefinition>
         </Grid.RowDefinitions>
 
-        <Label Grid.Row="0" Grid.Column="0">Version</Label>
-        <ComboBox Width="Auto" Grid.Row="1" Grid.Column="0" SelectionChanged="ComboBox_SelectionChanged" Name="cbVersion" SelectedIndex="0">
-            <ComboBoxItem Content="Entity Framework Core" HorizontalAlignment="Left" Width="298" Selected="ComboBoxItem_Selected"/>
-            <ComboBoxItem Content="Entity Framework 6" HorizontalAlignment="Left" Width="298" />
+  
+        <Label Grid.Row="0" Grid.Column="0" MinWidth="150">Version</Label>
+        <ComboBox Grid.Row="0" Grid.Column="1" Name="cbVersion" SelectedIndex="0" MinWidth="200" Margin="5,5,5,5">
+            <ComboBoxItem Content="Entity Framework Core" HorizontalAlignment="Left"/>
+            <ComboBoxItem Content="Entity Framework 6" HorizontalAlignment="Left"/>
         </ComboBox>
 
-        <Label Grid.Row="2" Grid.Column="0">Engine</Label>
-        <ComboBox Width="Auto" Grid.Row="3" Grid.Column="0" Name="cbEngine" SelectedIndex="0">
+
+
+        <Label Grid.Row="1" Grid.Column="0" MinWidth="150">Engine</Label>
+        <ComboBox Grid.Row="1" Grid.Column="1" Width="Auto"  Name="cbEngine" SelectedIndex="0" Margin="5,5,5,5">
             <ComboBoxItem Content="Sql Server" HorizontalAlignment="Left" Width="298"/>
             <ComboBoxItem Content="MySQL" HorizontalAlignment="Left" Width="298" />
         </ComboBox>
 
-        <Label Grid.Row="4">Context Name</Label>
-        <TextBox Grid.Row="5" Name="textContextName">MyContext</TextBox>
 
-        <Label Grid.Row="6">Namespace</Label>
-        <TextBox Grid.Row="7" Name="textNamespace"></TextBox>
-        
-        <Label Grid.Row="8">Connection String</Label>
-        <TextBox Grid.Row="9" Name="txtConnectionString"></TextBox>
+        <Label Grid.Row="2" Grid.Column="0" MinWidth="150">Context Name</Label>
+        <TextBox Grid.Row="2" Grid.Column="1" Name="textContextName" Margin="5,5,5,5">MyContext</TextBox>
 
 
-        <StackPanel Orientation="Horizontal" Grid.Row="10" Grid.Column="0">
-            <Button Content="Cancel" Click="cancel_click" Height="21" x:Name="cancelButton" Margin="220,0,0,0"/>
-            <Button Content="Ok" Click="ok_click" Height="21" x:Name="okButton" Margin="10,0,0,0"/>
+        <Label Grid.Row="3" Grid.Column="0" MinWidth="150">Namespace</Label>
+        <TextBox Grid.Row="3" Grid.Column="1" Name="textNamespace" Margin="5,5,5,5"></TextBox>
+
+
+        <Label Grid.Row="4" Grid.Column="0" MinWidth="150">Connection String</Label>
+        <TextBox Grid.Row="4" Grid.Column="1" Name="txtConnectionString" Margin="5,5,5,5"></TextBox>
+
+        <StackPanel Grid.Row="5" Grid.Column="1" Orientation="Horizontal">
+            <Button Content="Cancel" Click="cancel_click" Height="21" x:Name="cancelButton" MinWidth="50"  Margin="222,0,0,0"/>
+            <Button Content="OK" Click="ok_click" Height="21" x:Name="okButton" MinWidth="50" Margin="5,0,0,0"/>
         </StackPanel>
-        
     </Grid>
 </UserControl>
