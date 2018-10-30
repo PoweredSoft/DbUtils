@@ -68,11 +68,19 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Key.snk" />
+    <Content Include="LICENSE.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="36390750.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <Content Include="index.html" />
     <VSCTCompile Include="InstallPsdbPackage.vsct">
       <ResourceName>Menus.ctmenu</ResourceName>
