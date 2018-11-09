@@ -1,5 +1,10 @@
 # Getting started
 
+## Using the extension
+
+You can use the extension if you prefer over the CLI, visit:
+> https://marketplace.visualstudio.com/items?itemName=PoweredSoft.psdb-extension
+
 ## Download
 NuGet | NuGet Install
 :-------------: | :-------------:
