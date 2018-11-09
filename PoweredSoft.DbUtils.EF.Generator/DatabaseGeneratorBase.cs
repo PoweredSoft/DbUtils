@@ -520,6 +520,7 @@ namespace PoweredSoft.DbUtils.EF.Generator
                     {
                         m
                             .AccessModifier(AccessModifiers.Public)
+                            .Virtual(true)
                             .ReturnType("void")
                             .Name("From")
                             .Parameter(p => p.Type(tableClassFullName).Name("entity"));
@@ -530,6 +531,7 @@ namespace PoweredSoft.DbUtils.EF.Generator
                     {
                         m
                             .AccessModifier(AccessModifiers.Public)
+                            .Virtual(true)
                             .ReturnType("void")
                             .Name("To")
                             .Parameter(p => p.Type(tableClassFullName).Name("entity"));
