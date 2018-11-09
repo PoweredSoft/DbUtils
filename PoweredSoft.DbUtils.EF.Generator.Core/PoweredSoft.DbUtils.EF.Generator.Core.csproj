@@ -7,9 +7,16 @@
     <PackageProjectUrl>https://github.com/PoweredSoft/DbUtils</PackageProjectUrl>
     <RepositoryUrl>https://github.com/PoweredSoft/DbUtils/PoweredSoft.DbUtils.EF.Generator.Core</RepositoryUrl>
     <RepositoryType>github</RepositoryType>
-    <PackageIconUrl></PackageIconUrl>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageIconUrl>https://secure.gravatar.com/avatar/4e32f73820c16718909a06c2927f1f8b?s=512&amp;r=g&amp;d=retro</PackageIconUrl>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Version>1.0.4</Version>
+    <Product>PoweredSoft.DbUtils.EF.Generator.Core</Product>
+    <Description>update</Description>
+    <PackageId>PoweredSoft.DbUtils.EF.Generator.Core</PackageId>
+    <PackageReleaseNotes>made something virtual</PackageReleaseNotes>
+    <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
+    <Company>PoweredSoft.DbUtils.EF.Generator.Core</Company>
+    <Authors>PoweredSoft.DbUtils.EF.Generator.Core</Authors>
   </PropertyGroup>
 
   <ItemGroup>

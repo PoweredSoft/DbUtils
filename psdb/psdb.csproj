@@ -10,6 +10,7 @@
     <PackageLicenseUrl>https://github.com/PoweredSoft/DbUtils/blob/master/LICENSE.md</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/PoweredSoft/DbUtils/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/PoweredSoft/DbUtils</RepositoryUrl>
+    <PackageIconUrl>https://secure.gravatar.com/avatar/4e32f73820c16718909a06c2927f1f8b?s=512&amp;r=g&amp;d=retro</PackageIconUrl>
     <RepositoryType>github</RepositoryType>
     <Version>1.0.4</Version>
     <PackAsTool>true</PackAsTool>
