@@ -16,7 +16,7 @@
 
         public void ResolveNamespace()
         {
-            var start = CurrentDirectory.IndexOf(ProjectName);
+            var start = CurrentDirectory.LastIndexOf(ProjectName);
             var nameSpace = CurrentDirectory.Substring(start).Replace('\\', '.').TrimEnd('.');
             this.textNamespace.Text = nameSpace;
         }

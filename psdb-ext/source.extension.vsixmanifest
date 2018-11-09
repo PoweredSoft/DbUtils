@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="psdb_ext.1ecfd1e1-5320-48b2-ba32-945934d26b52" Version="1.0" Language="en-US" Publisher="Powered Soft" />
+        <Identity Id="psdb_ext.1ecfd1e1-5320-48b2-ba32-945934d26b52" Version="1.1" Language="en-US" Publisher="Powered Soft" />
         <DisplayName>psdb extension</DisplayName>
         <Description xml:space="preserve">Powered Soft Database Utils Extension</Description>
         <MoreInfo>https://github.com/poweredsoft/dbutils</MoreInfo>
