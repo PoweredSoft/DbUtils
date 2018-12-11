@@ -1,8 +1,9 @@
 ﻿
-//using PoweredSoft.DbUtils.EF.Generator.EFCore.SqlServer;
-using PoweredSoft.DbUtils.EF.Generator.EFCore.MySql;
+using PoweredSoft.DbUtils.EF.Generator.EFCore.SqlServer;
+//using PoweredSoft.DbUtils.EF.Generator.EFCore.MySql;
 using PoweredSoft.DbUtils.Schema.SqlServer.Extensions;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace dev_cli
@@ -13,8 +14,8 @@ namespace dev_cli
         {
             var gen = new DatabaseGenerator();
             gen.InitializeOptionsWithDefault();
-            //gen.Options.ConnectionString = "Server=ps-sql.dev;Database=TBMS;user id=acme;password=-acmepw2016-";
-            gen.Options.ConnectionString = "server=192.168.100.154;uid=dlebee;pwd=-pssql2016-;database=Acme";
+            gen.Options.ConnectionString = "Server=ps-sql.dev;Database=TBMS;user id=acme;password=-acmepw2016-";
+            //gen.Options.ConnectionString = "server=192.168.100.154;uid=dlebee;pwd=-pssql2016-;database=Acme";
             
             gen.Options.ContextName = "AcmeContext";
             gen.Options.Namespace = "Acme.Dal";
@@ -22,6 +23,11 @@ namespace dev_cli
             gen.Options.GenerateContextSequenceMethods = true;
             gen.Options.AddConnectionStringOnGenerate = true;
             gen.Options.CleanOutputDir = true;
+
+            gen.Options.DynamicAssemblies = new List<string>
+            {
+                "C:\\PS\\DbUtils\\Acme.DbUtils\\bin\\Debug\\netstandard2.0\\Acme.DbUtils.dll"
+            };
 
             var basePath = "C:\\Users\\PS-DEV2\\source\\repos\\blah1\\blah1\\Dal";
 
@@ -51,7 +57,7 @@ namespace dev_cli
             // models.
             gen.Options.GenerateModelPropertyAsNullable = true;
             gen.Options.ModelNamespace = "Acme.Models";
-            gen.Options.GenerateModels = false;
+            gen.Options.GenerateModels = true;
 
             // model interfaces.
             gen.Options.ModelInterfaceNamespace = "Acme.Core.Models";

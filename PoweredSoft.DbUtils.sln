@@ -47,6 +47,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.DbUtils.EF.Gene
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "psdb-ext", "psdb-ext\psdb-ext.csproj", "{8B7B79BB-E29A-4569-8184-077A82B8F68D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Acme.DbUtils", "Acme.DbUtils\Acme.DbUtils.csproj", "{C43B0659-34D3-4F6C-8E5C-D3C164F0A509}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -129,6 +131,10 @@ Global
 		{8B7B79BB-E29A-4569-8184-077A82B8F68D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8B7B79BB-E29A-4569-8184-077A82B8F68D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8B7B79BB-E29A-4569-8184-077A82B8F68D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C43B0659-34D3-4F6C-8E5C-D3C164F0A509}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C43B0659-34D3-4F6C-8E5C-D3C164F0A509}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C43B0659-34D3-4F6C-8E5C-D3C164F0A509}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C43B0659-34D3-4F6C-8E5C-D3C164F0A509}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

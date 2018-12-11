@@ -47,6 +47,7 @@ namespace PoweredSoft.DbUtils.EF.Generator.EF6.SqlServer
         public string ModelsInterfacesOutputDir { get; set; }
         public string ModelsOutputDir { get; set; }
         public string ContextOutputDir { get; set; }
+        public List<string> DynamicAssemblies { get; set; }
         public string ConnectionStringName { get; set; }
         public string FluentConfigurationClassSuffix { get; set; } = "FluentConfiguration";
         public List<string> IncludedSchemas { get; } = new List<string>();

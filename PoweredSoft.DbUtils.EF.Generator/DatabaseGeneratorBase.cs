@@ -3,7 +3,9 @@ using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
+using System.Threading;
 using Newtonsoft.Json;
 using Pluralize.NET;
 using PoweredSoft.CodeGenerator;
@@ -14,7 +16,8 @@ using PoweredSoft.DbUtils.Schema.Core;
 
 namespace PoweredSoft.DbUtils.EF.Generator
 {
-    public abstract class DatabaseGeneratorBase<TSchema, TOptions> : IGenerator<TOptions>
+    public abstract class DatabaseGeneratorBase<TSchema, TOptions> : IGenerator<TOptions>, 
+        IGeneratorUsingGenerationContext
         where TOptions : IGeneratorOptions
         where TSchema : IDatabaseSchema
     {
@@ -65,6 +68,7 @@ namespace PoweredSoft.DbUtils.EF.Generator
 
         public void Generate()
         {
+            LoadDynamicAssemblies();
             Schema = CreateAndLoadSchema();
             TablesToGenerate = ResolveTablesToGenerate();
             SequenceToGenerate = ResolveSequencesToGenerate();
@@ -72,6 +76,18 @@ namespace PoweredSoft.DbUtils.EF.Generator
             CleanOutputDir();
             GenerateCode();
         }
+
+        protected virtual void LoadDynamicAssemblies()
+        {
+            this.DynamicAssemblies = new List<Assembly>();
+            Options.DynamicAssemblies?.ForEach(da =>
+            {
+                var a = Assembly.LoadFile(da);
+                DynamicAssemblies.Add(a);
+            });
+        }
+
+        public List<Assembly> DynamicAssemblies { get; set; }
 
         public void LoadOptionsFromJson(string configFile)
         {
@@ -284,11 +300,28 @@ namespace PoweredSoft.DbUtils.EF.Generator
             GenerateEntities();
             GenerateContext();
             GenerateSequenceMethods();
+            EachTableHooks();
             BeforeSaveToDisk();
             GenerationContext.SaveToDisk(Encoding.UTF8, normalizeNewLines: true, createDir:true);
         }
 
-     
+        private void EachTableHooks()
+        {
+            DynamicAssemblies.ForEach(a =>
+            {
+                var eachTableServices = a.GetTypes()
+                    .Where(t => t.IsClass && typeof(IEachTableService).IsAssignableFrom(t))
+                    .Select(t => (IEachTableService) Activator.CreateInstance(t))
+                    .ToList();
+
+                TablesToGenerate.ForEach(table =>
+                {
+                    eachTableServices.ForEach(t => t.OnTable(this, table));
+                });
+            });
+        }
+
+
         protected virtual FileBuilder ResolveEntityFileBuilder(ITable table)
         {
             FileBuilder ret = null;
@@ -662,6 +695,11 @@ namespace PoweredSoft.DbUtils.EF.Generator
             var modelInterfaceName = ModelInterfaceName(table);
             var modelInterfaceFullName = $"{modelInterfaceNamespace}.{modelInterfaceName}";
             return modelInterfaceFullName;
+        }
+
+        public GenerationContext GetGenerationContext()
+        {
+            return GenerationContext;
         }
     }
 }

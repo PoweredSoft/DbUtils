@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using PoweredSoft.CodeGenerator;
 using PoweredSoft.DbUtils.Schema.Core;
 
 namespace PoweredSoft.DbUtils.EF.Generator.Core
@@ -18,5 +19,10 @@ namespace PoweredSoft.DbUtils.EF.Generator.Core
         where TOptions : IGeneratorOptions
     {
         TOptions Options { get; }
+    }
+
+    public interface IGeneratorUsingGenerationContext
+    {
+        GenerationContext GetGenerationContext();
     }
 }

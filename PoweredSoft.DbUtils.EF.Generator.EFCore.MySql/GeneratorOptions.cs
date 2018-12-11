@@ -40,6 +40,7 @@ namespace PoweredSoft.DbUtils.EF.Generator.EFCore.MySql
         public string ModelsInterfacesOutputDir { get; set; }
         public string ModelsOutputDir { get; set; }
         public string ContextOutputDir { get; set; }
+        public List<string> DynamicAssemblies { get; set; }
         public string ConnectionStringName { get; set; }
         public bool AddConnectionStringOnGenerate { get; set; } = false;
         public bool DontGeneratePrimaryIndexes { get; set; } = true;

@@ -45,5 +45,7 @@ namespace PoweredSoft.DbUtils.EF.Generator.Core
         string ModelsInterfacesOutputDir { get; set; }
         string ModelsOutputDir { get; set; }
         string ContextOutputDir { get; set; }
+
+        List<string> DynamicAssemblies { get; set; }
     }
 }
