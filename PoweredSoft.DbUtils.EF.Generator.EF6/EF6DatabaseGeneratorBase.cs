@@ -78,139 +78,122 @@ namespace PoweredSoft.DbUtils.EF.Generator.EF6
 
         protected override void GenerateContext()
         {
+            var fileBuilder = ResolveContextFileBuilder();
             var contextNamespace = ContextNamespace();
             var contextClassName = ContextClassName();
 
-            Action<FileBuilder> generateContextInline = (FileBuilder fileBuilder) =>
+            fileBuilder.Using("System.Linq");
+            fileBuilder.Namespace(contextNamespace, true, ns =>
             {
-                if (!Options.OutputToSingleFile)
+                ns.Class(contextClassName, true, contextClass =>
                 {
-                    var filePath = $"{Options.OutputDir}{Path.DirectorySeparatorChar}{Options.ContextName}.generated.cs";
-                    fileBuilder.Path(filePath);
-                }
+                    contextClass.Partial(true).Inherits(Options.ContextBaseClassName);
 
-                fileBuilder.Using("System.Linq");
-
-                fileBuilder.Namespace(contextNamespace, true, ns =>
-                {
-                    ns.Class(contextClassName, true, contextClass =>
+                    TablesToGenerate.ForEach(table =>
                     {
-                        contextClass.Partial(true).Inherits(Options.ContextBaseClassName);
+                        var tableClassFullName = TableClassFullName(table);
+                        var tableNamePlural = Pluralize(table.Name);
+                        contextClass.Property(tableNamePlural, true, dbSetProp =>
+                        {
+                            dbSetProp.Type($"System.Data.Entity.DbSet<{tableClassFullName}>");
+                        });
+                    });
+
+                    contextClass.Constructor(c => c
+                        .AccessModifier(AccessModifiers.Omit)
+                        .IsStatic(true)
+                        .Class(contextClass)
+                        .RawLine($"System.Data.Entity.Database.SetInitializer<{Options.ContextName}>(null)")
+                    );
+
+                    contextClass.Constructor(c => c
+                        .Class(contextClass)
+                        .BaseParameter($"\"{Options.ConnectionStringName ?? Options.ConnectionString}\"")
+                        .RawLine("InitializePartial()")
+                    );
+
+                    contextClass.Constructor(c => c
+                        .Class(contextClass)
+                        .Parameter(p => p.Type("string").Name("connectionString"))
+                        .BaseParameter("connectionString")
+                        .RawLine("InitializePartial()")
+                    );
+
+                    contextClass.Constructor(c => c
+                        .Class(contextClass)
+                        .Parameter(p => p.Type("string").Name("connectionString"))
+                        .Parameter(p => p.Type("System.Data.Entity.Infrastructure.DbCompiledModel").Name("model"))
+                        .BaseParameter("connectionString")
+                        .BaseParameter("model")
+                        .RawLine("InitializePartial()")
+                    );
+
+                    contextClass.Method(addConfigurationMethod =>
+                    {
+                        addConfigurationMethod
+                            .IsStatic(true)
+                            .ReturnType("void")
+                            .AccessModifier(AccessModifiers.Protected)
+                            .Name("AddFluentConfigurations")
+                            .Parameter(p => p.Type("System.Data.Entity.DbModelBuilder").Name("modelBuilder"));
 
                         TablesToGenerate.ForEach(table =>
                         {
-                            var tableClassFullName = TableClassFullName(table);
-                            var tableNamePlural = Pluralize(table.Name);
-                            contextClass.Property(tableNamePlural, true, dbSetProp =>
-                            {
-                                dbSetProp.Type($"System.Data.Entity.DbSet<{tableClassFullName}>");
-                            });
+                            var fcc = TableClassFullName(table) + Options.FluentConfigurationClassSuffix;
+                            addConfigurationMethod.RawLine($"modelBuilder.Configurations.Add(new {fcc}())");
                         });
-
-                        contextClass.Constructor(c => c
-                            .AccessModifier(AccessModifiers.Omit)
-                            .IsStatic(true)
-                            .Class(contextClass)
-                            .RawLine($"System.Data.Entity.Database.SetInitializer<{Options.ContextName}>(null)")
-                        );
-
-                        contextClass.Constructor(c => c
-                            .Class(contextClass)
-                            .BaseParameter($"\"{Options.ConnectionStringName ?? Options.ConnectionString}\"")
-                            .RawLine("InitializePartial()")
-                        );
-
-                        contextClass.Constructor(c => c
-                            .Class(contextClass)
-                            .Parameter(p => p.Type("string").Name("connectionString"))
-                            .BaseParameter("connectionString")
-                            .RawLine("InitializePartial()")
-                        );
-
-                        contextClass.Constructor(c => c
-                            .Class(contextClass)
-                            .Parameter(p => p.Type("string").Name("connectionString"))
-                            .Parameter(p => p.Type("System.Data.Entity.Infrastructure.DbCompiledModel").Name("model"))
-                            .BaseParameter("connectionString")
-                            .BaseParameter("model")
-                            .RawLine("InitializePartial()")
-                        );
-
-                        contextClass.Method(addConfigurationMethod =>
-                        {
-                            addConfigurationMethod
-                                .IsStatic(true)
-                                .ReturnType("void")
-                                .AccessModifier(AccessModifiers.Protected)
-                                .Name("AddFluentConfigurations")
-                                .Parameter(p => p.Type("System.Data.Entity.DbModelBuilder").Name("modelBuilder"));
-
-                            TablesToGenerate.ForEach(table =>
-                            {
-                                var fcc = TableClassFullName(table) + Options.FluentConfigurationClassSuffix;
-                                addConfigurationMethod.RawLine($"modelBuilder.Configurations.Add(new {fcc}())");
-                            });
-                        });
-
-                        contextClass.Method(m => m
-                            .AccessModifier(AccessModifiers.Omit)
-                            .Name("OnModelCreatingPartial")
-                            .ReturnType("void")
-                            .Partial(true)
-                            .Parameter(p => p.Type("System.Data.Entity.DbModelBuilder").Name("modelBuilder"))
-                        );
-
-                        contextClass.Method(m => m
-                            .AccessModifier(AccessModifiers.Omit)
-                            .Name("InitializePartial")
-                            .ReturnType("void")
-                            .Partial(true)
-                        );
-
-                        contextClass.Method(m =>
-                        {
-                            m
-                                .AccessModifier(AccessModifiers.Protected)
-                                .Override(true)
-                                .ReturnType("void")
-                                .Name("OnModelCreating")
-                                .Parameter(p => p.Type("System.Data.Entity.DbModelBuilder").Name("modelBuilder"))
-                                .RawLine("base.OnModelCreating(modelBuilder)")
-                                .RawLine("AddFluentConfigurations(modelBuilder)")
-                                .RawLine("OnModelCreatingPartial(modelBuilder)");
-                        });
-
-                        contextClass.Method(m =>
-                        {
-                            m
-                                .AccessModifier(AccessModifiers.Public)
-                                .IsStatic(true)
-                                .ReturnType("System.Data.Entity.DbModelBuilder")
-                                .Name("CreateModel")
-                                .Parameter(p => p.Type("System.Data.Entity.DbModelBuilder").Name("modelBuilder"))
-                                .Parameter(p => p.Type("string").Name("schema"))
-                                .RawLine("AddFluentConfigurations(modelBuilder)")
-                                .RawLine("return modelBuilder");
-                        });
-
                     });
-                });
-            };
 
-            if (Options.OutputToSingleFile)
-                GenerationContext.SingleFile(fb => generateContextInline(fb));
-            else
-                GenerationContext.FileIfPathIsSet(fb => generateContextInline(fb));
+                    contextClass.Method(m => m
+                        .AccessModifier(AccessModifiers.Omit)
+                        .Name("OnModelCreatingPartial")
+                        .ReturnType("void")
+                        .Partial(true)
+                        .Parameter(p => p.Type("System.Data.Entity.DbModelBuilder").Name("modelBuilder"))
+                    );
+
+                    contextClass.Method(m => m
+                        .AccessModifier(AccessModifiers.Omit)
+                        .Name("InitializePartial")
+                        .ReturnType("void")
+                        .Partial(true)
+                    );
+
+                    contextClass.Method(m =>
+                    {
+                        m
+                            .AccessModifier(AccessModifiers.Protected)
+                            .Override(true)
+                            .ReturnType("void")
+                            .Name("OnModelCreating")
+                            .Parameter(p => p.Type("System.Data.Entity.DbModelBuilder").Name("modelBuilder"))
+                            .RawLine("base.OnModelCreating(modelBuilder)")
+                            .RawLine("AddFluentConfigurations(modelBuilder)")
+                            .RawLine("OnModelCreatingPartial(modelBuilder)");
+                    });
+
+                    contextClass.Method(m =>
+                    {
+                        m
+                            .AccessModifier(AccessModifiers.Public)
+                            .IsStatic(true)
+                            .ReturnType("System.Data.Entity.DbModelBuilder")
+                            .Name("CreateModel")
+                            .Parameter(p => p.Type("System.Data.Entity.DbModelBuilder").Name("modelBuilder"))
+                            .Parameter(p => p.Type("string").Name("schema"))
+                            .RawLine("AddFluentConfigurations(modelBuilder)")
+                            .RawLine("return modelBuilder");
+                    });
+
+                });
+            });
         }
 
         private void GenerateFluentConfigurations()
         {
             TablesToGenerate.ForEach(table =>
             {
-                if (Options.OutputToSingleFile)
-                    GenerationContext.SingleFile(fb => GenerateEntityFluentConfiguration(table, fb));
-                else
-                    GenerationContext.File(fb => GenerateEntityFluentConfiguration(table, fb));
+                GenerateEntityFluentConfiguration(table);
             });
         }
 
@@ -223,65 +206,65 @@ namespace PoweredSoft.DbUtils.EF.Generator.EF6
         /// <param name="sequence"></param>
         //protected abstract void GenerateGetNextSequenceLines(MethodBuilder method, string outputType, ISequence sequence);
 
-        private void GenerateEntityFluentConfiguration(ITable table, FileBuilder fileBuilder)
+        private void GenerateEntityFluentConfiguration(ITable table)
         {
             var tableNamespace = TableNamespace(table);
             var tableFluentConfigurationClassName = $"{TableClassName(table)}{Options.FluentConfigurationClassSuffix}";
             var tableClassName = TableClassName(table);
             var tableClassFullName = TableClassFullName(table);
             var entityClass = GenerationContext.FindClass(tableClassName, tableNamespace);
+            var contextNamespace = ContextNamespace();
 
             // set the path.
-            var outputDir = Options.OutputDir;
-            var filePath = Options.OutputToSingleFile
-                ? $"{outputDir}\\{Options.OutputSingleFileName}"
-                : $"{outputDir}\\{tableFluentConfigurationClassName}.generated.cs";
+            var outputDir = Options.ContextOutputDir ?? Options.OutputDir;
+            var fileName = Options.ContextOutputSingleFileName ?? Options.OutputSingleFileName ?? $"{tableFluentConfigurationClassName}.generated.cs";
+            var path = $"{outputDir}{Path.DirectorySeparatorChar}{fileName}";
 
-            fileBuilder.Path(filePath);
-
-            // set the namespace.
-            fileBuilder.Namespace(tableNamespace, true, ns =>
+            GenerationContext.File(path, fileBuilder =>
             {
-                ns.Class(tableFluentConfigurationClassName, true, fluentConfigClass =>
+                // set the namespace.
+                fileBuilder.Namespace(contextNamespace, true, ns =>
                 {
-                    fluentConfigClass
-                        .Partial(true)
-                        .Inherits($"System.Data.Entity.ModelConfiguration.EntityTypeConfiguration<{tableClassName}>")
-                        .Constructor(constructor =>
-                        {
-                            constructor.AddComment("Table mapping & keys");
-
-                            // to table mapping.
-                            constructor.RawLine(ToTableFluent(table));
-
-                            // pk mapping.
-                            var pk = table.Columns.FirstOrDefault(t => t.IsPrimaryKey);
-                            var pkProp = entityClass.FindByMeta<PropertyBuilder>(pk);
-                            constructor.RawLine($"HasKey(t => t.{pkProp.GetName()})");
-
-                            constructor.AddComment("Columns");
-
-                            // columns mapping.
-                            table.Columns.ForEach(column =>
+                    ns.Class(tableFluentConfigurationClassName, true, fluentConfigClass =>
+                    {
+                        fluentConfigClass
+                            .Partial(true)
+                            .Inherits($"System.Data.Entity.ModelConfiguration.EntityTypeConfiguration<{tableClassFullName}>")
+                            .Constructor(constructor =>
                             {
-                                var columnProp = entityClass.FindByMeta<PropertyBuilder>(column);
-                                var columnLine = RawLineBuilder.Create();
-                                columnLine.Append($"Property(t => t.{columnProp.GetName()})");
-                                columnLine.Append($".HasColumnName(\"{column.Name}\")");
+                                constructor.AddComment("Table mapping & keys");
 
-                                if (column.IsNullable)
-                                    columnLine.Append(".IsOptional()");
-                                else
-                                    columnLine.Append(".IsRequired()");
+                                // to table mapping.
+                                constructor.RawLine(ToTableFluent(table));
 
-                                columnLine.Append($".HasColumnType(\"{column.DataType}\")");
+                                // pk mapping.
+                                var pk = table.Columns.FirstOrDefault(t => t.IsPrimaryKey);
+                                    var pkProp = entityClass.FindByMeta<PropertyBuilder>(pk);
+                                    constructor.RawLine($"HasKey(t => t.{pkProp.GetName()})");
 
-                                if (column.IsPrimaryKey)
+                                    constructor.AddComment("Columns");
+
+                                // columns mapping.
+                                table.Columns.ForEach(column =>
                                 {
-                                    if (IsGenerateOptionIdentity(column))
-                                        columnLine.Append(".HasDatabaseGeneratedOption(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.Identity)");
+                                    var columnProp = entityClass.FindByMeta<PropertyBuilder>(column);
+                                    var columnLine = RawLineBuilder.Create();
+                                    columnLine.Append($"Property(t => t.{columnProp.GetName()})");
+                                    columnLine.Append($".HasColumnName(\"{column.Name}\")");
+
+                                    if (column.IsNullable)
+                                        columnLine.Append(".IsOptional()");
                                     else
-                                        columnLine.Append(".HasDatabaseGeneratedOption(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.None)");
+                                        columnLine.Append(".IsRequired()");
+
+                                    columnLine.Append($".HasColumnType(\"{column.DataType}\")");
+
+                                    if (column.IsPrimaryKey)
+                                    {
+                                        if (IsGenerateOptionIdentity(column))
+                                            columnLine.Append(".HasDatabaseGeneratedOption(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.Identity)");
+                                        else
+                                            columnLine.Append(".HasDatabaseGeneratedOption(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.None)");
 
                                     /*
                                     // TODO make overridable class method here called IsGenerateOptionIdentity(IColumn)
@@ -292,87 +275,89 @@ namespace PoweredSoft.DbUtils.EF.Generator.EF6
                                     else
                                         columnLine.Append(".HasDatabaseGeneratedOption(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.None)");
                                         */
-                                }
+                                    }
 
-                                if (column.CharacterMaximumLength.HasValue && column.CharacterMaximumLength != -1)
-                                    columnLine.Append($".HasMaxLength({column.CharacterMaximumLength})");
+                                    if (column.CharacterMaximumLength.HasValue && column.CharacterMaximumLength != -1)
+                                        columnLine.Append($".HasMaxLength({column.CharacterMaximumLength})");
 
-                                if (DataTypeResolver.IsFixLength(column))
-                                    columnLine.Append(".IsFixedLength()");
+                                    if (DataTypeResolver.IsFixLength(column))
+                                        columnLine.Append(".IsFixedLength()");
 
-                                if (DataTypeResolver.IsString(column) && !DataTypeResolver.IsUnicode(column))
-                                    columnLine.Append(".IsUnicode(false)");
+                                    if (DataTypeResolver.IsString(column) && !DataTypeResolver.IsUnicode(column))
+                                        columnLine.Append(".IsUnicode(false)");
 
-                                if (column.NumericPrecision.HasValue && column.NumericScale.HasValue && column.NumericScale != 0)
-                                    columnLine.Append($".HasPrecision({column.NumericPrecision}, {column.NumericScale})");
+                                    if (column.NumericPrecision.HasValue && column.NumericScale.HasValue && column.NumericScale != 0)
+                                        columnLine.Append($".HasPrecision({column.NumericPrecision}, {column.NumericScale})");
 
 
-                                constructor.Add(columnLine);
-                            });
+                                    constructor.Add(columnLine);
+                                });
 
-                            constructor.AddComment("Navigations");
-                            table.ForeignKeys.ForEach(fk =>
-                            {
-                                var fkProp = entityClass.FindByMeta<PropertyBuilder>(fk);
-                                var fkColumnProp = entityClass.FindByMeta<PropertyBuilder>(fk.ForeignKeyColumn);
-                                // if null meaning its being filtered. (excluded table from generation)
-                                if (fkProp != null)
+                                constructor.AddComment("Navigations");
+                                table.ForeignKeys.ForEach(fk =>
                                 {
+                                    var fkProp = entityClass.FindByMeta<PropertyBuilder>(fk);
+                                    var fkColumnProp = entityClass.FindByMeta<PropertyBuilder>(fk.ForeignKeyColumn);
+
+                                    // if null meaning its being filtered. (excluded table from generation)
+                                    if (fkProp != null)
+                                    {
+                                        var line = RawLineBuilder.Create();
+                                        var primaryNamespace = TableNamespace(fk.PrimaryKeyColumn.Table);
+                                        var primaryClassName = TableClassName(fk.PrimaryKeyColumn.Table);
+                                        var primaryEntity = GenerationContext.FindClass(primaryClassName, primaryNamespace);
+                                        var reverseNav = primaryEntity.FindByMeta<PropertyBuilder>(fk);
+
+
+                                        if (fk.ForeignKeyColumn.IsNullable)
+                                            line.Append($"HasOptional(t => t.{fkProp.GetName()})");
+                                        else
+                                            line.Append($"HasRequired(t => t.{fkProp.GetName()})");
+
+                                        if (fk.IsOneToOne())
+                                        {
+                                            line.Append($".WithOptional(t => t.{reverseNav.GetName()})");
+                                        }
+                                        else
+                                        {
+                                            line.Append($".WithMany(t => t.{reverseNav.GetName()})");
+                                            line.Append($".HasForeignKey(t => t.{fkColumnProp.GetName()})");
+                                        }
+                                        constructor.Add(line);
+                                    }
+                                });
+
+                                constructor.AddComment("Many to Many");
+                                table.ManyToMany().ToList().ForEach(mtm =>
+                                {
+                                    if (mtm.ForeignKeyColumn.PrimaryKeyOrder > 1)
+                                        return;
+
+
+                                    var manyToManyTable = mtm.ForeignKeyColumn.Table;
+                                    var otherFk = mtm.ForeignKeyColumn.Table.ForeignKeys.First(t => t.ForeignKeyColumn.PrimaryKeyOrder > 1);
+                                    var otherFkTable = otherFk.PrimaryKeyColumn.Table;
+                                    var manyProp = entityClass.FindByMeta<PropertyBuilder>(mtm);
+
+                                    // exclude if not being generated.
+                                    if (!TablesToGenerate.Contains(otherFk.PrimaryKeyColumn.Table))
+                                        return;
+
+                                    var otherNamespace = TableNamespace(otherFkTable);
+                                    var otherClassName = TableClassName(otherFkTable);
+                                    var otherEntity = GenerationContext.FindClass(otherClassName, otherNamespace);
+                                    var otherProp = otherEntity.FindByMeta<PropertyBuilder>(otherFk);
+
                                     var line = RawLineBuilder.Create();
-                                    var primaryNamespace = TableNamespace(fk.PrimaryKeyColumn.Table);
-                                    var primaryClassName = TableClassName(fk.PrimaryKeyColumn.Table);
-                                    var primaryEntity = GenerationContext.FindClass(primaryClassName, primaryNamespace);
-                                    var reverseNav = primaryEntity.FindByMeta<PropertyBuilder>(fk);
-
-
-                                    if (fk.ForeignKeyColumn.IsNullable)
-                                        line.Append($"HasOptional(t => t.{fkProp.GetName()})");
-                                    else
-                                        line.Append($"HasRequired(t => t.{fkProp.GetName()})");
-
-                                    if (fk.IsOneToOne())
-                                    {
-                                        line.Append($".WithOptional(t => t.{reverseNav.GetName()})");
-                                    }
-                                    else
-                                    {
-                                        line.Append($".WithMany(t => t.{reverseNav.GetName()})");
-                                        line.Append($".HasForeignKey(t => t.{fkColumnProp.GetName()})");
-                                    }
+                                    line.Append($"HasMany(t => t.{manyProp.GetName()})");
+                                    line.Append($".WithMany(t => t.{otherProp.GetName()})");
+                                    line.Append($".Map(t => t.{ToTableFluent(manyToManyTable)}");
+                                    line.Append($".MapLeftKey(\"{mtm.ForeignKeyColumn.Name}\")");
+                                    line.Append($".MapRightKey(\"{otherFk.ForeignKeyColumn.Name}\"))");
                                     constructor.Add(line);
-                                }
+                                });
                             });
-
-                            constructor.AddComment("Many to Many");
-                            table.ManyToMany().ToList().ForEach(mtm =>
-                            {
-                                if (mtm.ForeignKeyColumn.PrimaryKeyOrder > 1)
-                                    return;
-
-
-                                var manyToManyTable = mtm.ForeignKeyColumn.Table;
-                                var otherFk = mtm.ForeignKeyColumn.Table.ForeignKeys.First(t => t.ForeignKeyColumn.PrimaryKeyOrder > 1);
-                                var otherFkTable = otherFk.PrimaryKeyColumn.Table;
-                                var manyProp = entityClass.FindByMeta<PropertyBuilder>(mtm);
-
-                                // exclude if not being generated.
-                                if (!TablesToGenerate.Contains(otherFk.PrimaryKeyColumn.Table))
-                                    return;
-
-                                var otherNamespace = TableNamespace(otherFkTable);
-                                var otherClassName = TableClassName(otherFkTable);
-                                var otherEntity = GenerationContext.FindClass(otherClassName, otherNamespace);
-                                var otherProp = otherEntity.FindByMeta<PropertyBuilder>(otherFk);
-
-                                var line = RawLineBuilder.Create();
-                                line.Append($"HasMany(t => t.{manyProp.GetName()})");
-                                line.Append($".WithMany(t => t.{otherProp.GetName()})");
-                                line.Append($".Map(t => t.{ToTableFluent(manyToManyTable)}");
-                                line.Append($".MapLeftKey(\"{mtm.ForeignKeyColumn.Name}\")");
-                                line.Append($".MapRightKey(\"{otherFk.ForeignKeyColumn.Name}\"))");
-                                constructor.Add(line);
-                            });
-                        });
+                    });
                 });
             });
         }

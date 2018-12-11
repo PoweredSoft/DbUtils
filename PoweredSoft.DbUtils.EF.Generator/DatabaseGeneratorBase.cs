@@ -34,7 +34,28 @@ namespace PoweredSoft.DbUtils.EF.Generator
             if (!Options.CleanOutputDir)
                 return;
             
-            var dir = new DirectoryInfo(Options.OutputDir);
+            if (!string.IsNullOrWhiteSpace(Options.OutputDir) && Directory.Exists(Options.OutputDir))
+                EmptyDir(Options.OutputDir);
+
+            if (!string.IsNullOrWhiteSpace(Options.EntitiesInterfacesOutputDir) && Directory.Exists(Options.OutputDir))
+                EmptyDir(Options.EntitiesInterfacesOutputDir);
+
+            if (!string.IsNullOrWhiteSpace(Options.EntitiesOutputDir) && Directory.Exists(Options.EntitiesOutputDir))
+                EmptyDir(Options.EntitiesOutputDir);
+
+            if (!string.IsNullOrWhiteSpace(Options.ModelsInterfacesOutputDir) && Directory.Exists(Options.ModelsInterfacesOutputDir))
+                EmptyDir(Options.ModelsInterfacesOutputDir);
+
+            if (!string.IsNullOrWhiteSpace(Options.ModelsOutputDir) && Directory.Exists(Options.ModelsOutputDir))
+                EmptyDir(Options.ModelsOutputDir);
+
+            if (!string.IsNullOrWhiteSpace(Options.ContextOutputDir) && Directory.Exists(Options.ContextOutputDir))
+                EmptyDir(Options.ContextOutputDir);
+        }
+
+        private void EmptyDir(string dirPath)
+        {
+            var dir = new DirectoryInfo(dirPath);
             foreach (var fi in dir.GetFiles())
                 fi.Delete();
 
@@ -71,7 +92,29 @@ namespace PoweredSoft.DbUtils.EF.Generator
 
         protected virtual string TableNamespace(ITable table)
         {
-            var nsName = ReplaceMetas(Options.Namespace, table);
+            var tableNamespace = Options.EntityNamespace ?? Options.Namespace;
+            var nsName = ReplaceMetas(tableNamespace, table);
+            return nsName;
+        }
+
+        protected virtual string ModelInterfaceNamespace(ITable table)
+        {
+            var ns = Options.ModelInterfaceNamespace ?? Options.Namespace;
+            var nsName = ReplaceMetas(ns, table);
+            return nsName;
+        }
+
+        protected virtual string ModelNamespace(ITable table)
+        {
+            var ns = Options.ModelNamespace ?? Options.Namespace;
+            var nsName = ReplaceMetas(ns, table);
+            return nsName;
+        }
+
+        protected virtual string TableInterfaceNamespace(ITable table)
+        {
+            var ns = Options.EntityInterfaceNamespace ?? Options.Namespace;
+            var nsName = ReplaceMetas(ns, table);
             return nsName;
         }
 
@@ -83,7 +126,8 @@ namespace PoweredSoft.DbUtils.EF.Generator
 
         protected virtual string ContextNamespace()
         {
-            var metaReplacedNamespace = EmptyMetas(Options.Namespace);
+            var ns = Options.ContextNamespace ?? Options.Namespace;
+            var metaReplacedNamespace = EmptyMetas(ns);
             return string.Join(".", metaReplacedNamespace.Split('.').Where(t => !string.IsNullOrWhiteSpace(t)));
         }
 
@@ -241,28 +285,66 @@ namespace PoweredSoft.DbUtils.EF.Generator
             GenerateContext();
             GenerateSequenceMethods();
             BeforeSaveToDisk();
-            GenerationContext.SaveToDisk(Encoding.UTF8);
+            GenerationContext.SaveToDisk(Encoding.UTF8, normalizeNewLines: true, createDir:true);
         }
 
-        protected virtual void GenerateModelInterface(ITable table, FileBuilder fileBuilder)
+     
+        protected virtual FileBuilder ResolveEntityFileBuilder(ITable table)
+        {
+            FileBuilder ret = null;
+            var outputDir = Options.EntitiesOutputDir ?? Options.OutputDir;
+            var outputFile = Options.EntitiesOutputSingleFileName ?? Options.OutputSingleFileName ?? $"{ModelClassName(table)}.generated.cs";
+            GenerationContext.File($"{outputDir}{Path.DirectorySeparatorChar}{outputFile}", fb => ret = fb);
+            return ret;
+        }
+
+        protected virtual FileBuilder ResolveEntityInterfaceFileBuilder(ITable table)
+        {
+            FileBuilder ret = null;
+            var outputDir = Options.EntitiesInterfacesOutputDir ?? Options.OutputDir;
+            var outputFile = Options.EntitiesInterfacesOutputSingleFileName ?? Options.OutputSingleFileName ?? $"{TableInterfaceName(table)}.generated.cs";
+            GenerationContext.File($"{outputDir}{Path.DirectorySeparatorChar}{outputFile}", fb => ret = fb);
+            return ret;
+        }
+
+        protected virtual FileBuilder ResolveModelInterfaceFileBuilder(ITable table)
+        {
+            FileBuilder ret = null;
+            var outputDir = Options.ModelsInterfacesOutputDir ?? Options.OutputDir;
+            var outputFile = Options.ModelsInterfacesOutputSingleFileName ?? Options.OutputSingleFileName ?? $"{ModelInterfaceName(table)}.generated.cs";
+            GenerationContext.File($"{outputDir}{Path.DirectorySeparatorChar}{outputFile}", fb => ret = fb);
+            return ret;
+        }
+
+
+        protected virtual FileBuilder ResolveModelFileBuilder(ITable table)
+        {
+            FileBuilder ret = null;
+            var outputDir = Options.ModelsOutputDir ?? Options.OutputDir;
+            var outputFile = Options.ModelsOutputSingleFileName ?? Options.OutputSingleFileName ?? $"{ModelClassName(table)}.generated.cs";
+            GenerationContext.File($"{outputDir}{Path.DirectorySeparatorChar}{outputFile}", fb => ret = fb);
+            return ret;
+        }
+
+        protected virtual FileBuilder ResolveContextFileBuilder()
+        {
+            FileBuilder ret = null;
+            var outputDir = Options.ContextOutputDir ?? Options.OutputDir;
+            var outputFile = Options.ContextOutputSingleFileName ?? Options.OutputSingleFileName ?? $"{ContextClassName()}.generated.cs";
+            GenerationContext.File($"{outputDir}{Path.DirectorySeparatorChar}{outputFile}", fb => ret = fb);
+            return ret;
+        }
+
+        protected virtual void GenerateModelInterface(ITable table)
         {
             if (!Options.GenerateModelsInterfaces)
                 return;
 
-            var tableNamespace = TableNamespace(table);
-            var tableClassName = TableClassName(table);
             var modelInterfaceName = ModelInterfaceName(table);
-            var tableClassFullName = TableClassFullName(table);
-            var tableClass = GenerationContext.FindClass(tableClassName, tableNamespace);
+            var modelInterfaceNamespace = ModelInterfaceNamespace(table);
+            var fileBuilder = ResolveModelInterfaceFileBuilder(table);
 
-
-            if (!Options.OutputToSingleFile)
-            {
-                var filePath = $"{Options.OutputDir}{Path.DirectorySeparatorChar}{modelInterfaceName}.generated.cs";
-                fileBuilder.Path(filePath);
-            }
-
-            fileBuilder.Namespace(tableNamespace, true, ns =>
+            fileBuilder.Namespace(modelInterfaceNamespace, true, ns =>
             {
                 ns.Interface(modelInterface =>
                 {
@@ -297,27 +379,10 @@ namespace PoweredSoft.DbUtils.EF.Generator
 
             tables.ForEach(table =>
             {
-                if (Options.OutputToSingleFile)
-                {
-                    GenerationContext.SingleFile(fb =>
-                    {
-                        var filePath = $"{Options.OutputDir}{Path.DirectorySeparatorChar}{Options.OutputSingleFileName}";
-                        fb.Path(filePath);
-
-                        GenerateEntityInterface(table, fb);
-                        GenerateEntity(table, fb);
-                        GenerateModelInterface(table, fb);
-                        GenerateModel(table, fb);
-                    });
-                }
-                else
-                {
-                    GenerationContext
-                        .FileIfPathIsSet(fb => GenerateEntityInterface(table, fb))
-                        .FileIfPathIsSet(fb => GenerateEntity(table, fb))
-                        .FileIfPathIsSet(fb => GenerateModelInterface(table, fb))
-                        .FileIfPathIsSet(fb => GenerateModel(table, fb));
-                }
+                GenerateEntityInterface(table);
+                GenerateEntity(table);
+                GenerateModelInterface(table);
+                GenerateModel(table);
             });
 
             // generate foreign keys and navigation properties.
@@ -396,22 +461,16 @@ namespace PoweredSoft.DbUtils.EF.Generator
             });
         }
 
-        protected virtual void GenerateEntityInterface(ITable table, FileBuilder fileBuilder)
+        protected virtual void GenerateEntityInterface(ITable table)
         {
             if (!Options.GenerateInterfaces)
                 return;
-
-            var tableNamespace = TableNamespace(table);
-            var tableClassName = TableClassName(table);
+  
             var tableInterfaceName = TableInterfaceName(table);
+            var tableInterfaceNamespace = TableInterfaceNamespace(table);
+            var fileBuilder = ResolveEntityInterfaceFileBuilder(table);
 
-            if (!Options.OutputToSingleFile)
-            {
-                var filePath = $"{Options.OutputDir}{Path.DirectorySeparatorChar}{tableInterfaceName}.generated.cs";
-                fileBuilder.Path(filePath);
-            }
-
-            fileBuilder.Namespace(tableNamespace, true, ns =>
+            fileBuilder.Namespace(tableInterfaceNamespace, true, ns =>
             {
                 ns.Interface(tableInterface =>
                 {
@@ -436,17 +495,11 @@ namespace PoweredSoft.DbUtils.EF.Generator
             });
         }
 
-        private void GenerateEntity(ITable table, FileBuilder fileBuilder)
+        private void GenerateEntity(ITable table)
         {
             var tableNamespace = TableNamespace(table);
             var tableClassName = TableClassName(table);
-            var tableInterfaceName = TableInterfaceName(table);
-
-            if (!Options.OutputToSingleFile)
-            {
-                var filePath = $"{Options.OutputDir}{Path.DirectorySeparatorChar}{tableClassName}.generated.cs";
-                fileBuilder.Path(filePath);
-            }
+            var fileBuilder = ResolveEntityFileBuilder(table);
 
             fileBuilder.Namespace(tableNamespace, true, ns =>
             {
@@ -456,7 +509,10 @@ namespace PoweredSoft.DbUtils.EF.Generator
                     tableClass.Partial(true).Name(tableClassName);
 
                     if (Options.GenerateInterfaces)
-                        tableClass.Inherits(tableInterfaceName);
+                    {
+                        var tableInterfaceFullName = TableInterfaceFullName(table);
+                        tableClass.Inherits(tableInterfaceFullName);
+                    }
 
                     // set properties.
                     table.Columns.ForEach(column =>
@@ -478,26 +534,28 @@ namespace PoweredSoft.DbUtils.EF.Generator
             });
         }
 
-        protected virtual void GenerateModel(ITable table, FileBuilder fileBuilder)
+        protected virtual string TableInterfaceFullName(ITable table)
+        {
+            var tableInterfaceNamespace = TableInterfaceNamespace(table);
+            var tableInterfaceName = TableInterfaceName(table);
+            var tableInterfaceFullName = $"{tableInterfaceNamespace}.{tableInterfaceName}";
+            return tableInterfaceFullName;
+        }
+
+        protected virtual void GenerateModel(ITable table)
         {
             if (!Options.GenerateModels)
                 return;
 
             var tableNamespace = TableNamespace(table);
+            var modelNamespace = ModelNamespace(table);
             var tableClassName = TableClassName(table);
             var modelClassName = ModelClassName(table);
-            var modelInterfaceName = ModelInterfaceName(table);
             var tableClassFullName = TableClassFullName(table);
             var tableClass = GenerationContext.FindClass(tableClassName, tableNamespace);
+            var fileBuilder = ResolveModelFileBuilder(table);
 
-
-            if (!Options.OutputToSingleFile)
-            {
-                var filePath = $"{Options.OutputDir}{Path.DirectorySeparatorChar}{modelClassName}.generated.cs";
-                fileBuilder.Path(filePath);
-            }
-
-            fileBuilder.Namespace(tableNamespace, true, ns =>
+            fileBuilder.Namespace(modelNamespace, true, ns =>
             {
                 ns.Class(modelClass =>
                 {
@@ -505,14 +563,17 @@ namespace PoweredSoft.DbUtils.EF.Generator
                     modelClass.Partial(true).Name(modelClassName);
 
                     if (Options.GenerateModelsInterfaces)
-                        modelClass.Inherits(modelInterfaceName);
+                    {
+                        var modelInterfaceFullName = ModelInterfaceFullName(table);
+                        modelClass.Inherits(modelInterfaceFullName);
+                    }
 
                     Options?.ModelInheritances.ForEach(mi =>
                     {
                         modelClass.Inherits(ReplaceMetas(mi, table));
                     });
 
-
+                    /*
                     MethodBuilder from = null;
                     MethodBuilder to = null;
 
@@ -550,6 +611,7 @@ namespace PoweredSoft.DbUtils.EF.Generator
                         .Name("GetEntityType")
                         .RawLine($"return typeof({tableClassFullName})")
                     );
+                    */
 
                     // set properties.
                     table.Columns.ForEach(column =>
@@ -568,6 +630,8 @@ namespace PoweredSoft.DbUtils.EF.Generator
                                 .Type(typeName)
                                 .Meta(column);
 
+                            /*
+
                             from.RawLine($"{column.Name} = entity.{column.Name}");
 
                             if (isPropertyNullable && !column.IsNullable)
@@ -585,11 +649,19 @@ namespace PoweredSoft.DbUtils.EF.Generator
                             else
                             {
                                 to.RawLine($"entity.{column.Name} = {column.Name}");
-                            }
+                            }*/
                         });
                     });
                 });
             });
+        }
+
+        protected virtual string ModelInterfaceFullName(ITable table)
+        {
+            var modelInterfaceNamespace = ModelInterfaceNamespace(table);
+            var modelInterfaceName = ModelInterfaceName(table);
+            var modelInterfaceFullName = $"{modelInterfaceNamespace}.{modelInterfaceName}";
+            return modelInterfaceFullName;
         }
     }
 }
