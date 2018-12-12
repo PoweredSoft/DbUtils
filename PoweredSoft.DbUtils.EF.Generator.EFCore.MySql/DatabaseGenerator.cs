@@ -11,7 +11,7 @@ namespace PoweredSoft.DbUtils.EF.Generator.EFCore.MySql
 {
     public class DatabaseGenerator : EFCoreDatabaseGeneratorBase<DatabaseSchema, GeneratorOptions>
     {
-        protected override IDataTypeResolver DataTypeResolver { get; } = new DataTypeResolver();
+        public override IDataTypeResolver DataTypeResolver { get; } = new DataTypeResolver();
         public override DatabaseSchema CreateSchema() => new DatabaseSchema();
 
         public override IGeneratorOptions GetDefaultOptions() => new GeneratorOptions();

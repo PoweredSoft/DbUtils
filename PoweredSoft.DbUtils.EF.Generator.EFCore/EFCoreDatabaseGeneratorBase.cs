@@ -67,99 +67,85 @@ namespace PoweredSoft.DbUtils.EF.Generator.EFCore
 
         protected override void GenerateContext()
         {
+            var fileBuilder = ResolveContextFileBuilder();
             var contextNamespace = ContextNamespace();
             var contextClassName = ContextClassName();
 
-            Action<FileBuilder> generateContextInline = (FileBuilder fileBuilder) =>
+            fileBuilder.Using("Microsoft.EntityFrameworkCore");
+            fileBuilder.Namespace(contextNamespace, true, ns =>
             {
-                if (!Options.OutputToSingleFile)
+                ns.Class(contextClassName, true, contextClass =>
                 {
-                    var filePath = $"{Options.OutputDir}{Path.DirectorySeparatorChar}{Options.ContextName}.generated.cs";
-                    fileBuilder.Path(filePath);
-                }
+                    contextClass.Partial(true).Inherits(Options.ContextBaseClassName);
 
-                fileBuilder.Using("Microsoft.EntityFrameworkCore");
-
-                fileBuilder.Namespace(contextNamespace, true, ns =>
-                {
-                    ns.Class(contextClassName, true, contextClass =>
+                    TablesToGenerate.ForEach(table =>
                     {
-                        contextClass.Partial(true).Inherits(Options.ContextBaseClassName);
+                        var tableClassFullName = TableClassFullName(table);
+                        var tableNamePlural = Pluralize(table.Name);
+                        contextClass.Property(tableNamePlural, true, dbSetProp =>
+                        {
+                            dbSetProp.Virtual(true).Type($"DbSet<{tableClassFullName}>");
+                        });
+                    });
+
+                    // empty constructor.
+                    contextClass.Constructor(c => c.Class(contextClass));
+
+                    // constructor with options.
+                    contextClass.Constructor(c => c
+                        .Class(contextClass)
+                        .Parameter(p => p.Type($"DbContextOptions<{contextClassName}>").Name("options"))
+                        .BaseParameter("options")
+                    );
+
+                    // override On Configuring
+                    contextClass.Method(m =>
+                    {
+                        m
+                            .AccessModifier(AccessModifiers.Protected)
+                            .Override(true)
+                            .ReturnType("void")
+                            .Name("OnConfiguring")
+                            .Parameter(p => p.Type("DbContextOptionsBuilder").Name("optionsBuilder"));
+
+                        if (Options.AddConnectionStringOnGenerate)
+                        {
+                            m.Add(() =>
+                            {
+                                return IfBuilder.Create()
+                                    .RawCondition(c => c.Condition("!optionsBuilder.IsConfigured"))
+                                    .Add(RawLineBuilder.Create(
+                                            "#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.")
+                                        .NoEndOfLine())
+                                    .Add(UseDatabaseEngineConnectionStringLine());
+                            });
+                        }
+                    });
+
+                    // model creating.
+                    contextClass.Method(m =>
+                    {
+                        m
+                            .AccessModifier(AccessModifiers.Protected)
+                            .Override(true)
+                            .ReturnType("void")
+                            .Name("OnModelCreating")
+                            .Parameter(p => p.Type("ModelBuilder").Name("modelBuilder"));
 
                         TablesToGenerate.ForEach(table =>
                         {
-                            var tableClassFullName = TableClassFullName(table);
-                            var tableNamePlural = Pluralize(table.Name);
-                            contextClass.Property(tableNamePlural, true, dbSetProp =>
-                            {
-                                dbSetProp.Virtual(true).Type($"DbSet<{tableClassFullName}>");
-                            });
+                            AddFluentToMethod(m, table);
                         });
 
-                        // empty constructor.
-                        contextClass.Constructor(c => c.Class(contextClass));
-
-                        // constructor with options.
-                        contextClass.Constructor(c => c
-                            .Class(contextClass)
-                            .Parameter(p => p.Type($"DbContextOptions<{contextClassName}>").Name("options"))
-                            .BaseParameter("options")
-                        );
-
-                        // override On Configuring
-                        contextClass.Method(m =>
+                        SequenceToGenerate.ForEach(sequence =>
                         {
-                            m
-                                .AccessModifier(AccessModifiers.Protected)
-                                .Override(true)
-                                .ReturnType("void")
-                                .Name("OnConfiguring")
-                                .Parameter(p => p.Type("DbContextOptionsBuilder").Name("optionsBuilder"));
-
-                            if (Options.AddConnectionStringOnGenerate)
-                            {
-                                m.Add(() =>
-                                {
-                                    return IfBuilder.Create()
-                                        .RawCondition(c => c.Condition("!optionsBuilder.IsConfigured"))
-                                        .Add(RawLineBuilder.Create(
-                                                "#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.")
-                                            .NoEndOfLine())
-                                        .Add(UseDatabaseEngineConnectionStringLine());
-                                });
-                            }
-                        });
-
-                        // model creating.
-                        contextClass.Method(m =>
-                        {
-                            m
-                                .AccessModifier(AccessModifiers.Protected)
-                                .Override(true)
-                                .ReturnType("void")
-                                .Name("OnModelCreating")
-                                .Parameter(p => p.Type("ModelBuilder").Name("modelBuilder"));
-
-                            TablesToGenerate.ForEach(table =>
-                            {
-                                AddFluentToMethod(m, table);
-                            });
-
-                            SequenceToGenerate.ForEach(sequence =>
-                            {
-                                var dataType = DataTypeResolver.ResolveType(sequence);
-                                var outputType = dataType.GetOutputType();
-                                m.RawLine($"modelBuilder.HasSequence<{outputType}>(\"{sequence.Name}\").StartsAt({sequence.StartAt}).IncrementsBy({sequence.IncrementsBy})");
-                            });
+                            var dataType = DataTypeResolver.ResolveType(sequence);
+                            var outputType = dataType.GetOutputType();
+                            m.RawLine($"modelBuilder.HasSequence<{outputType}>(\"{sequence.Name}\").StartsAt({sequence.StartAt}).IncrementsBy({sequence.IncrementsBy})");
                         });
                     });
                 });
-            };
-
-            if (Options.OutputToSingleFile)
-                GenerationContext.SingleFile(fb => generateContextInline(fb));
-            else
-                GenerationContext.FileIfPathIsSet(fb => generateContextInline(fb));
+            });
         }
        
      
@@ -216,7 +202,7 @@ namespace PoweredSoft.DbUtils.EF.Generator.EFCore
                 line.Append($"entity.HasIndex(t => {rightExpr})");
                 line.Append($"\n\t.HasName(\"{i.Name}\")");
                 if (i.IsUnique)
-                    line.Append("\n\t.IsUnique()");
+                    line.Append($"\n\t.IsUnique()");
 
                 OnBeforeIndexLineAdded(line, i);
 

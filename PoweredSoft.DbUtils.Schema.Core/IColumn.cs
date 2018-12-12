@@ -19,7 +19,6 @@ namespace PoweredSoft.DbUtils.Schema.Core
         int PrimaryKeyOrder { get; }
         bool IsForeignKey { get; }
         bool IsNullable { get; }
-        ITable Table { get; }
-        bool IsUnsigned { get; }
+        ITable Table { get; } 
     }
 }

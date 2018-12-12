@@ -15,8 +15,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.DbUtils.EF.Gene
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.DbUtils.EF.Generator.SqlServer.Core", "PoweredSoft.DbUtils.EF.Generator.SqlServer.Core\PoweredSoft.DbUtils.EF.Generator.SqlServer.Core.csproj", "{DF674EB3-D3D4-4B38-92B5-47ADF692A307}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.CodeGenerator", "..\CodeGenerator\PoweredSoft.CodeGenerator\PoweredSoft.CodeGenerator.csproj", "{44C9C724-8ED1-4DEE-9E4E-3A639FE0FB54}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8329CE09-25D6-43A3-8A13-603DFD39C18C}"
 	ProjectSection(SolutionItems) = preProject
 		LICENSE.md = LICENSE.md
@@ -46,6 +44,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoweredSoft.DbUtils.EF.Generator.EFCore.MySql", "PoweredSoft.DbUtils.EF.Generator.EFCore.MySql\PoweredSoft.DbUtils.EF.Generator.EFCore.MySql.csproj", "{82174FEB-C78F-47C2-AEF8-471FDAE8248A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "psdb-ext", "psdb-ext\psdb-ext.csproj", "{8B7B79BB-E29A-4569-8184-077A82B8F68D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Acme.DbUtils", "Acme.DbUtils\Acme.DbUtils.csproj", "{C43B0659-34D3-4F6C-8E5C-D3C164F0A509}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -77,10 +77,6 @@ Global
 		{DF674EB3-D3D4-4B38-92B5-47ADF692A307}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DF674EB3-D3D4-4B38-92B5-47ADF692A307}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DF674EB3-D3D4-4B38-92B5-47ADF692A307}.Release|Any CPU.Build.0 = Release|Any CPU
-		{44C9C724-8ED1-4DEE-9E4E-3A639FE0FB54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{44C9C724-8ED1-4DEE-9E4E-3A639FE0FB54}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{44C9C724-8ED1-4DEE-9E4E-3A639FE0FB54}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{44C9C724-8ED1-4DEE-9E4E-3A639FE0FB54}.Release|Any CPU.Build.0 = Release|Any CPU
 		{202B8A94-C3A0-4BE0-8772-50905E6759A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{202B8A94-C3A0-4BE0-8772-50905E6759A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{202B8A94-C3A0-4BE0-8772-50905E6759A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -129,6 +125,10 @@ Global
 		{8B7B79BB-E29A-4569-8184-077A82B8F68D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8B7B79BB-E29A-4569-8184-077A82B8F68D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8B7B79BB-E29A-4569-8184-077A82B8F68D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C43B0659-34D3-4F6C-8E5C-D3C164F0A509}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C43B0659-34D3-4F6C-8E5C-D3C164F0A509}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C43B0659-34D3-4F6C-8E5C-D3C164F0A509}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C43B0659-34D3-4F6C-8E5C-D3C164F0A509}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
