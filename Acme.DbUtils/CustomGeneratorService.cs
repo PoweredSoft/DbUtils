@@ -68,60 +68,60 @@ namespace Acme.DbUtils
             ctx.File(path, fb => 
             {
                 fb.Namespace("Acme.Models", true, ns =>
+                {
+                    ns.Class($"{table.Name}ModelTransformationService", true, c =>
                     {
-                        ns.Class($"{table.Name}ModelTransformationService", true, c =>
+                        c.Method(m =>
                         {
-                            c.Method(m =>
+                            m
+                                .AccessModifier(AccessModifiers.Public)
+                                .Virtual(true)
+                                .Name("ToModel")
+                                .ReturnType("void")
+                                .Parameter(p => p.Name("source").Type(pocoFullClassName))
+                                .Parameter(p => p.Name("model").Type(modelFullClassName));
+                            
+                            table.Columns.ForEach(column =>
                             {
-                                m
-                                    .AccessModifier(AccessModifiers.Public)
-                                    .Virtual(true)
-                                    .Name("ToModel")
-                                    .ReturnType("void")
-                                    .Parameter(p => p.Name("source").Type(pocoFullClassName))
-                                    .Parameter(p => p.Name("model").Type(modelFullClassName));
-                                
-                                table.Columns.ForEach(column =>
-                                {
-                                    m.RawLine($"model.{column.Name} = source.{column.Name}");
-                                });
+                                m.RawLine($"model.{column.Name} = source.{column.Name}");
                             });
+                        });
 
-                            c.Method(m =>
+                        c.Method(m =>
+                        {
+                            m
+                                .AccessModifier(AccessModifiers.Public)
+                                .Virtual(true)
+                                .Name("FromModel")
+                                .ReturnType("void")
+                                .Parameter(p => p.Name("model").Type(modelFullClassName))
+                                .Parameter(p => p.Name("destination").Type(pocoFullClassName));
+
+                            table.Columns.ForEach(column =>
                             {
-                                m
-                                    .AccessModifier(AccessModifiers.Public)
-                                    .Virtual(true)
-                                    .Name("FromModel")
-                                    .ReturnType("void")
-                                    .Parameter(p => p.Name("model").Type(modelFullClassName))
-                                    .Parameter(p => p.Name("destination").Type(pocoFullClassName));
-
-                                table.Columns.ForEach(column =>
+                                bool isPropertyNullable =
+                                    column.IsNullable || options.GenerateModelPropertyAsNullable;
+                                if (isPropertyNullable && !column.IsNullable)
                                 {
-                                    bool isPropertyNullable =
-                                        column.IsNullable || options.GenerateModelPropertyAsNullable;
-                                    if (isPropertyNullable && !column.IsNullable)
-                                    {
-                                        var matchingProp = pocoClass.FindByMeta<PropertyBuilder>(column);
-                                        var ternary = TernaryBuilder
-                                            .Create()
-                                            .RawCondition(rc => rc.Condition($"model.{column.Name} != null"))
-                                            .True(RawInlineBuilder.Create(
-                                                $"destination.{column.Name} = ({matchingProp.GetTypeName()})model.{column.Name}"))
-                                            .False(RawInlineBuilder.Create(
-                                                $"destination.{column.Name} = default({matchingProp.GetTypeName()})"));
+                                    var matchingProp = pocoClass.FindByMeta<PropertyBuilder>(column);
+                                    var ternary = TernaryBuilder
+                                        .Create()
+                                        .RawCondition(rc => rc.Condition($"model.{column.Name} != null"))
+                                        .True(RawInlineBuilder.Create(
+                                            $"destination.{column.Name} = ({matchingProp.GetTypeName()})model.{column.Name}"))
+                                        .False(RawInlineBuilder.Create(
+                                            $"destination.{column.Name} = default({matchingProp.GetTypeName()})"));
 
-                                        m.RawLine($"destination.{column.Name} = {ternary.GenerateInline()}");
-                                    }
-                                    else
-                                    {
-                                        m.RawLine($"destination.{column.Name} = model.{column.Name}");
-                                    }
-                                });
+                                    m.RawLine($"destination.{column.Name} = {ternary.GenerateInline()}");
+                                }
+                                else
+                                {
+                                    m.RawLine($"destination.{column.Name} = model.{column.Name}");
+                                }
                             });
                         });
                     });
+                });
             });
         }
     }
