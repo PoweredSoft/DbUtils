@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Version>1.0.4</Version>
     <Copyright>Powered Softwares Inc.</Copyright>
     <PackageLicenseUrl>https://github.com/PoweredSoft/DbUtils/blob/master/LICENSE.md</PackageLicenseUrl>
@@ -10,7 +9,7 @@
     <RepositoryUrl>https://github.com/PoweredSoft/DbUtils/PoweredSoft.DbUtils.EF.Geneartor.MySql</RepositoryUrl>
     <RepositoryType>github</RepositoryType>
     <PackageIconUrl>https://secure.gravatar.com/avatar/4e32f73820c16718909a06c2927f1f8b?s=512&amp;r=g&amp;d=retro</PackageIconUrl>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>1.1.0$(VersionSuffix)</Version>
   </PropertyGroup>
 
   <ItemGroup>
