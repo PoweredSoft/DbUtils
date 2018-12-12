@@ -312,8 +312,22 @@ namespace PoweredSoft.DbUtils.EF.Generator
             GenerateContext();
             GenerateSequenceMethods();
             EachTableHooks();
+            ContextHook();
             BeforeSaveToDisk();
             GenerationContext.SaveToDisk(Encoding.UTF8, normalizeNewLines: true, createDir:true);
+        }
+
+        private void ContextHook()
+        {
+            DynamicAssemblies.ForEach(a =>
+            {
+                var contextServices = a.GetTypes()
+                    .Where(t => t.IsClass && typeof(IContextService).IsAssignableFrom(t))
+                    .Select(t => (IContextService)Activator.CreateInstance(t))
+                    .ToList();
+
+                contextServices.ForEach(c => c.OnContext(this));
+            });
         }
 
         private void EachTableHooks()

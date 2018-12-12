@@ -8,6 +8,23 @@ using PoweredSoft.DbUtils.Schema.Core;
 
 namespace Acme.DbUtils
 {
+    public class ContextService : IContextService
+    {
+        public void OnContext(IGenerator generator)
+        {
+            if (!(generator is IGeneratorUsingGenerationContext) || !(generator is IGeneratorWithMeta))
+                throw new Exception("Not the kind of generator expected.");
+
+            var gen = generator as IGeneratorUsingGenerationContext;
+            var genMeta = generator as IGeneratorWithMeta;
+            var options = gen.GetOptions();
+            var gc = gen.GetGenerationContext();
+            var contextClassName = genMeta.ContextClassName();
+            var contextClass = gc.FindClass(contextClassName);
+            contextClass.Method(m => m.ReturnType("void").Name("CreateMethodBlah"));
+        }
+    }
+
     public class EachTableService : IEachTableService
     {
         public void OnTable(IGenerator generator, ITable table)
@@ -32,7 +49,6 @@ namespace Acme.DbUtils
             var pocoFullClassName = genMeta.TableClassFullName(table);
 
             // classes
-            var modelClass = ctx.FindClass(modelClassName, modelClassNamespace);
             var pocoClass = ctx.FindClass(pocoClassName, pocoClassNamespace);
 
             var path = $"{options.OutputDir}{Path.DirectorySeparatorChar}transformations.generated.cs";
