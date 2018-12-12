@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="PoweredSoft.CodeGenerator" Version="1.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\PoweredSoft.DbUtils.EF.Generator.EF6.SqlServer\PoweredSoft.DbUtils.EF.Generator.EF6.SqlServer.csproj" />
     <ProjectReference Include="..\PoweredSoft.DbUtils.EF.Generator.EFCore.MySql\PoweredSoft.DbUtils.EF.Generator.EFCore.MySql.csproj" />
     <ProjectReference Include="..\PoweredSoft.DbUtils.EF.Generator.EFCore.SqlServer\PoweredSoft.DbUtils.EF.Generator.EFCore.SqlServer.csproj" />

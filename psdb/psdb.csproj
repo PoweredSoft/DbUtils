@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+    <PackageReference Include="PoweredSoft.CodeGenerator" Version="1.0.1" />
     <PackageReference Include="SysCommand" Version="1.0.9" />
   </ItemGroup>
 
