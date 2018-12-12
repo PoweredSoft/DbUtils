@@ -16,8 +16,10 @@ using PoweredSoft.DbUtils.Schema.Core;
 
 namespace PoweredSoft.DbUtils.EF.Generator
 {
-    public abstract class DatabaseGeneratorBase<TSchema, TOptions> : IGenerator<TOptions>, 
-        IGeneratorUsingGenerationContext
+    public abstract class DatabaseGeneratorBase<TSchema, TOptions> : 
+        IGenerator<TOptions>, 
+        IGeneratorUsingGenerationContext, 
+        IGeneratorWithMeta 
         where TOptions : IGeneratorOptions
         where TSchema : IDatabaseSchema
     {
@@ -26,7 +28,7 @@ namespace PoweredSoft.DbUtils.EF.Generator
         protected List<ITable> TablesToGenerate { get; set; }
         protected List<ISequence> SequenceToGenerate { get; set; }
         protected GenerationContext GenerationContext { get; set; }
-        protected abstract IDataTypeResolver DataTypeResolver { get; }
+        public abstract IDataTypeResolver DataTypeResolver { get; }
 
         protected Pluralizer Plurializer { get; } = new Pluralizer();
 
@@ -100,55 +102,60 @@ namespace PoweredSoft.DbUtils.EF.Generator
             return Schema.Sequences;
         }
 
-        protected virtual string Pluralize(string text)
+        public virtual string Pluralize(string text)
         {
             var ret = Plurializer.Pluralize(text);
             return ret;
         }
 
-        protected virtual string TableNamespace(ITable table)
+        public virtual string TableNamespace(ITable table)
         {
             var tableNamespace = Options.EntityNamespace ?? Options.Namespace;
             var nsName = ReplaceMetas(tableNamespace, table);
             return nsName;
         }
 
-        protected virtual string ModelInterfaceNamespace(ITable table)
+        public virtual string ModelInterfaceNamespace(ITable table)
         {
             var ns = Options.ModelInterfaceNamespace ?? Options.Namespace;
             var nsName = ReplaceMetas(ns, table);
             return nsName;
         }
 
-        protected virtual string ModelNamespace(ITable table)
+        public virtual string ModelNamespace(ITable table)
         {
             var ns = Options.ModelNamespace ?? Options.Namespace;
             var nsName = ReplaceMetas(ns, table);
             return nsName;
         }
 
-        protected virtual string TableInterfaceNamespace(ITable table)
+        public virtual string ModelClassFullName(ITable table)
+        {
+            return $"{ModelNamespace(table)}.{ModelClassName(table)}";
+        }
+
+        public virtual string TableInterfaceNamespace(ITable table)
         {
             var ns = Options.EntityInterfaceNamespace ?? Options.Namespace;
             var nsName = ReplaceMetas(ns, table);
             return nsName;
         }
 
-        protected virtual string TableClassName(ITable table)
+        public virtual string TableClassName(ITable table)
         {
             var ret = table.Name;
             return ret;
         }
 
-        protected virtual string ContextNamespace()
+        public virtual string ContextNamespace()
         {
             var ns = Options.ContextNamespace ?? Options.Namespace;
             var metaReplacedNamespace = EmptyMetas(ns);
             return string.Join(".", metaReplacedNamespace.Split('.').Where(t => !string.IsNullOrWhiteSpace(t)));
         }
 
-        protected virtual string ContextClassName() => Options.ContextName;
-        protected virtual string ContextFullClassName() => $"{ContextNamespace()}.{ContextClassName()}";
+        public virtual string ContextClassName() => Options.ContextName;
+        public virtual string ContextFullClassName() => $"{ContextNamespace()}.{ContextClassName()}";
 
         protected abstract string CollectionInstanceType();
         public abstract bool HasManyShouldBeVirtual();
@@ -156,35 +163,39 @@ namespace PoweredSoft.DbUtils.EF.Generator
         public abstract bool ForeignKeysShouldBeVirtual();
         protected abstract void GenerateManyToMany(ITable table);
 
-        protected virtual string EmptyMetas(string text)
+        public virtual string EmptyMetas(string text)
         {
             return text.Replace("[CONTEXT]", string.Empty).Replace("[ENTITY]", string.Empty);
         }
 
-        protected virtual string ReplaceMetas(string text)
+        public virtual string ReplaceMetas(string text)
         {
             return text.Replace("[CONTEXT]", ContextFullClassName());
         }
 
-        protected virtual string ReplaceMetas(string text, ITable table)
+        public virtual string ReplaceMetas(string text, ITable table)
         {
             return ReplaceMetas(text).Replace("[ENTITY]", table.Name);
         }
 
-        protected string ModelClassName(ITable table, bool includeSuffix = true)
+        public string ModelClassName(ITable table)
         {
-            var ret = $"{table.Name}Model{(includeSuffix ? Options.ModelSuffix : "")}";
+            var ret = $"{table.Name}Model{Options.ModelSuffix}";
             return ret;
         }
 
-        protected string ModelInterfaceName(ITable table)
+        string IGeneratorWithMeta.ModelNamespace(ITable table)
         {
-            var ret = ModelClassName(table, false);
-            ret = $"I{ret}{Options.ModelInterfaceSuffix}";
+            return ModelNamespace(table);
+        }
+
+        public string ModelInterfaceName(ITable table)
+        {
+            var ret = $"I{table.Name}Model{Options.ModelInterfaceSuffix}";
             return ret;
         }
 
-        protected string TableInterfaceName(ITable table)
+        public string TableInterfaceName(ITable table)
         {
             var ret = TableClassName(table);
             ret = $"I{ret}{Options.InterfaceNameSuffix}";

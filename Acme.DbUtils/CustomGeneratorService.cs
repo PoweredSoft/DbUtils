@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
+using PoweredSoft.CodeGenerator;
 using PoweredSoft.CodeGenerator.Constants;
+using PoweredSoft.CodeGenerator.Extensions;
 using PoweredSoft.DbUtils.EF.Generator.Core;
 using PoweredSoft.DbUtils.Schema.Core;
 
@@ -10,16 +12,28 @@ namespace Acme.DbUtils
     {
         public void OnTable(IGenerator generator, ITable table)
         {
-            if (!(generator is IGeneratorUsingGenerationContext))
+            if (!(generator is IGeneratorUsingGenerationContext) || !(generator is IGeneratorWithMeta))
                 throw new Exception("Not the kind of generator expected.");
 
             var gen = generator as IGeneratorUsingGenerationContext;
+            var genMeta = generator as IGeneratorWithMeta;
             var options = generator.GetOptions();
             var ctx = gen.GetGenerationContext();
 
-            var modelClassName = $"{table.Name}ModelBase";
-            var modelClass = ctx.FindClass(modelClassName);
-            var pocoClass = ctx.FindClass(table.Name);
+
+            // model.
+            var modelClassName = genMeta.ModelClassName(table);
+            var modelClassNamespace = genMeta.ModelNamespace(table);
+            var modelFullClassName = genMeta.ModelClassFullName(table);
+
+            // poco.
+            var pocoClassName = genMeta.TableClassName(table);
+            var pocoClassNamespace = genMeta.TableNamespace(table);
+            var pocoFullClassName = genMeta.TableClassFullName(table);
+
+            // classes
+            var modelClass = ctx.FindClass(modelClassName, modelClassNamespace);
+            var pocoClass = ctx.FindClass(pocoClassName, pocoClassNamespace);
 
             var path = $"{options.OutputDir}{Path.DirectorySeparatorChar}transformations.generated.cs";
 
@@ -27,7 +41,7 @@ namespace Acme.DbUtils
             {
                 fb.Namespace("Acme.Models", true, ns =>
                     {
-                        ns.Class($"{table.Name}TransformationService", true, c =>
+                        ns.Class($"{table.Name}ModelTransformationService", true, c =>
                         {
                             c.Method(m =>
                             {
@@ -35,12 +49,48 @@ namespace Acme.DbUtils
                                     .AccessModifier(AccessModifiers.Public)
                                     .Virtual(true)
                                     .Name("ToModel")
-                                    .ReturnType("void");
+                                    .ReturnType("void")
+                                    .Parameter(p => p.Name("source").Type(pocoFullClassName))
+                                    .Parameter(p => p.Name("model").Type(modelFullClassName));
+                                
+                                table.Columns.ForEach(column =>
+                                {
+                                    m.RawLine($"model.{column.Name} = source.{column.Name}");
+                                });
+                            });
 
-                                m.Parameter(p => p.Name("source").Type("object"));
-                                m.Parameter(p => p.Name("destination").Type("object"));
-                                m.RawLine("int todo")
-                                    ;
+                            c.Method(m =>
+                            {
+                                m
+                                    .AccessModifier(AccessModifiers.Public)
+                                    .Virtual(true)
+                                    .Name("FromModel")
+                                    .ReturnType("void")
+                                    .Parameter(p => p.Name("model").Type(modelFullClassName))
+                                    .Parameter(p => p.Name("destination").Type(pocoFullClassName));
+
+                                table.Columns.ForEach(column =>
+                                {
+                                    bool isPropertyNullable =
+                                        column.IsNullable || options.GenerateModelPropertyAsNullable;
+                                    if (isPropertyNullable && !column.IsNullable)
+                                    {
+                                        var matchingProp = pocoClass.FindByMeta<PropertyBuilder>(column);
+                                        var ternary = TernaryBuilder
+                                            .Create()
+                                            .RawCondition(rc => rc.Condition($"model.{column.Name} != null"))
+                                            .True(RawInlineBuilder.Create(
+                                                $"destination.{column.Name} = ({matchingProp.GetTypeName()})model.{column.Name}"))
+                                            .False(RawInlineBuilder.Create(
+                                                $"destination.{column.Name} = default({matchingProp.GetTypeName()})"));
+
+                                        m.RawLine($"destination.{column.Name} = {ternary.GenerateInline()}");
+                                    }
+                                    else
+                                    {
+                                        m.RawLine($"destination.{column.Name} = model.{column.Name}");
+                                    }
+                                });
                             });
                         });
                     });
