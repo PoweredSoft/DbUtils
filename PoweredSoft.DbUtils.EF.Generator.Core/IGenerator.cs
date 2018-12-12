@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using PoweredSoft.CodeGenerator;
 using PoweredSoft.DbUtils.Schema.Core;
 
@@ -45,6 +46,8 @@ namespace PoweredSoft.DbUtils.EF.Generator.Core
         string TableInterfaceNamespace(ITable table);
         string TableNamespace(ITable table);
         string ModelInterfaceNamespace(ITable table);
+        Tuple<string, bool> GetColumnTypeInfo(IColumn column);
+        string GetColumnTypeName(IColumn column, bool alwaysAsNullable = false);
     }
 
 

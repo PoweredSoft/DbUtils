@@ -30,6 +30,8 @@ namespace PoweredSoft.DbUtils.EF.Generator
         protected GenerationContext GenerationContext { get; set; }
         public abstract IDataTypeResolver DataTypeResolver { get; }
 
+        private List<IResolveTypeInterceptor> ResolveTypesInterceptors { get; set; } = null;
+
         protected Pluralizer Plurializer { get; } = new Pluralizer();
 
         public abstract TSchema CreateSchema();
@@ -86,6 +88,15 @@ namespace PoweredSoft.DbUtils.EF.Generator
             {
                 var a = Assembly.LoadFile(da);
                 DynamicAssemblies.Add(a);
+            });
+
+            ResolveTypesInterceptors = new List<IResolveTypeInterceptor>();
+            DynamicAssemblies.ForEach(da =>
+            {
+                ResolveTypesInterceptors.AddRange(da.GetTypes()
+                    .Where(t => t.IsClass && typeof(IResolveTypeInterceptor).IsAssignableFrom(t))
+                    .Select(t => (IResolveTypeInterceptor) Activator.CreateInstance(t))
+                );
             });
         }
 
@@ -307,7 +318,7 @@ namespace PoweredSoft.DbUtils.EF.Generator
         }
 
         protected void GenerateCode()
-        {
+        { 
             GenerateEntities();
             GenerateContext();
             GenerateSequenceMethods();
@@ -322,11 +333,11 @@ namespace PoweredSoft.DbUtils.EF.Generator
             DynamicAssemblies.ForEach(a =>
             {
                 var contextServices = a.GetTypes()
-                    .Where(t => t.IsClass && typeof(IContextService).IsAssignableFrom(t))
-                    .Select(t => (IContextService)Activator.CreateInstance(t))
+                    .Where(t => t.IsClass && typeof(IContextInterceptor).IsAssignableFrom(t))
+                    .Select(t => (IContextInterceptor)Activator.CreateInstance(t))
                     .ToList();
 
-                contextServices.ForEach(c => c.OnContext(this));
+                contextServices.ForEach(c => c.InterceptContext(this));
             });
         }
 
@@ -335,13 +346,13 @@ namespace PoweredSoft.DbUtils.EF.Generator
             DynamicAssemblies.ForEach(a =>
             {
                 var eachTableServices = a.GetTypes()
-                    .Where(t => t.IsClass && typeof(IEachTableService).IsAssignableFrom(t))
-                    .Select(t => (IEachTableService) Activator.CreateInstance(t))
+                    .Where(t => t.IsClass && typeof(ITableInterceptor).IsAssignableFrom(t))
+                    .Select(t => (ITableInterceptor) Activator.CreateInstance(t))
                     .ToList();
 
                 TablesToGenerate.ForEach(table =>
                 {
-                    eachTableServices.ForEach(t => t.OnTable(this, table));
+                    eachTableServices.ForEach(t => t.InterceptTable(this, table));
                 });
             });
         }
@@ -414,12 +425,7 @@ namespace PoweredSoft.DbUtils.EF.Generator
                     {
                         modelInterface.Property(columnProperty =>
                         {
-                            var type = DataTypeResolver.ResolveType(column);
-                            var typeName = type.GetOutputType();
-                            bool isPropertyNullable = column.IsNullable || Options.GenerateModelPropertyAsNullable;
-                            if (type.IsValueType && isPropertyNullable)
-                                typeName = $"{typeName}?";
-
+                            var typeName = GetColumnTypeName(column, Options.GenerateModelPropertyAsNullable);
                             columnProperty
                                 .AccessModifier(AccessModifiers.Omit)
                                 .Name(column.Name)
@@ -537,11 +543,7 @@ namespace PoweredSoft.DbUtils.EF.Generator
                     {
                         tableInterface.Property(columnProperty =>
                         {
-                            var type = DataTypeResolver.ResolveType(column);
-                            var typeName = type.GetOutputType();
-                            if (type.IsValueType && column.IsNullable)
-                                typeName = $"{typeName}?";
-
+                            var typeName = GetColumnTypeName(column);
                             columnProperty
                                 .Name(column.Name)
                                 .AccessModifier(AccessModifiers.Omit)
@@ -551,6 +553,43 @@ namespace PoweredSoft.DbUtils.EF.Generator
                     });
                 });
             });
+        }
+
+        public virtual string GetColumnTypeName(IColumn column, bool alwaysAsNullable = false)
+        {
+            var typeInfo = GetColumnTypeInfo(column);
+            var typeName = typeInfo.Item1;
+            if (typeInfo.Item2 && (column.IsNullable || alwaysAsNullable))
+                typeName = $"{typeName}?";
+            return typeName;
+        }
+
+        public virtual Tuple<string, bool> GetColumnTypeInfo(IColumn column)
+        {
+            var dynamicAssemblyResolvedType = ResolveDynamicAssemblyType(column);
+            if (dynamicAssemblyResolvedType != null)
+                return dynamicAssemblyResolvedType;
+
+            var type = DataTypeResolver.ResolveType(column);
+            var typeName = type.GetOutputType();
+            return new Tuple<string, bool>(typeName, type.IsValueType);
+        }
+
+        /// <summary>
+        /// Tuple parts are the name of the part ad if the type is a value type (not nullable)
+        /// </summary>
+        /// <param name="column"></param>
+        /// <returns></returns>
+        private Tuple<string, bool> ResolveDynamicAssemblyType(IColumn column)
+        {
+            foreach (var rti in ResolveTypesInterceptors)
+            {
+                var temp = rti.InterceptResolveType(column);
+                if (temp != null)
+                    return temp;
+            }
+
+            return null;
         }
 
         private void GenerateEntity(ITable table)
@@ -577,11 +616,7 @@ namespace PoweredSoft.DbUtils.EF.Generator
                     {
                         tableClass.Property(columnProperty =>
                         {
-                            var type = DataTypeResolver.ResolveType(column);
-                            var typeName = type.GetOutputType();
-                            if (type.IsValueType && column.IsNullable)
-                                typeName = $"{typeName}?";
-
+                            var typeName = GetColumnTypeName(column);
                             columnProperty
                                 .Name(column.Name)
                                 .Type(typeName)
@@ -676,12 +711,7 @@ namespace PoweredSoft.DbUtils.EF.Generator
                     {
                         modelClass.Property(columnProperty =>
                         {
-                            var type = DataTypeResolver.ResolveType(column);
-                            var typeName = type.GetOutputType();
-                            bool isPropertyNullable = column.IsNullable || Options.GenerateModelPropertyAsNullable;
-                            if (type.IsValueType && isPropertyNullable)
-                                typeName = $"{typeName}?";
-
+                            var typeName = GetColumnTypeName(column, Options.GenerateModelPropertyAsNullable);
                             columnProperty
                                 .Virtual(true)
                                 .Name(column.Name)

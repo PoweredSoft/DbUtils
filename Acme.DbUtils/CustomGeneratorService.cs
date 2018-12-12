@@ -8,9 +8,9 @@ using PoweredSoft.DbUtils.Schema.Core;
 
 namespace Acme.DbUtils
 {
-    public class ContextService : IContextService
+    public class ContextInterceptor : IContextInterceptor
     {
-        public void OnContext(IGenerator generator)
+        public void InterceptContext(IGenerator generator)
         {
             if (!(generator is IGeneratorUsingGenerationContext) || !(generator is IGeneratorWithMeta))
                 throw new Exception("Not the kind of generator expected.");
@@ -25,9 +25,21 @@ namespace Acme.DbUtils
         }
     }
 
-    public class EachTableService : IEachTableService
+    public class ResolveTypeInterceptor : IResolveTypeInterceptor
     {
-        public void OnTable(IGenerator generator, ITable table)
+        public Tuple<string, bool> InterceptResolveType(IColumn column)
+        {
+            /*
+            if (column.Table.Name == "Phone" && column.Name == "PhoneTypeId")
+                return new Tuple<string, bool>("Acme.Enums.PhoneTypes", true);*/
+            
+            return null;
+        }
+    }
+
+    public class TableInterceptor : ITableInterceptor
+    {
+        public void InterceptTable(IGenerator generator, ITable table)
         {
             if (!(generator is IGeneratorUsingGenerationContext) || !(generator is IGeneratorWithMeta))
                 throw new Exception("Not the kind of generator expected.");

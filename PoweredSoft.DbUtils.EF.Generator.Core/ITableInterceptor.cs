@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Text;
 using PoweredSoft.CodeGenerator;
+using PoweredSoft.DbUtils.Schema.Core;
 
 namespace PoweredSoft.DbUtils.EF.Generator.Core
 {
-    public interface IContextService
+    public interface ITableInterceptor
     {
-        void OnContext(IGenerator generator);
+        void InterceptTable(IGenerator generator, ITable table);
     }
 }
