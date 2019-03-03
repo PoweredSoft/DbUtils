@@ -100,7 +100,7 @@ namespace PoweredSoft.DbUtils.Schema.MySql {
         ///    AND
         ///    TC.CONSTRAINT_NAME = KCU.CONSTRAINT_NAME
         ///INNER JOIN
-        ///	INFORMATION_SCHEMA.REFERENTIAL_ [rest of string was truncated]&quot;;.
+        ///	INFORMATION_SC [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string FetchForeignKeys {
             get {
@@ -136,7 +136,7 @@ namespace PoweredSoft.DbUtils.Schema.MySql {
         ///INNER JOIN
         ///	INFORMATION_SCHEMA.KEY_COLUMN_USAGE KCU
         ///ON
-        ///	KCU.CONSTRAINT_SCHEMA = KCU.TABLE_SCHEMA AND KCU.TABLE_NAME = T.TABLE_NAME AND KCU.CONSTRAINT_NAME = T.CONSTRAINT_NAME
+        ///	KCU.CONSTRAINT_SCHEMA = KCU.TABLE_SCHEMA AND T.TABLE_SCHEMA = KCU.TABLE_SCHEMA AND KCU.TABLE_NAME = T.TABLE_NAME AND KCU.CONSTRAINT_NAME = T.CONSTRAINT_NAME
         ///WHERE 
         ///	T.CONSTRAINT_TYPE = &apos;PRIMARY KEY&apos; AND T.CONSTRAINT_SCHEMA = @DatabaseName ORDER BY 
         ///	T.TABLE_NAME, KCU.ORDINAL_POSITION.
