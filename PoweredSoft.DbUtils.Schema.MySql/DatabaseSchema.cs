@@ -48,6 +48,7 @@ namespace PoweredSoft.DbUtils.Schema.MySql
             // no sequences in MySQL
         }
 
+
         protected void GetIndexes()
         {
             var indexSql = MySqlSchemaQueries.FetchIndexes;
@@ -68,7 +69,15 @@ namespace PoweredSoft.DbUtils.Schema.MySql
                         indexModel.IndexName = reader["IndexName"] as string;
                         indexModel.ColumnName = reader["ColumnName"] as string;
                         indexModel.IsUniqueConstraint = (long) reader["IsUniqueConstraint"] != 0;
-                        indexModel.KeyOrdinal = (Byte) (UInt32)reader["KeyOrdinal"];
+
+                        byte ordinal = 0;
+                        var raw = reader["KeyOrdinal"];
+                        if (raw is UInt32)
+                            ordinal = (Byte)(UInt32)raw;
+                        else if (raw is long)
+                            ordinal = (Byte)(long)raw;
+
+                        indexModel.KeyOrdinal = ordinal;
                         indexModels.Add(indexModel);
                     }
 
@@ -181,7 +190,13 @@ namespace PoweredSoft.DbUtils.Schema.MySql
                         // get the keys.
                         var tableName = reader["TABLE_NAME"] as string;
                         var columnName = reader["COLUMN_NAME"] as string;
-                        int ordinalPosition = (int)(uint)reader["ORDINAL_POSITION"];
+
+                        int ordinalPosition = 0;
+                        var val = reader["ORDINAL_POSITION"];
+                        if (val is uint)
+                            ordinalPosition = (int)(uint)val;
+                        else if (val is long)
+                            ordinalPosition = (int)(long)val;
 
                         // find the table.
                         var table = MySqlTables.FirstOrDefault(t => t.Name == tableName);
