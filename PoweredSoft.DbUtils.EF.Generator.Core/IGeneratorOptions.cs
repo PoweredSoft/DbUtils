@@ -17,6 +17,8 @@ namespace PoweredSoft.DbUtils.EF.Generator.Core
         bool GenerateInterfaces { get; set; }
         string InterfaceNameSuffix { get; set; }
         bool GenerateModels { get; set; }
+        bool GenerateModelsFromTo { get; set; }
+        bool GenerateModelExtensions { get; set; }
         bool GenerateModelsInterfaces { get; set; }
         bool GenerateModelPropertyAsNullable { get; set; }
         string ModelSuffix { get; set; }
@@ -30,6 +32,7 @@ namespace PoweredSoft.DbUtils.EF.Generator.Core
         string EntityInterfaceNamespace { get; set; }
         string ModelInterfaceNamespace { get; set; }
         string ModelNamespace { get; set; }
+        string ModelExtensionsNamespace { get; set; }
         string ContextNamespace { get; set; }
 
         // file overrides.
@@ -38,11 +41,13 @@ namespace PoweredSoft.DbUtils.EF.Generator.Core
         string ModelsInterfacesOutputSingleFileName { get; set; }
         string ModelsOutputSingleFileName { get; set; }
         string ContextOutputSingleFileName { get; set; }
+        string ModelExtensionsOutputSingleFileName { get; set; }
 
         // output dir overrides.
         string EntitiesOutputDir { get; set; }
         string EntitiesInterfacesOutputDir { get; set; }
         string ModelsInterfacesOutputDir { get; set; }
+        string ModelExtensionsOutputDir { get; set; }
         string ModelsOutputDir { get; set; }
         string ContextOutputDir { get; set; }
 

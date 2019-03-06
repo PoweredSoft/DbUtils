@@ -38,6 +38,9 @@ namespace PoweredSoft.DbUtils.EF.Generator.Core
         string ModelNamespace(ITable table);
         string ModelClassFullName(ITable table);
         string ModelInterfaceName(ITable table);
+        string ModelExtensionsNamespace(ITable table);
+        string ModelExtensionsClassName(ITable table);
+        string ModelExtensionsFullClassName(ITable table);
         string Pluralize(string text);
         string ReplaceMetas(string text);
         string TableClassFullName(ITable table);
