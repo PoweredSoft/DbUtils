@@ -52,5 +52,10 @@ namespace PoweredSoft.DbUtils.EF.Generator.EF6.SqlServer
         public string FluentConfigurationClassSuffix { get; set; } = "FluentConfiguration";
         public List<string> IncludedSchemas { get; } = new List<string>();
         public List<string> ExcludedSchemas { get; } = new List<string>();
+        public bool GenerateModelsFromTo { get; set; } = false;
+        public bool GenerateModelExtensions { get; set; } = false;
+        public string ModelExtensionsOutputSingleFileName { get; set; }
+        public string ModelExtensionsOutputDir { get; set; }
+        public string ModelExtensionsNamespace { get; set; }
     }
 }

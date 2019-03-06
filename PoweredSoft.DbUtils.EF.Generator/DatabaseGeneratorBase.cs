@@ -145,6 +145,25 @@ namespace PoweredSoft.DbUtils.EF.Generator
             return $"{ModelNamespace(table)}.{ModelClassName(table)}";
         }
 
+
+        public virtual string ModelExtensionsNamespace(ITable table)
+        {
+            var ns = Options.ModelExtensionsNamespace ?? Options.Namespace;
+            var nsName = ReplaceMetas(ns, table);
+            return nsName;
+        }
+
+        public virtual string ModelExtensionsClassName(ITable table)
+        {
+            var ret = $"{table.Name}ModelExtensions";
+            return ret;
+        }
+
+        public virtual string ModelExtensionsFullClassName(ITable table)
+        {
+            return $"{ModelExtensionsNamespace(table)}.{ModelExtensionsClassName(table)}";
+        }
+
         public virtual string TableInterfaceNamespace(ITable table)
         {
             var ns = Options.EntityInterfaceNamespace ?? Options.Namespace;
@@ -447,6 +466,7 @@ namespace PoweredSoft.DbUtils.EF.Generator
                 GenerateEntity(table);
                 GenerateModelInterface(table);
                 GenerateModel(table);
+                GenerateModelExtensions(table);
             });
 
             // generate foreign keys and navigation properties.
@@ -458,6 +478,115 @@ namespace PoweredSoft.DbUtils.EF.Generator
                 GenerateManyToMany(table);
             });
         }
+
+        protected virtual void GenerateModelExtensions(ITable table)
+        {
+            if (!Options.GenerateModelExtensions)
+                return;
+
+            if (!Options.GenerateModelsInterfaces && !Options.GenerateModels)
+                throw new Exception("Impossible to generate model extensions because neither GenerateModels or GenerateModelsInterfaces is activated.");
+
+            // full paths to model or interface
+            var modelFullClassName = ModelClassFullName(table);
+            var modelInterfaceFullName = ModelInterfaceFullName(table);
+
+            // poco.
+            var pocoFullInterfaceName = TableInterfaceFullName(table);
+            var pocoFullClassName = TableClassFullName(table);
+
+            // poco type.
+            var pocoClassName = TableClassName(table);
+            var pocoClassNamespace = TableNamespace(table);
+            var pocoClass = GenerationContext.FindClass(pocoClassName, pocoClassNamespace);
+
+            var modelExtensionNamespaceName = ModelExtensionsNamespace(table);
+            var modelExtensionClassName = ModelExtensionsClassName(table);
+            var fileBuilder = ResolveModelExtensionFileBuilder(table);
+
+            fileBuilder.Namespace(modelExtensionNamespaceName, true, ns =>
+            {
+                ns.Class(c =>
+                {
+                    // set basic info.
+                    c.Partial(true).Static(true).Name(modelExtensionClassName);
+
+                    var finalEntityType = Options.GenerateInterfaces ? pocoFullInterfaceName : pocoFullClassName;
+                    var finalModelType = Options.GenerateModelsInterfaces ? modelInterfaceFullName : modelFullClassName;
+
+                    c.Method(m =>
+                    {
+                        m
+                            .AccessModifier(AccessModifiers.Public)
+                            .IsStatic(true)
+                            .Name("ToModel")
+                            .ReturnType("void")
+                            .Parameter(p => p.Name("source").Type($"this {finalEntityType}"))
+                            .Parameter(p => p.Name("model").Type(finalModelType));
+
+                        table.Columns.ForEach(column =>
+                        {
+                            m.RawLine($"model.{column.Name} = source.{column.Name}");
+                        });
+                    });
+
+                    c.Method(m =>
+                    {
+                        m
+                            .AccessModifier(AccessModifiers.Public)
+                            .IsStatic(true)
+                            .Name("FromModel")
+                            .ReturnType("void")
+                            .Parameter(p => p.Name("model").Type($"this {finalModelType}"))
+                            .Parameter(p => p.Name("destination").Type(finalEntityType))
+                            .Parameter(p => p.Name("ignorePrimaryKey").Type("bool").DefaultValue("true"))
+                            ;
+
+                        table.Columns.ForEach(column =>
+                        {
+                            var rawLine = "";
+                            bool isPropertyNullable = column.IsNullable || Options.GenerateModelPropertyAsNullable;
+                            if (isPropertyNullable && !column.IsNullable)
+                            {
+                                var matchingProp = pocoClass.FindByMeta<PropertyBuilder>(column);
+                                var ternary = TernaryBuilder
+                                    .Create()
+                                    .RawCondition(rc => rc.Condition($"model.{column.Name} != null"))
+                                    .True(RawInlineBuilder.Create(
+                                        $"destination.{column.Name} = ({matchingProp.GetTypeName()})model.{column.Name}"))
+                                    .False(RawInlineBuilder.Create(
+                                        $"destination.{column.Name} = default({matchingProp.GetTypeName()})"));
+
+                                rawLine = $"destination.{column.Name} = {ternary.GenerateInline()}";
+                            }
+                            else
+                            {
+                                rawLine = $"destination.{column.Name} = model.{column.Name}";
+                            }
+
+                            if (column.IsPrimaryKey)
+                            {
+                                m.Add(IfBuilder.Create().RawCondition(rc => rc.Condition($"ignorePrimaryKey != true")).Add(RawLineBuilder.Create(rawLine)));
+                            }
+                            else
+                            {
+                                m.RawLine(rawLine);
+                            }
+                        });
+                    });
+                });
+            });
+        }
+
+        protected virtual FileBuilder ResolveModelExtensionFileBuilder(ITable table)
+        {
+            FileBuilder ret = null;
+            var outputDir = Options.ModelExtensionsOutputDir ?? Options.OutputDir;
+            var outputFile = Options.ModelExtensionsOutputSingleFileName ?? Options.OutputSingleFileName ?? $"{ModelExtensionsClassName(table)}.generated.cs";
+            GenerationContext.File($"{outputDir}{Path.DirectorySeparatorChar}{outputFile}", fb => ret = fb);
+            return ret;
+        }
+
 
         protected virtual void GenerateHasMany(ITable table)
         {
@@ -666,45 +795,33 @@ namespace PoweredSoft.DbUtils.EF.Generator
                         modelClass.Inherits(ReplaceMetas(mi, table));
                     });
 
-                    /*
                     MethodBuilder from = null;
                     MethodBuilder to = null;
-
-                    modelClass.Method(m =>
+                    if (Options.GenerateModelsFromTo)
                     {
-                        m
-                            .AccessModifier(AccessModifiers.Public)
-                            .Virtual(true)
-                            .ReturnType("void")
-                            .Name("From")
-                            .Parameter(p => p.Type(tableClassFullName).Name("entity"));
-                        from = m;
-                    });
 
-                    modelClass.Method(m =>
-                    {
-                        m
-                            .AccessModifier(AccessModifiers.Public)
-                            .Virtual(true)
-                            .ReturnType("void")
-                            .Name("To")
-                            .Parameter(p => p.Type(tableClassFullName).Name("entity"));
-                        to = m;
-                    });
+                        modelClass.Method(m =>
+                        {
+                            m
+                                .AccessModifier(AccessModifiers.Public)
+                                .Virtual(true)
+                                .ReturnType("void")
+                                .Name("From")
+                                .Parameter(p => p.Type(tableClassFullName).Name("entity"));
+                            from = m;
+                        });
 
-                    modelClass.Method(m => m
-                        .Virtual(true)
-                        .ReturnType("System.Type")
-                        .Name("GetContextType")
-                        .RawLine($"return typeof({ContextFullClassName()})")
-                    );
-
-                    modelClass.Method(m => m
-                        .ReturnType("System.Type")
-                        .Name("GetEntityType")
-                        .RawLine($"return typeof({tableClassFullName})")
-                    );
-                    */
+                        modelClass.Method(m =>
+                        {
+                            m
+                                .AccessModifier(AccessModifiers.Public)
+                                .Virtual(true)
+                                .ReturnType("void")
+                                .Name("To")
+                                .Parameter(p => p.Type(tableClassFullName).Name("entity"));
+                            to = m;
+                        });
+                    }
 
                     // set properties.
                     table.Columns.ForEach(column =>
@@ -718,26 +835,27 @@ namespace PoweredSoft.DbUtils.EF.Generator
                                 .Type(typeName)
                                 .Meta(column);
 
-                            /*
-
-                            from.RawLine($"{column.Name} = entity.{column.Name}");
-
-                            if (isPropertyNullable && !column.IsNullable)
+                            if (Options.GenerateModelsFromTo)
                             {
+                                from.RawLine($"{column.Name} = entity.{column.Name}");
+                                bool isPropertyNullable = column.IsNullable || Options.GenerateModelPropertyAsNullable;
+                                if (isPropertyNullable && !column.IsNullable)
+                                {
 
-                                var matchingProp = tableClass.FindByMeta<PropertyBuilder>(column);
-                                var ternary = TernaryBuilder
-                                    .Create()
-                                    .RawCondition(rc => rc.Condition($"{column.Name} != null"))
-                                    .True(RawInlineBuilder.Create($"entity.{column.Name} = ({matchingProp.GetTypeName()}){column.Name}"))
-                                    .False(RawInlineBuilder.Create($"entity.{column.Name} = default({matchingProp.GetTypeName()})"));
+                                    var matchingProp = tableClass.FindByMeta<PropertyBuilder>(column);
+                                    var ternary = TernaryBuilder
+                                        .Create()
+                                        .RawCondition(rc => rc.Condition($"{column.Name} != null"))
+                                        .True(RawInlineBuilder.Create($"entity.{column.Name} = ({matchingProp.GetTypeName()}){column.Name}"))
+                                        .False(RawInlineBuilder.Create($"entity.{column.Name} = default({matchingProp.GetTypeName()})"));
 
-                                to.RawLine($"entity.{column.Name} = {ternary.GenerateInline()}");
+                                    to.RawLine($"entity.{column.Name} = {ternary.GenerateInline()}");
+                                }
+                                else
+                                {
+                                    to.RawLine($"entity.{column.Name} = {column.Name}");
+                                }
                             }
-                            else
-                            {
-                                to.RawLine($"entity.{column.Name} = {column.Name}");
-                            }*/
                         });
                     });
                 });

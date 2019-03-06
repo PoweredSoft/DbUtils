@@ -45,5 +45,10 @@ namespace PoweredSoft.DbUtils.EF.Generator.EFCore.MySql
         public bool AddConnectionStringOnGenerate { get; set; } = false;
         public bool DontGeneratePrimaryIndexes { get; set; } = true;
         public bool DontGenerateForeignKeyIndexes { get; set; } = true;
+        public bool GenerateModelsFromTo { get; set; } = false;
+        public bool GenerateModelExtensions { get; set; } = false;
+        public string ModelExtensionsOutputSingleFileName { get; set; }
+        public string ModelExtensionsOutputDir { get; set; }
+        public string ModelExtensionsNamespace { get; set; }
     }
 }
