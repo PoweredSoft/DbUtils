@@ -30,6 +30,8 @@ namespace PoweredSoft.DbUtils.EF.Generator
         protected GenerationContext GenerationContext { get; set; }
         public abstract IDataTypeResolver DataTypeResolver { get; }
 
+        public List<Assembly> DynamicAssemblies { get; set; }
+
         private List<IResolveTypeInterceptor> ResolveTypesInterceptors { get; set; } = null;
 
         protected Pluralizer Plurializer { get; } = new Pluralizer();
@@ -72,7 +74,8 @@ namespace PoweredSoft.DbUtils.EF.Generator
 
         public void Generate()
         {
-            LoadDynamicAssemblies();
+            DynamicAssemblies = LoadDynamicAssemblies();
+            RefreshResolveTypeInterceptors();
             Schema = CreateAndLoadSchema();
             TablesToGenerate = ResolveTablesToGenerate();
             SequenceToGenerate = ResolveSequencesToGenerate();
@@ -81,26 +84,28 @@ namespace PoweredSoft.DbUtils.EF.Generator
             GenerateCode();
         }
 
-        protected virtual void LoadDynamicAssemblies()
+        protected virtual List<Assembly> LoadDynamicAssemblies()
         {
-            this.DynamicAssemblies = new List<Assembly>();
+            var ret = new List<Assembly>();
             Options.DynamicAssemblies?.ForEach(da =>
             {
                 var a = Assembly.LoadFile(da);
                 DynamicAssemblies.Add(a);
             });
+            return ret;
+        }
 
+        protected void RefreshResolveTypeInterceptors()
+        {
             ResolveTypesInterceptors = new List<IResolveTypeInterceptor>();
             DynamicAssemblies.ForEach(da =>
             {
                 ResolveTypesInterceptors.AddRange(da.GetTypes()
                     .Where(t => t.IsClass && typeof(IResolveTypeInterceptor).IsAssignableFrom(t))
-                    .Select(t => (IResolveTypeInterceptor) Activator.CreateInstance(t))
+                    .Select(t => (IResolveTypeInterceptor)Activator.CreateInstance(t))
                 );
             });
         }
-
-        public List<Assembly> DynamicAssemblies { get; set; }
 
         public void LoadOptionsFromJson(string configFile)
         {
