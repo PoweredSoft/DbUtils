@@ -219,25 +219,20 @@ namespace PoweredSoft.DbUtils.EF.Generator
             return ret;
         }
 
-        string IGeneratorWithMeta.ModelNamespace(ITable table)
-        {
-            return ModelNamespace(table);
-        }
-
-        public string ModelInterfaceName(ITable table)
+        public virtual string ModelInterfaceName(ITable table)
         {
             var ret = $"I{table.Name}Model{Options.ModelInterfaceSuffix}";
             return ret;
         }
 
-        public string TableInterfaceName(ITable table)
+        public virtual string TableInterfaceName(ITable table)
         {
             var ret = TableClassName(table);
             ret = $"I{ret}{Options.InterfaceNameSuffix}";
             return ret;
         }
 
-        public string TableClassFullName(ITable table)
+        public virtual string TableClassFullName(ITable table)
         {
             var ns = TableNamespace(table);
             var cn = TableClassName(table);
