@@ -213,7 +213,7 @@ namespace PoweredSoft.DbUtils.EF.Generator
             return ReplaceMetas(text).Replace("[ENTITY]", table.Name);
         }
 
-        public string ModelClassName(ITable table)
+        public virtual string ModelClassName(ITable table)
         {
             var ret = $"{table.Name}Model{Options.ModelSuffix}";
             return ret;
