@@ -430,7 +430,7 @@ namespace PoweredSoft.DbUtils.EF.Generator
 
         public virtual bool IsModelPropertyNullable(IColumn column)
         {
-            return column.IsNullable || ShouldGenerateModelPropertyAsNullable(column));
+            return column.IsNullable || ShouldGenerateModelPropertyAsNullable(column);
         }
 
         protected virtual void GenerateModelInterface(ITable table)
