@@ -51,6 +51,8 @@ namespace PoweredSoft.DbUtils.EF.Generator.Core
         string ModelInterfaceNamespace(ITable table);
         Tuple<string, bool> GetColumnTypeInfo(IColumn column);
         string GetColumnTypeName(IColumn column, bool alwaysAsNullable = false);
+        bool ShouldGenerateModelPropertyAsNullable(IColumn column);
+        bool IsModelPropertyNullable(IColumn column);
     }
 
 

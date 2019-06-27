@@ -99,8 +99,7 @@ namespace Acme.DbUtils
 
                             table.Columns.ForEach(column =>
                             {
-                                bool isPropertyNullable =
-                                    column.IsNullable || options.GenerateModelPropertyAsNullable;
+                                bool isPropertyNullable = genMeta.IsModelPropertyNullable(column);// column.IsNullable || genMeta.ShouldGenerateModelPropertyAsNullable(column);
                                 if (isPropertyNullable && !column.IsNullable)
                                 {
                                     var matchingProp = pocoClass.FindByMeta<PropertyBuilder>(column);

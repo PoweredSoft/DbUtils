@@ -423,6 +423,16 @@ namespace PoweredSoft.DbUtils.EF.Generator
             return ret;
         }
 
+        public virtual bool ShouldGenerateModelPropertyAsNullable(IColumn column)
+        {
+            return Options.GenerateModelPropertyAsNullable;
+        }
+
+        public virtual bool IsModelPropertyNullable(IColumn column)
+        {
+            return column.IsNullable || ShouldGenerateModelPropertyAsNullable(column));
+        }
+
         protected virtual void GenerateModelInterface(ITable table)
         {
             if (!Options.GenerateModelsInterfaces)
@@ -444,7 +454,7 @@ namespace PoweredSoft.DbUtils.EF.Generator
                     {
                         modelInterface.Property(columnProperty =>
                         {
-                            var typeName = GetColumnTypeName(column, Options.GenerateModelPropertyAsNullable);
+                            var typeName = GetColumnTypeName(column, ShouldGenerateModelPropertyAsNullable(column));
                             columnProperty
                                 .AccessModifier(AccessModifiers.Omit)
                                 .Name(column.Name)
@@ -545,7 +555,7 @@ namespace PoweredSoft.DbUtils.EF.Generator
                         table.Columns.ForEach(column =>
                         {
                             var rawLine = "";
-                            bool isPropertyNullable = column.IsNullable || Options.GenerateModelPropertyAsNullable;
+                            bool isPropertyNullable = IsModelPropertyNullable(column); // column.IsNullable || ShouldGenerateModelPropertyAsNullable(column);
                             if (isPropertyNullable && !column.IsNullable)
                             {
                                 var matchingProp = pocoClass.FindByMeta<PropertyBuilder>(column);
@@ -828,7 +838,7 @@ namespace PoweredSoft.DbUtils.EF.Generator
                     {
                         modelClass.Property(columnProperty =>
                         {
-                            var typeName = GetColumnTypeName(column, Options.GenerateModelPropertyAsNullable);
+                        var typeName = GetColumnTypeName(column, ShouldGenerateModelPropertyAsNullable(column)); // Options.GenerateModelPropertyAsNullable);
                             columnProperty
                                 .Virtual(true)
                                 .Name(column.Name)
@@ -838,7 +848,7 @@ namespace PoweredSoft.DbUtils.EF.Generator
                             if (Options.GenerateModelsFromTo)
                             {
                                 from.RawLine($"{column.Name} = entity.{column.Name}");
-                                bool isPropertyNullable = column.IsNullable || Options.GenerateModelPropertyAsNullable;
+                                bool isPropertyNullable = IsModelPropertyNullable(column); // column.IsNullable || ShouldGenerateModelPropertyAsNullable(column);// Options.GenerateModelPropertyAsNullable;
                                 if (isPropertyNullable && !column.IsNullable)
                                 {
 
