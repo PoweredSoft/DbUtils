@@ -37,6 +37,11 @@ namespace PoweredSoft.DbUtils.EF.Generator.EF6
             return ret;
         }
 
+        protected virtual string ManyToManyPropertyName(IForeignKey foreignKey, IForeignKey otherForeignKey)
+        {
+            return Pluralize(otherForeignKey.PrimaryKeyColumn.Table.Name);
+        }
+
         protected override void GenerateManyToMany(ITable table)
         {
             var tableNamespace = TableNamespace(table);
@@ -57,7 +62,7 @@ namespace PoweredSoft.DbUtils.EF.Generator.EF6
                     return;
 
                 // pluralize this name.
-                var propName = Pluralize(otherPk.Name);
+                var propName = ManyToManyPropertyName(fk, otherFk);
                 propName = tableClass.GetUniqueMemberName(propName);
 
                 // the type of the property.
