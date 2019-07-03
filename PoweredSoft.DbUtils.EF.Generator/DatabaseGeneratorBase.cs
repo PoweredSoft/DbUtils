@@ -255,9 +255,12 @@ namespace PoweredSoft.DbUtils.EF.Generator
             return prop;
         }
 
-        protected string ForeignKeyPropertyName(IForeignKey fk, bool withForeignKeyName = false)
+        protected virtual string ForeignKeyPropertyName(IForeignKey fk, bool withTableName = false, bool withForeignKeyName = false)
         {
             var prop = fk.IsOneToOne() ? fk.PrimaryKeyColumn.Table.Name : RemoveIdSuffixFromColumnName(fk.ForeignKeyColumn.Name);
+
+            if (withTableName)
+                prop = $"{fk.PrimaryKeyColumn.Table.Name}_{fk.ForeignKeyColumn.Name}";
 
             if (withForeignKeyName)
                 prop = $"{prop}_{fk.ForeignKeyColumn.Name}";
@@ -597,6 +600,15 @@ namespace PoweredSoft.DbUtils.EF.Generator
             return ret;
         }
 
+        protected virtual PropertyBuilder FindNavigation(ClassBuilder classBuilder, IForeignKey foreignKey, params NavigationKind[] navigationKinds)
+        {
+            var query = classBuilder.Properties.Where(t => (t.GetMeta() as Tuple<NavigationKind, IForeignKey>)?.Item2 == foreignKey);
+
+            if (navigationKinds.Any())
+                query = query.Where(t => navigationKinds.Contains((t.GetMeta() as Tuple<NavigationKind, IForeignKey>).Item1));
+
+            return query.FirstOrDefault();
+        }
 
         protected virtual void GenerateHasMany(ITable table)
         {
@@ -617,7 +629,7 @@ namespace PoweredSoft.DbUtils.EF.Generator
                 var pocoType = TableClassFullName(fk.ForeignKeyColumn.Table);
                 var propType = $"System.Collections.Generic.ICollection<{pocoType}>";
                 var defaultValue = $"new {CollectionInstanceType()}<{pocoType}>()";
-                tableClass.Property(p => p.Virtual(HasManyShouldBeVirtual()).Type(propType).Name(propName).DefaultValue(defaultValue).Comment("Has Many").Meta(fk));
+                tableClass.Property(p => p.Virtual(HasManyShouldBeVirtual()).Type(propType).Name(propName).DefaultValue(defaultValue).Comment("Has Many").Meta(Tuple.Create(NavigationKind.HasMany, fk)));
             });
         }
 
@@ -635,7 +647,7 @@ namespace PoweredSoft.DbUtils.EF.Generator
                 var propName = OneToOnePropertyName(fk);
                 propName = tableClass.GetUniqueMemberName(propName);
                 var propType = TableClassFullName(fk.ForeignKeyColumn.Table);
-                tableClass.Property(p => p.Virtual(OneToShouldBeVirtual()).Type(propType).Name(propName).Comment("One to One").Meta(fk));
+                tableClass.Property(p => p.Virtual(OneToShouldBeVirtual()).Type(propType).Name(propName).Comment("One to One").Meta(Tuple.Create(NavigationKind.OneToOne, fk)));
             });
         }
 
@@ -653,14 +665,20 @@ namespace PoweredSoft.DbUtils.EF.Generator
                 var propName = ForeignKeyPropertyName(fk);
                 if (tableClass.HasMemberWithName(propName))
                 {
-                    var tempPropName = ForeignKeyPropertyName(fk, true);
+                    var tempPropName = ForeignKeyPropertyName(fk, withTableName: true);
                     if (!tableClass.HasMemberWithName(tempPropName))
                         propName = tempPropName;
+                    else
+                    {
+                        tempPropName = ForeignKeyPropertyName(fk, withForeignKeyName: true);
+                        if (!tableClass.HasMemberWithName(tempPropName))
+                            propName = tempPropName;
+                    }
                 }
 
                 propName = tableClass.GetUniqueMemberName(propName);
                 var foreignKeyTypeName = TableClassFullName(fk.PrimaryKeyColumn.Table);
-                tableClass.Property(foreignKeyProp => foreignKeyProp.Virtual(ForeignKeysShouldBeVirtual()).Type(foreignKeyTypeName).Name(propName).Comment("Foreign Key").Meta(fk));
+                tableClass.Property(foreignKeyProp => foreignKeyProp.Virtual(ForeignKeysShouldBeVirtual()).Type(foreignKeyTypeName).Name(propName).Comment("Foreign Key").Meta(Tuple.Create(NavigationKind.ForeignKey, fk)));
             });
         }
 

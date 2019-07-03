@@ -6,6 +6,7 @@ using System.Text;
 using PoweredSoft.CodeGenerator;
 using PoweredSoft.CodeGenerator.Constants;
 using PoweredSoft.CodeGenerator.Extensions;
+using PoweredSoft.DbUtils.EF.Generator.Core;
 using PoweredSoft.DbUtils.EF.Generator.EFCore.Core;
 using PoweredSoft.DbUtils.Schema.Core;
 
@@ -53,7 +54,7 @@ namespace PoweredSoft.DbUtils.EF.Generator.EFCore
                 var defaultValue = $"new {CollectionInstanceType()}<{manyToManyPocoFullClass}>()";
 
                 // generate property :)
-                tableClass.Property(p => p.Type(propType).Name(propName).DefaultValue(defaultValue).Comment("Many to Many").Meta(fk));
+                tableClass.Property(p => p.Type(propType).Name(propName).DefaultValue(defaultValue).Comment("Many to Many").Meta(Tuple.Create(NavigationKind.ManyToMany, fk)));
             });
         }
 
@@ -160,11 +161,11 @@ namespace PoweredSoft.DbUtils.EF.Generator.EFCore
             var fluentExpression = MultiLineLambdaExpression.Create()
                 .Parameter(p => p.Name("entity"))
                 .RawLine($"entity.{ToTableFluent(table)}");   
-            //.RawLine($"entity.ToTable(\"{table.Name}\", \"{table.Schema}\")");
 
             var pks = table.Columns.Where(t => t.IsPrimaryKey);
             var hasCompositeKey = pks.Count() > 1;
-            ; if (hasCompositeKey)
+
+            if (hasCompositeKey)
             {
                 var def = string.Join(", ", pks.Select(pk =>
                 {
@@ -245,12 +246,18 @@ namespace PoweredSoft.DbUtils.EF.Generator.EFCore
                 if (!TablesToGenerate.Contains(fk.PrimaryKeyColumn.Table))
                     return;
 
-                var fkProp = tableClass.FindByMeta<PropertyBuilder>(fk);
+                var fkProp = FindNavigation(tableClass, fk);// tableClass.FindByMeta<PropertyBuilder>(fk);
                 var fkColumnProp = tableClass.FindByMeta<PropertyBuilder>(fk.ForeignKeyColumn);
                 var fkTableNamespace = TableNamespace(fk.PrimaryKeyColumn.Table);
                 var fkTableClassName = TableClassName(fk.PrimaryKeyColumn.Table);
                 var fkTableClass = GenerationContext.FindClass(fkTableClassName, fkTableNamespace);
-                var reverseProp = fkTableClass.FindByMeta<PropertyBuilder>(fk);
+
+                PropertyBuilder reverseProp;
+
+                if (fk.PrimaryKeyColumn.Table == fk.ForeignKeyColumn.Table)
+                    reverseProp = FindNavigation(fkTableClass, fk, NavigationKind.HasMany);
+                else
+                    reverseProp = FindNavigation(fkTableClass, fk);
 
                 var line = RawLineBuilder.Create();
 
