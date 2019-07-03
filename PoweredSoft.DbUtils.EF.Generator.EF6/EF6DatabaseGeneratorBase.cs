@@ -6,6 +6,7 @@ using System.Text;
 using PoweredSoft.CodeGenerator;
 using PoweredSoft.CodeGenerator.Constants;
 using PoweredSoft.CodeGenerator.Extensions;
+using PoweredSoft.DbUtils.EF.Generator.Core;
 using PoweredSoft.DbUtils.EF.Generator.EF6.Core;
 using PoweredSoft.DbUtils.Schema.Core;
 
@@ -65,7 +66,7 @@ namespace PoweredSoft.DbUtils.EF.Generator.EF6
                 var defaultValue = $"new {CollectionInstanceType()}<{pocoType}>()";
 
                 // generate property :)
-                tableClass.Property(p => p.Virtual(true).Type(propType).Name(propName).DefaultValue(defaultValue).Comment("Many to Many").Meta(fk));
+                tableClass.Property(p => p.Virtual(true).Type(propType).Name(propName).DefaultValue(defaultValue).Comment("Many to Many").Meta(Tuple.Create(NavigationKind.ManyToMany, fk)));
             });
         }
 
@@ -206,6 +207,8 @@ namespace PoweredSoft.DbUtils.EF.Generator.EF6
         /// <param name="sequence"></param>
         //protected abstract void GenerateGetNextSequenceLines(MethodBuilder method, string outputType, ISequence sequence);
 
+        
+
         private void GenerateEntityFluentConfiguration(ITable table)
         {
             var tableNamespace = TableNamespace(table);
@@ -296,7 +299,7 @@ namespace PoweredSoft.DbUtils.EF.Generator.EF6
                                 constructor.AddComment("Navigations");
                                 table.ForeignKeys.ForEach(fk =>
                                 {
-                                    var fkProp = entityClass.FindByMeta<PropertyBuilder>(fk);
+                                    var fkProp = FindNavigation(entityClass, fk);
                                     var fkColumnProp = entityClass.FindByMeta<PropertyBuilder>(fk.ForeignKeyColumn);
 
                                     // if null meaning its being filtered. (excluded table from generation)
@@ -306,8 +309,12 @@ namespace PoweredSoft.DbUtils.EF.Generator.EF6
                                         var primaryNamespace = TableNamespace(fk.PrimaryKeyColumn.Table);
                                         var primaryClassName = TableClassName(fk.PrimaryKeyColumn.Table);
                                         var primaryEntity = GenerationContext.FindClass(primaryClassName, primaryNamespace);
-                                        var reverseNav = primaryEntity.FindByMeta<PropertyBuilder>(fk);
 
+                                        PropertyBuilder reverseNav;
+                                        if (fk.PrimaryKeyColumn.Table == fk.ForeignKeyColumn.Table)
+                                            reverseNav = FindNavigation(primaryEntity, fk, NavigationKind.HasMany);
+                                        else
+                                            reverseNav = FindNavigation(primaryEntity, fk);
 
                                         if (fk.ForeignKeyColumn.IsNullable)
                                             line.Append($"HasOptional(t => t.{fkProp.GetName()})");
@@ -337,7 +344,7 @@ namespace PoweredSoft.DbUtils.EF.Generator.EF6
                                     var manyToManyTable = mtm.ForeignKeyColumn.Table;
                                     var otherFk = mtm.ForeignKeyColumn.Table.ForeignKeys.First(t => t.ForeignKeyColumn.PrimaryKeyOrder > 1);
                                     var otherFkTable = otherFk.PrimaryKeyColumn.Table;
-                                    var manyProp = entityClass.FindByMeta<PropertyBuilder>(mtm);
+                                    var manyProp = FindNavigation(entityClass, mtm);
 
                                     // exclude if not being generated.
                                     if (!TablesToGenerate.Contains(otherFk.PrimaryKeyColumn.Table))
@@ -346,7 +353,7 @@ namespace PoweredSoft.DbUtils.EF.Generator.EF6
                                     var otherNamespace = TableNamespace(otherFkTable);
                                     var otherClassName = TableClassName(otherFkTable);
                                     var otherEntity = GenerationContext.FindClass(otherClassName, otherNamespace);
-                                    var otherProp = otherEntity.FindByMeta<PropertyBuilder>(otherFk);
+                                    var otherProp = FindNavigation(otherEntity, otherFk);
 
                                     var line = RawLineBuilder.Create();
                                     line.Append($"HasMany(t => t.{manyProp.GetName()})");
