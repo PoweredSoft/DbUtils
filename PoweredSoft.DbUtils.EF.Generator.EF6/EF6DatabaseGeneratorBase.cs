@@ -245,12 +245,26 @@ namespace PoweredSoft.DbUtils.EF.Generator.EF6
                                 // to table mapping.
                                 constructor.RawLine(ToTableFluent(table));
 
-                                // pk mapping.
-                                var pk = table.Columns.FirstOrDefault(t => t.IsPrimaryKey);
+                                if (table.Columns.Count(t => t.IsPrimaryKey) > 1)
+                                {
+                                    //HasKey(x => new { x.PurchaseOrderId, x.RequiredDocumentId });
+                                    var props = string.Join(", ", table.Columns
+                                        .Where(t => t.IsPrimaryKey)
+                                        .OrderBy(t => t.PrimaryKeyOrder)
+                                        .Select(t => $"x.{entityClass.FindByMeta<PropertyBuilder>(t).GetName()}"));
+
+                                    var line = $"HasKey(x => new {{ {props} }})";
+                                    constructor.RawLine(line);
+                                }
+                                else
+                                {
+                                    // pk mapping.
+                                    var pk = table.Columns.FirstOrDefault(t => t.IsPrimaryKey);
                                     var pkProp = entityClass.FindByMeta<PropertyBuilder>(pk);
                                     constructor.RawLine($"HasKey(t => t.{pkProp.GetName()})");
+                                }
 
-                                    constructor.AddComment("Columns");
+                                constructor.AddComment("Columns");
 
                                 // columns mapping.
                                 table.Columns.ForEach(column =>
