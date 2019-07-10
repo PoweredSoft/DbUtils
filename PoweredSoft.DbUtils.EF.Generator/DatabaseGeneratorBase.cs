@@ -102,7 +102,7 @@ namespace PoweredSoft.DbUtils.EF.Generator
             {
                 ResolveTypesInterceptors.AddRange(da.GetTypes()
                     .Where(t => t.IsClass && typeof(IResolveTypeInterceptor).IsAssignableFrom(t))
-                    .Select(t => (IResolveTypeInterceptor)Activator.CreateInstance(t))
+                    .Select(t => (IResolveTypeInterceptor)Activator.CreateInstance(t, (IGenerator)this))
                 );
             });
         }
@@ -356,10 +356,10 @@ namespace PoweredSoft.DbUtils.EF.Generator
             {
                 var contextServices = a.GetTypes()
                     .Where(t => t.IsClass && typeof(IContextInterceptor).IsAssignableFrom(t))
-                    .Select(t => (IContextInterceptor)Activator.CreateInstance(t))
+                    .Select(t => (IContextInterceptor)Activator.CreateInstance(t, (IGenerator)this))
                     .ToList();
 
-                contextServices.ForEach(c => c.InterceptContext(this));
+                contextServices.ForEach(c => c.InterceptContext());
             });
         }
 
@@ -369,12 +369,12 @@ namespace PoweredSoft.DbUtils.EF.Generator
             {
                 var eachTableServices = a.GetTypes()
                     .Where(t => t.IsClass && typeof(ITableInterceptor).IsAssignableFrom(t))
-                    .Select(t => (ITableInterceptor) Activator.CreateInstance(t))
+                    .Select(t => (ITableInterceptor) Activator.CreateInstance(t, (IGenerator)this))
                     .ToList();
 
                 TablesToGenerate.ForEach(table =>
                 {
-                    eachTableServices.ForEach(t => t.InterceptTable(this, table));
+                    eachTableServices.ForEach(t => t.InterceptTable(table));
                 });
             });
         }

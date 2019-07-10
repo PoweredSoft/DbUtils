@@ -8,6 +8,6 @@ namespace PoweredSoft.DbUtils.EF.Generator.Core
 {
     public interface ITableInterceptor
     {
-        void InterceptTable(IGenerator generator, ITable table);
+        void InterceptTable(ITable table);
     }
 }
