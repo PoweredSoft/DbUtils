@@ -7,6 +7,6 @@ namespace PoweredSoft.DbUtils.EF.Generator.Core
 {
     public interface IContextInterceptor
     {
-        void InterceptContext(IGenerator generator);
+        void InterceptContext();
     }
 }

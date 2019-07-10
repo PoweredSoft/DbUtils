@@ -10,13 +10,20 @@ namespace Acme.DbUtils
 {
     public class ContextInterceptor : IContextInterceptor
     {
-        public void InterceptContext(IGenerator generator)
+        public ContextInterceptor(IGenerator generator)
         {
-            if (!(generator is IGeneratorUsingGenerationContext) || !(generator is IGeneratorWithMeta))
+            Generator = generator;
+        }
+
+        public IGenerator Generator { get; }
+
+        public void InterceptContext()
+        {
+            if (!(Generator is IGeneratorUsingGenerationContext) || !(Generator is IGeneratorWithMeta))
                 throw new Exception("Not the kind of generator expected.");
 
-            var gen = generator as IGeneratorUsingGenerationContext;
-            var genMeta = generator as IGeneratorWithMeta;
+            var gen = Generator as IGeneratorUsingGenerationContext;
+            var genMeta = Generator as IGeneratorWithMeta;
             var options = gen.GetOptions();
             var gc = gen.GetGenerationContext();
             var contextClassName = genMeta.ContextClassName();
@@ -27,6 +34,13 @@ namespace Acme.DbUtils
 
     public class ResolveTypeInterceptor : IResolveTypeInterceptor
     {
+        public ResolveTypeInterceptor(IGenerator generator)
+        {
+            Generator = generator;
+        }
+
+        public IGenerator Generator { get; }
+
         public Tuple<string, bool> InterceptResolveType(IColumn column)
         {
             /*
@@ -39,14 +53,21 @@ namespace Acme.DbUtils
 
     public class TableInterceptor : ITableInterceptor
     {
-        public void InterceptTable(IGenerator generator, ITable table)
+        public TableInterceptor(IGenerator generator)
         {
-            if (!(generator is IGeneratorUsingGenerationContext) || !(generator is IGeneratorWithMeta))
+            Generator = generator;
+        }
+
+        public IGenerator Generator { get; }
+
+        public void InterceptTable(ITable table)
+        {
+            if (!(Generator is IGeneratorUsingGenerationContext) || !(Generator is IGeneratorWithMeta))
                 throw new Exception("Not the kind of generator expected.");
 
-            var gen = generator as IGeneratorUsingGenerationContext;
-            var genMeta = generator as IGeneratorWithMeta;
-            var options = generator.GetOptions();
+            var gen = Generator as IGeneratorUsingGenerationContext;
+            var genMeta = Generator as IGeneratorWithMeta;
+            var options = Generator.GetOptions();
             var ctx = gen.GetGenerationContext();
 
 
