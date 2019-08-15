@@ -29,6 +29,7 @@ namespace PoweredSoft.DbUtils.EF.Generator.EF6.SqlServer
         public override string ReplaceMetas(string text, ITable table) => base.ReplaceMetas(text, table).ReplaceMetas((Table)table);
         public override List<ITable> ResolveTablesToGenerate() => base.ResolveTablesToGenerate().ShouldGenerate(Options);
         public override List<ISequence> ResolveSequencesToGenerate() => base.ResolveSequencesToGenerate().ShouldGenerate(Options);
+        protected override bool MatchColumnTypeMapping(ColumnTypeMapping mapping, IColumn column) => mapping.MatchMappingColumnType(column);
 
         protected override bool IsGenerateOptionIdentity(IColumn column)
         {

@@ -1,18 +1,16 @@
-﻿using System;
-using System.CodeDom.Compiler;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Pluralize.NET;
 using PoweredSoft.CodeGenerator;
 using PoweredSoft.CodeGenerator.Constants;
 using PoweredSoft.CodeGenerator.Extensions;
 using PoweredSoft.DbUtils.EF.Generator.Core;
 using PoweredSoft.DbUtils.Schema.Core;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Text;
 
 namespace PoweredSoft.DbUtils.EF.Generator
 {
@@ -727,9 +725,24 @@ namespace PoweredSoft.DbUtils.EF.Generator
             if (dynamicAssemblyResolvedType != null)
                 return dynamicAssemblyResolvedType;
 
+            if (Options.ColumnTypeMappings != null)
+            {
+                var matched = Options.ColumnTypeMappings.FirstOrDefault(mapping => MatchColumnTypeMapping(mapping, column));
+                if (matched != null)
+                    return new Tuple<string, bool>(matched.Type, matched.IsValueType);
+            }
+
             var type = DataTypeResolver.ResolveType(column);
             var typeName = type.GetOutputType();
             return new Tuple<string, bool>(typeName, type.IsValueType);
+        }
+
+        protected virtual bool MatchColumnTypeMapping(ColumnTypeMapping mapping, IColumn column)
+        {
+            if (mapping.Table.Equals(column.Table.Name) && mapping.Column.Equals(column.Name))
+                return true;
+
+            return false;
         }
 
         /// <summary>
