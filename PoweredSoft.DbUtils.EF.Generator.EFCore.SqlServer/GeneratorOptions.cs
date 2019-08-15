@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using PoweredSoft.DbUtils.EF.Generator.Core;
 using PoweredSoft.DbUtils.EF.Generator.EFCore.Core;
 using PoweredSoft.DbUtils.EF.Generator.SqlServer.Core;
 
@@ -55,5 +57,25 @@ namespace PoweredSoft.DbUtils.EF.Generator.EFCore.SqlServer
         public string ModelExtensionsOutputSingleFileName { get; set; }
         public string ModelExtensionsOutputDir { get; set; }
         public string ModelExtensionsNamespace { get; set; }
+
+        private IEnumerable<SqlServerColumnTypeMapping> columnTypeMappings { get; set; }
+
+        public IEnumerable<SqlServerColumnTypeMapping> ColumnTypeMappings
+        {
+            get => columnTypeMappings;
+            set => columnTypeMappings = value;
+        }
+
+        IEnumerable<ColumnTypeMapping> IGeneratorOptions.ColumnTypeMappings
+        {
+            get => columnTypeMappings;
+            set 
+            {
+                if (value.Any(t => !(t is SqlServerColumnTypeMapping)))
+                    throw new System.Exception("Must all by of kind Sql Server Column Type Mapping");
+
+                columnTypeMappings = value.Cast<SqlServerColumnTypeMapping>();
+            }
+        }
     }
 }

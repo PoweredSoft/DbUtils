@@ -28,6 +28,8 @@ namespace PoweredSoft.DbUtils.EF.Generator.MySql
                 return typeof(uint);
             else if (meta.DataType == "int")
                 return typeof(int);
+            else if (meta.DataType == "bit" || (meta.DataType == "tinyint" && meta.NumericScale == 1))
+                return typeof(bool);
             else if (meta.DataType == "tinyint" && meta.IsUnsigned)
                 return typeof(byte);
             else if (meta.DataType == "tinyint")

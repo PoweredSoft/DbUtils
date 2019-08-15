@@ -1,4 +1,5 @@
-﻿using PoweredSoft.DbUtils.EF.Generator.EFCore.Core;
+﻿using PoweredSoft.DbUtils.EF.Generator.Core;
+using PoweredSoft.DbUtils.EF.Generator.EFCore.Core;
 using System.Collections.Generic;
 
 namespace PoweredSoft.DbUtils.EF.Generator.EFCore.MySql
@@ -50,5 +51,6 @@ namespace PoweredSoft.DbUtils.EF.Generator.EFCore.MySql
         public string ModelExtensionsOutputSingleFileName { get; set; }
         public string ModelExtensionsOutputDir { get; set; }
         public string ModelExtensionsNamespace { get; set; }
+        public IEnumerable<ColumnTypeMapping> ColumnTypeMappings { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
     }
 }

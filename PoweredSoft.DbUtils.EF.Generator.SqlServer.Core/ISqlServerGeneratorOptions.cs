@@ -7,5 +7,6 @@ namespace PoweredSoft.DbUtils.EF.Generator.SqlServer.Core
     {
         List<string> IncludedSchemas { get; }
         List<string> ExcludedSchemas { get; }
+        new IEnumerable<SqlServerColumnTypeMapping> ColumnTypeMappings { get; set; }
     }
 }

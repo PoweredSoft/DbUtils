@@ -52,5 +52,6 @@ namespace PoweredSoft.DbUtils.EF.Generator.Core
         string ContextOutputDir { get; set; }
 
         List<string> DynamicAssemblies { get; set; }
+        IEnumerable<ColumnTypeMapping> ColumnTypeMappings { get; set; }
     }
 }
