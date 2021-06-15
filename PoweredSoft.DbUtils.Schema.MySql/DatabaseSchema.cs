@@ -68,7 +68,7 @@ namespace PoweredSoft.DbUtils.Schema.MySql
                         indexModel.TableName = reader["TableName"] as string;
                         indexModel.IndexName = reader["IndexName"] as string;
                         indexModel.ColumnName = reader["ColumnName"] as string;
-                        indexModel.IsUniqueConstraint = (long) reader["IsUniqueConstraint"] != 0;
+                        indexModel.IsUniqueConstraint = Convert.ToInt32(reader["IsUniqueConstraint"]) != 0;
 
                         byte ordinal = 0;
                         var raw = reader["KeyOrdinal"];

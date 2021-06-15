@@ -176,7 +176,10 @@ namespace PoweredSoft.DbUtils.EF.Generator.EFCore
             }
             else
             {
-                var pk = pks.First();
+                var pk = pks.FirstOrDefault();
+                if (pk == null)
+                    throw new Exception($"Table {table.Name} does not have a primary key, required.");
+
                 var pkProp = tableClass.FindByMeta<PropertyBuilder>(pk);
                 fluentExpression.RawLine($"entity.HasKey(t => t.{pkProp.GetName()})");
             }
