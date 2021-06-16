@@ -99,6 +99,16 @@ namespace PoweredSoft.DbUtils.EF.Generator.EFCore
                         .BaseParameter("options")
                     );
 
+                    contextClass.Method(m =>
+                    {
+                        m
+                            .Partial(true)
+                            .AccessModifier(AccessModifiers.Omit)
+                            .ReturnType("void")
+                            .Name("OnConfiguringPartial")
+                            .Parameter(p => p.Type("DbContextOptionsBuilder").Name("optionsBuilder"));
+                    });
+
                     // override On Configuring
                     contextClass.Method(m =>
                     {
@@ -121,6 +131,18 @@ namespace PoweredSoft.DbUtils.EF.Generator.EFCore
                                     .Add(UseDatabaseEngineConnectionStringLine());
                             });
                         }
+
+                        m.RawLine("OnConfiguringPartial(optionsBuilder)");
+                    });
+
+                    contextClass.Method(m =>
+                    {
+                        m
+                            .Partial(true)
+                            .AccessModifier(AccessModifiers.Omit)
+                            .ReturnType("void")
+                            .Name("OnModelCreatingPartial")
+                            .Parameter(p => p.Type("ModelBuilder").Name("modelBuilder"));
                     });
 
                     // model creating.
@@ -144,6 +166,8 @@ namespace PoweredSoft.DbUtils.EF.Generator.EFCore
                             var outputType = dataType.GetOutputType();
                             m.RawLine($"modelBuilder.HasSequence<{outputType}>(\"{sequence.Name}\").StartsAt({sequence.StartAt}).IncrementsBy({sequence.IncrementsBy})");
                         });
+
+                        m.RawLine("OnModelCreatingPartial(modelBuilder)");
                     });
                 });
             });
