@@ -52,5 +52,6 @@ namespace PoweredSoft.DbUtils.EF.Generator.EFCore.MySql
         public string ModelExtensionsOutputDir { get; set; }
         public string ModelExtensionsNamespace { get; set; }
         public IEnumerable<ColumnTypeMapping> ColumnTypeMappings { get; set; }
+        public decimal CoreVersion { get; set; } = 5M;
     }
 }

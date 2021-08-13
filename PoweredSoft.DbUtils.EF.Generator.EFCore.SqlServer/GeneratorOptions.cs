@@ -77,5 +77,8 @@ namespace PoweredSoft.DbUtils.EF.Generator.EFCore.SqlServer
                 columnTypeMappings = value.Cast<SqlServerColumnTypeMapping>();
             }
         }
+
+        decimal CoreVersion { get; set; } = 5;
+        decimal IEFCoreGeneratorOptions.CoreVersion { get; set; }
     }
 }

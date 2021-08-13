@@ -7,6 +7,7 @@ namespace PoweredSoft.DbUtils.EF.Generator.EFCore.Core
 {
     public interface IEFCoreGeneratorOptions : IGeneratorOptions
     {
-        bool AddConnectionStringOnGenerate { get; set; } 
+        bool AddConnectionStringOnGenerate { get; set; }
+        decimal CoreVersion { get; set; } 
     }
 }

@@ -228,7 +228,11 @@ namespace PoweredSoft.DbUtils.EF.Generator.EFCore
                 }
 
                 line.Append($"entity.HasIndex(t => {rightExpr})");
-                line.Append($"\n\t.HasName(\"{i.Name}\")");
+
+                if (Options.CoreVersion >= 5)
+                    line.Append($"\n\t.HasDatabaseName(\"{i.Name}\")");
+                else
+                    line.Append($"\n\t.HasName(\"{i.Name}\")");
                 if (i.IsUnique)
                     line.Append($"\n\t.IsUnique()");
 
